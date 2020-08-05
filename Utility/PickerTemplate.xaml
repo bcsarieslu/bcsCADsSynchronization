@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTemplate x:Key="IconButton" TargetType="{x:Type ToggleButton}">
+        <Border>
+            <ContentPresenter />
+        </Border>
+    </ControlTemplate>
+
+    <Style x:Key="CustomTextBoxStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Grid>
+                        <Border BorderThickness="1" BorderBrush="Black">
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Border>
+                        <ToggleButton Template="{StaticResource IconButton}"
+                              MaxHeight="21" 
+                              Margin="-1,0,0,0" 
+                              Name="PopUpImageButton" 
+                              Focusable="False"
+                              IsChecked="False">
+                            <Image Source="..\Images\Expand_Collapse_Icon.png" Stretch="None" Visibility="Hidden" HorizontalAlignment="Right" Name="imgPicker" >
+                            </Image>
+                        </ToggleButton>
+                        <Popup IsOpen="{Binding Path=IsChecked, ElementName=PopUpImageButton, Mode=TwoWay}" x:Name="CustomPopup" Margin="0,-1,0,0" PopupAnimation="Fade" StaysOpen="False">
+                            <!--
+                                Control to be displayed in the popup goes here!
+                                Control can have an event based trigger that sets the togglebutton to close the popup when needed.
+                            -->
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Visibility" TargetName="imgPicker" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter Property="Visibility" TargetName="imgPicker" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

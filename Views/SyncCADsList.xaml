@@ -1,0 +1,103 @@
+﻿<Page
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+        xmlns:vm="clr-namespace:BCS.CADs.Synchronization"
+        xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" x:Class="BCS.CADs.Synchronization.Views.SyncCADsList"
+        mc:Ignorable="d"
+        Title="SyncCADsList" x:Name="win">
+
+    <Page.DataContext>
+        <ViewModels:MainWindowViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <ResourceDictionary>
+            <!--<Style x:Key="TextBlockStyle" TargetType="TextBlock" />-->
+            <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference win}"/>
+            <ViewModels:SyncCADsListStringImageToResource x:Key="StringToResource" />
+            <ViewModels:ThumbnailToPathConverter x:Key="ImageIdToPathConverter" ImagePath="DisplayImage" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/MainStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
+    </Page.Resources>
+    
+    <Grid>
+
+        <Grid ShowGridLines="True" >
+            <!--AutoGenerateColumns="False" CanUserSortColumns="False"-->
+            <DataGrid x:Name="gridSelectedItems" IsReadOnly="False" CanUserAddRows="False"
+                        AutoGenerateColumns="False" 
+                        ItemsSource="{Binding ObsSearchItems}"
+                        Grid.Row="3"
+		                Grid.Column="1"
+		                Margin="10"
+                        FontSize="16"
+		                AlternationCount="2"
+		                MinRowHeight="26" >
+                
+                <DataGrid.InputBindings>
+                    <!--LeftDoubleClick -->
+                    <MouseBinding Gesture="LeftClick" 
+                          Command="{Binding GridFieldClickedCommand}" 
+                          CommandParameter="{Binding ElementName=gridSelectedItems, Path=SelectedItem}" />
+                </DataGrid.InputBindings>
+                
+                <DataGrid.RowHeaderTemplate>
+                    <DataTemplate>
+                        <!-- <ToggleButton x:Name="RowHeaderToggleButton" Click="ToggleButton_Click" Cursor="Hand"/> -->
+                        <ToggleButton x:Name="RowHeaderToggleButton" Cursor="Hand"/>
+                    </DataTemplate>
+                </DataGrid.RowHeaderTemplate>
+                <DataGrid.Columns>
+                    <!--<Image Width="24" Height="24" Source="{StaticResource Assembly}"/>-->
+                    <!--<Image  x:Name="icon" Source="{Binding Name,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
+                    <DataGridTemplateColumn Header="" Width="SizeToCells" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                                    <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassName,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
+                                    <Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassThumbnail}"/>
+                                    <Image Width="24" Height="24" x:Name="accessRights" Source="{Binding AccessRights,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                                    <Image Width="24" Height="24" x:Name="restrictedStatus" Source="{Binding RestrictedStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                                    <Image Width="24" Height="24" x:Name="versionStatus" Source="{Binding VersionStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                                    <!--<Image Width="24" Height="24" Source="{StaticResource Assembly}"/>-->
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header=""  Width="24" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"></Image>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridCheckBoxColumn ElementStyle="{StaticResource MyCheckBoxStyle}"   IsThreeState="False" Width="auto" Binding="{Binding IsViewSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                        <DataGridColumn.Header>
+                            <TextBlock Text="{DynamicResource select}" />
+                        </DataGridColumn.Header>
+                    </DataGridCheckBoxColumn>
+                    <!-- {DynamicResource select} 選取-->
+                    
+                    <!--<DataGridTextColumn Header="icon" Binding="{Binding Icon}"  Width="auto" x:Name="icon"/>-->
+                    <DataGridTextColumn Binding="{Binding FileName}" Width="*" x:Name="filename" IsReadOnly="True" >
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource filename}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <!-- "{DynamicResource filename}" {DynamicResource ResourceKey=filename} 檔案名稱 -->
+                    <!--  ElementStyle="{StaticResource TextBlockStyle}" -->
+                    <!--<DataGridTextColumn Header="State" Binding="{Binding State}" Width="auto" x:Name="state"/>-->
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</Page>

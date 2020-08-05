@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:BCS.CADs.Synchronization.ViewModels">
+    <Style x:Key="Login_Style_Change">
+        <Setter Property="Button.Cursor" Value="Hand"/>
+        <Setter Property="Button.Width" Value="40"/>
+        <Setter Property="Button.Height" Value="40"/>
+        <Setter Property="Button.Background" Value="Red"/>
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}">
+                        <Path Data="M8.0000001,15.000999L10,15.000999 10,17.000998 8.0000001,17.000998z M23.000008,11.800992L19.73793,13.964993 23.000008,16.176993 23.000008,15.000999 23,13.000999z M2.0000001,2.9689846L2.0000001,25.868979 11,29.144978 11,6.2449839z M5.1841088,2.0000002L13,4.8449843 13,25.09499 20,25.09499 20,16.54509 17.30187,14.702993C16.892861,14.280993,16.895861,13.620993,17.307871,13.201992L17.467875,13.069992 20,11.391166 20,2.0000002z M0,0L22,0 22,10.065145 23.237013,9.2449915 23.638023,8.8429911 24.33704,9.0829909C24.73905,9.2499917,25.000055,9.6389916,25.000055,10.074991L25.000055,13.000999 32,13.000999 32,15.000999 25.000055,15.000999 25.000055,18.601994 24.32604,18.922995C24.195036,18.975994 24.058033,19.001995 23.92403,19.001995 23.690024,19.001995 23.46102,18.924994 23.272015,18.778994L22,17.910551 22,27.09499 13,27.09499 13,32.001978 0,27.268978 0,27.095 0,0.11298496z" Stretch="Uniform" Fill="#FF2101B6" Width="22" Height="22" Margin="5,0,0,0" RenderTransformOrigin="0.5,0.5"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Background, ElementName=logintext}" Value="AliceBlue">
+                <Setter Property="Control.Background" Value="AliceBlue"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

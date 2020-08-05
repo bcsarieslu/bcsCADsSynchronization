@@ -1,0 +1,484 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2370F313-05D6-4461-A3FD-4F3814C3D5DA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BCS.CADs.Synchronization</RootNamespace>
+    <AssemblyName>BCS.CADs.Synchronization</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\Pools\Compiler\Release\Dll\PLM\BCS.CADs.Synchronization\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>default</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\Pools\Compiler\Release\Dll\PLM\BCS.CADs.Synchronization\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>6</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>bcslogo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AdornedControl">
+      <HintPath>..\..\..\..\Pools\References\WPF\AdornedControl.dll</HintPath>
+    </Reference>
+    <Reference Include="IOM">
+      <HintPath>..\..\..\..\Pools\References\Aras\Server\IOM.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Pools\References\Expression.Blend\Sdk.1.0.2\lib\net40-client\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CADsSynchronizer.cs" />
+    <Compile Include="Classes\ClassItemProperties.cs" />
+    <Compile Include="Classes\ClassPlugin.cs" />
+    <Compile Include="Classes\ClassRelationship.cs" />
+    <Compile Include="Classes\ClassComposition.cs" />
+    <Compile Include="Classes\ClassItem.cs" />
+    <Compile Include="Classes\ClassTemplateFile.cs" />
+    <Compile Include="Classes\ConditionalRule.cs" />
+    <Compile Include="Classes\IClassPlugin.cs" />
+    <Compile Include="Classes\IClassRelationship.cs" />
+    <Compile Include="Classes\IClassTemplateFile.cs" />
+    <Compile Include="Classes\IConditionalRule.cs" />
+    <Compile Include="Classes\IntegrationEvents.cs" />
+    <Compile Include="Classes\ItemType.cs" />
+    <Compile Include="Classes\OperationOption.cs" />
+    <Compile Include="Classes\Product.cs" />
+    <Compile Include="CommandModel\GetAllLang.cs" />
+    <Compile Include="ConfigProperties\IDefaultElements.cs" />
+    <Compile Include="ConfigProperties\IPLMProperty.cs" />
+    <Compile Include="ConfigProperties\IPLMPropertyFile.cs" />
+    <Compile Include="ConfigProperties\PLMKeys.cs" />
+    <Compile Include="ConfigProperties\PLMProperty.cs" />
+    <Compile Include="ConfigProperties\PLMPropertyFile.cs" />
+    <Compile Include="ConfigProperties\XmlSettingAttributeNameAttribute.cs" />
+    <Compile Include="ConfigProperties\XmlSettingTagNameAttribute.cs" />
+    <Compile Include="DependencyObjectProxy.cs" />
+    <Compile Include="Entities\ConnInnovator.cs" />
+    <Compile Include="Entities\ConnPLM.cs" />
+    <Compile Include="Entities\IClasses.cs" />
+    <Compile Include="Entities\IConfigurations.cs" />
+    <Compile Include="Entities\IProduct.cs" />
+    <Compile Include="Entities\IServerConnection.cs" />
+    <Compile Include="Entities\ISyncReachedEventArgs.cs" />
+    <Compile Include="Entities\ItemException.cs" />
+    <Compile Include="Entities\ItemMessage.cs" />
+    <Compile Include="Entities\SyncCADEvents.cs" />
+    <Compile Include="Entities\SyncMessages.cs" />
+    <Compile Include="Entities\SyncReachedEventArgs.cs" />
+    <Compile Include="Models\Innovator.cs" />
+    <Compile Include="Libs\MyCache.cs" />
+    <Compile Include="Models\SynsEnumDefine.cs" />
+    <Compile Include="PLMList\IPLMListItem.cs" />
+    <Compile Include="PLMList\ILists.cs" />
+    <Compile Include="ConfigProperties\IPLMRevision.cs" />
+    <Compile Include="PLMList\PLMListItem.cs" />
+    <Compile Include="PLMList\Lists.cs" />
+    <Compile Include="ConfigProperties\PLMRevision.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Search\CADStructure.cs" />
+    <Compile Include="Search\ICADStructure.cs" />
+    <Compile Include="Search\ISearchItem.cs" />
+    <Compile Include="Search\SearchItem.cs" />
+    <Compile Include="Search\StructuralChange.cs" />
+    <Compile Include="Services\SelectLangs.cs" />
+    <Compile Include="SyncView.cs" />
+    <Compile Include="TitleCS\WindowResizer.cs" />
+    <Compile Include="TitleXaml\SystemInformationWindow.xaml.cs">
+      <DependentUpon>SystemInformationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\CalendarConveter.cs" />
+    <Compile Include="Utility\DoubleStringConverter.cs" />
+    <Compile Include="Utility\ItemPickerConveter.cs" />
+    <Compile Include="Utility\ListboxConveter.cs" />
+    <Compile Include="ViewModels\ClsSynchronizer.cs" />
+    <Compile Include="ViewModels\ItemSearchDialogViewModel.cs" />
+    <Compile Include="ViewModels\ItemSearchViewModel.cs" />
+    <Compile Include="ViewModels\LanguageList.cs" />
+    <Compile Include="ViewModels\NewFileNameViewModel.cs" />
+    <Compile Include="ViewModels\NotifyPropertyBase.cs" />
+    <Compile Include="ViewModels\PositioningCommand.cs" />
+    <Compile Include="ViewModels\RelayCommand.cs" />
+    <Compile Include="ViewModels\ShowCommand.cs" />
+    <Compile Include="ViewModels\SyncCommands.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\AddFromTemplate.xaml.cs">
+      <DependentUpon>AddFromTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemFilterSearch.xaml.cs">
+      <DependentUpon>ItemFilterSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemSearch.xaml.cs">
+      <DependentUpon>ItemSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemSearchDialog.xaml.cs">
+      <DependentUpon>ItemSearchDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemsMessage.xaml.cs">
+      <DependentUpon>ItemsMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoadingWait.xaml.cs">
+      <DependentUpon>LoadingWait.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login.xaml.cs">
+      <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditProperties.xaml.cs">
+      <DependentUpon>EditProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IClient.cs" />
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewFileName.xaml.cs">
+      <DependentUpon>NewFileName.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlugInFuncs.xaml.cs">
+      <DependentUpon>PlugInFuncs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SubItemSearchDialog.xaml.cs">
+      <DependentUpon>SubItemSearchDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SystemSetting.xaml.cs">
+      <DependentUpon>SystemSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TreeStructure.xaml.cs">
+      <DependentUpon>TreeStructure.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SyncCADsList.xaml.cs">
+      <DependentUpon>SyncCADsList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ViewFile.xaml.cs">
+      <DependentUpon>ViewFile.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Synchronization\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Resources\MainResource.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\AddTemplateStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\ButtonChangeStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\CommonStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\RectangleButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ScrallBarStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SettingViewStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SvgCADImages.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\SvgImages.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Utility\GridItemPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utility\ItemPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AddFromTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EditProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemFilterSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemSearchDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemsMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoadingWait.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewFileName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlugInFuncs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SubItemSearchDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SystemSetting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TreeStructure.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SyncCADsList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ViewFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="Lang\en-US.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Lang\zh-CN.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Lang\zh-TW.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Page Include="Resources\CADsSynchronizer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\DataGridStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ScrollViewerStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\TreeViewStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ButtonDefaultStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\LoginStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\CoreResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\DataWindowResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\GlassButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\InnovatorLogin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\MainStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\TextBlockDefaultStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\UserControlResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TitleXaml\SystemInformationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Utility\CalculatorPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Utility\DatePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Utility\ListPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Utility\PickerTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Login.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="OpenPLM.png" />
+    <Resource Include="Images\Calculator_Icon.png" />
+    <Resource Include="Images\Calendar_Icon.png" />
+    <Resource Include="Images\Down_Icon.gif" />
+    <Resource Include="Images\Expand_Collapse_Icon.png" />
+    <Resource Include="Images\BCS Logo Full.png" />
+    <Resource Include="Images\bcslogo.ico" />
+    <Resource Include="Images\gtk-execute_36132.ico" />
+    <Resource Include="Images\VaultServer.ico" />
+    <Resource Include="Images\VaultServers.ico" />
+    <Resource Include="Images\Changes_replace_16.Png" />
+    <Resource Include="Images\insert16x16.bmp" />
+    <Resource Include="Images\Insert.bmp" />
+    <Resource Include="Images\ReplaceRevision.bmp" />
+    <Resource Include="Images\BCS_CSD_Image.png" />
+    <Resource Include="Images\CAD整合登入圖片.png" />
+    <Resource Include="Images\CreatedBy.png" />
+    <Resource Include="Images\DefaultAvatar.png" />
+    <Resource Include="Images\White.bmp" />
+    <Resource Include="Images\OpenPLM.png" />
+    <Resource Include="Images\solidworks_drawing.jpg" />
+    <Resource Include="Images\Assembly.png" />
+    <Resource Include="Images\Document.png" />
+    <Resource Include="Images\Drawing.png" />
+    <Resource Include="Images\Part.png" />
+    <Resource Include="Images\solidworks_assembly.jpg" />
+    <Resource Include="Images\solidworks_part.jpg" />
+    <Resource Include="bcslogo.ico" />
+    <Resource Include="Images\BCS_CSD_Image2.png" />
+    <Resource Include="Images\ellipsis.png" />
+    <Resource Include="Images\dropdown-arrow.png" />
+    <Resource Include="Images\calendar.png" />
+    <Resource Include="Images\CopyToAdd.bmp" />
+    <Resource Include="Images\ToggleButtonEditIcon.png" />
+    <Content Include="Libs\WPFToolkit.dll" />
+    <Content Include="Libs\WPFToolkit.Extended.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

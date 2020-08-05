@@ -1,0 +1,114 @@
+﻿<Page x:Class="BCS.CADs.Synchronization.Views.EditProperties"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" 
+      xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
+      mc:Ignorable="d" 
+      Title="DataGrid">
+    <!--xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"-->
+    <Page.Resources>
+        <ResourceDictionary>
+            <ViewModels:StringImageToResource x:Key="StringToResource" />
+            <ViewModels:ThumbnailToPathConverter x:Key="ImageIdToPathConverter" ImagePath="DisplayImage" />
+            <!--TruePath="MyTruePath" FalsePath="MyFalsePath"-->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/CADsSynchronizer.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ScrallBarStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+
+    </Page.Resources>
+    <Page.DataContext>
+        <ViewModels:MainWindowViewModel/>
+    </Page.DataContext>
+
+    <DataGrid x:Name="gridDetail" IsReadOnly="True" CanUserAddRows="False"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding ObsSearchItems}"
+                Grid.Row="3"
+		        Grid.Column="1"
+		        Margin="10"
+		        AlternationCount="2"
+                FontSize="16"
+		        MinRowHeight="26" 
+                HorizontalScrollBarVisibility="Visible"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                RowDetailsTemplate="{StaticResource RowDetailTemplate}">
+
+        <DataGrid.InputBindings>
+            <!-- LeftDoubleClick -->
+            <MouseBinding Gesture="LeftClick" 
+                          Command="{Binding GridFieldClickedCommand}" 
+                          CommandParameter="{Binding ElementName=gridDetail, Path=SelectedItem}" />
+        </DataGrid.InputBindings>
+
+        <DataGrid.RowHeaderTemplate>
+            <DataTemplate>
+                <ToggleButton x:Name="RowHeaderToggleButton" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Cursor="Hand">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Image Stretch="Uniform" Width="20" Source="/BCS.CADs.Synchronization;component/Images/ToggleButtonEditIcon.png"/>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="BorderBrush" Value="#007ACC"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                
+            </DataTemplate>
+        </DataGrid.RowHeaderTemplate>
+        <DataGrid.RowHeaderStyle>
+            <Style TargetType="{x:Type DataGridRowHeader}">
+                <Setter Property="Width" Value="35" />
+            </Style>
+        </DataGrid.RowHeaderStyle>
+
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Header="" Width="SizeToCells" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                            <!--<Image Width="24" Height="24" Source="{StaticResource Assembly}"/>-->
+                            <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassName,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
+                            <Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassThumbnail}"/>
+                            <Image Width="24" Height="24" x:Name="accessRights" Source="{Binding AccessRights,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                            <Image Width="24" Height="24" x:Name="restrictedStatus" Source="{Binding RestrictedStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                            <Image Width="24" Height="24" x:Name="versionStatus" Source="{Binding VersionStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                        </StackPanel>
+                        
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <!--<DataGridTextColumn Header="icon" Binding="{Binding Icon}"  Width="auto" x:Name="icon"/>-->
+
+            <DataGridTemplateColumn Header=""  Width="24" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"></Image>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+
+            <DataGridTextColumn Binding="{Binding FileName}" Width="*" x:Name="filename" IsReadOnly="True" >
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="{DynamicResource filename}" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+
+            <!--ElementStyle="{StaticResource TextBlockStyle}"-->
+
+            <!--<DataGridTextColumn Header="State" Binding="{Binding State}" Width="auto" x:Name="state"/>-->
+        </DataGrid.Columns>
+        
+    </DataGrid>
+</Page>

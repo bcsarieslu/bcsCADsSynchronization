@@ -1,0 +1,42 @@
+﻿<Page x:Class="BCS.CADs.Synchronization.Views.SystemSetting"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      mc:Ignorable="d" 
+      xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SettingViewStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Page.DataContext>
+        <ViewModels:MainWindowViewModel/>
+    </Page.DataContext>
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Margin="20" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBlock FontSize="16" Text="語言設定:"/>
+            <ComboBox x:Name="langComboBox" ItemsSource="{Binding AllLang}"
+                      SelectedItem="{Binding SelectedLang}"
+                      Margin="10,0,0,0"
+                      VerticalAlignment="Top"
+                      MinWidth="100"
+                      HorizontalAlignment="Stretch"
+                      Style="{StaticResource ComboBoxFlatStyle}">
+                <ComboBox.ItemTemplate >
+                    <DataTemplate >
+                        <TextBlock Text="{Binding Label}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <Button Content="確認修改" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="10,100,10,0" Style="{StaticResource btn_default}"
+                Command="{Binding SettingOK}"
+                CommandParameter="{Binding RelativeSource={RelativeSource self}}">
+        </Button>
+    </StackPanel>
+</Page>

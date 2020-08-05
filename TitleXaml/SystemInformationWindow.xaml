@@ -1,0 +1,72 @@
+﻿<Window x:Class="LoginWindow.SystemInformationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:BCS.CADs.Synchronization"
+        xmlns:cm="clr-namespace:BCS.CADs.Synchronization.CommandModel"
+        mc:Ignorable="d"
+        x:Name="win"
+        Title="SystemInfoWindow" SizeToContent="WidthAndHeight" SnapsToDevicePixels="True" MinWidth="400"
+        AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" KeyUp="SystemInfoWindow_OnKeyUp" Background="Transparent">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/DataWindowResourceDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Border Style="{StaticResource CoreBorderStyle}" CornerRadius="20" Background="Azure">
+        <Grid Background="Transparent">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0">
+                <StackPanel Style="{StaticResource DataWindowHeaderStackPanelStyle}" HorizontalAlignment="Center">
+                    <Label Content="{DynamicResource SystemInformation}" Style="{StaticResource DataWindowTitelLabelStyle}"></Label>
+                </StackPanel>
+            </DockPanel>
+            <Thumb Grid.Row="0" Opacity="0" Background="Transparent" Foreground="{x:Null}" DragDelta="MainHeaderThumb_OnDragDelta" />
+            <DockPanel Grid.Row="0">
+                <StackPanel Style="{StaticResource DataWindowCloseButtonStackPanelStyle}">
+                    <Button ToolTip="Close" Width="32" Height="28" Style="{StaticResource WindowActionButton}" Click="btnClose_OnClick">
+                        <Path Width="10" Height="10" Stretch="Fill" Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}" Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z "/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+            <Border Grid.Row="1" Style="{StaticResource DataWindowContentBorderStyle}">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                    <StackPanel Height="20"></StackPanel>
+                    <StackPanel Margin="36,0,36,0" Orientation="Horizontal" >
+                        <StackPanel Margin="0,0,12,0">
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Content="{DynamicResource OperatingSystem}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Content="{DynamicResource DotNetFrameworkVer}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Margin="0,12,0,0" Content="{DynamicResource WindowsUsername}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Content="{DynamicResource Domainname}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Margin="0,12,0,0" Content="{DynamicResource RAM}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Content="{DynamicResource Processor}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Margin="0,12,0,0" Content="{DynamicResource IPAddress_LAN}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Content="{DynamicResource IP_Address_WAN}"/>
+                            <Label Style="{StaticResource SystemInfoWindowLabel}" Margin="0,28,0,0" Content="{DynamicResource ApplicationVer}"></Label>
+                        </StackPanel>
+                        <StackPanel>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowOperatingSystem">--</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowNetFrameworkVersion">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowWindowsUserName" Margin="0,12,0,0">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowDomainName">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowRam" Margin="0,12,0,0">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowProcessor">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowLanIp" Margin="0,12,0,0">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowWanIp" Foreground="{StaticResource ManagementColorBrush}">---</Label>
+                            <Label Style="{StaticResource SystemInfoWindowLabelValues}" Name="SystemInfoWindowRubyVersion" Margin="0,28,0,0">---</Label>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Height="20"></StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

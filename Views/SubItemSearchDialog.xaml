@@ -1,0 +1,40 @@
+﻿<Window x:Class="BCS.CADs.Synchronization.Views.SubItemSearchDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:vm="clr-namespace:BCS.CADs.Synchronization"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="SubItemSearchDialog"
+        WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" WindowStyle="None" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CommonStyle.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/ScrollViewerStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference winItemType}"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Background="White" Grid.Row="0" Height="30">
+                <TextBlock x:Name="searchDialogTitle" Text="Search Dialog-SubItem" Margin="15,6,0,0" FontSize="14"/>
+                <Thumb Opacity="0" Foreground="{x:Null}" DragDelta="Thumb_OnDragDelta"/>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Frame NavigationUIVisibility="Hidden" x:Name="viewPage" Grid.RowSpan="2" Grid.ColumnSpan="3" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

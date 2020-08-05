@@ -1,0 +1,95 @@
+﻿<Page x:Class="BCS.CADs.Synchronization.Views.TreeStructure"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" 
+      x:Name="treeStructurePage" 
+      mc:Ignorable="d" >
+
+    <!-- Loaded="Page_Loaded"  -->   
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries >
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CommonStyle.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/TreeViewStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml"  />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Page.DataContext>
+        <ViewModels:MainWindowViewModel/>
+    </Page.DataContext>
+    <Grid>
+
+        <!-- ItemTemplate="{StaticResource CheckBoxItemTemplate}" Width="Auto" Height="Auto" 
+        
+        Visibility="Visible"
+        HorizontalAlignment="Center" VerticalAlignment="Top"
+        -->
+        <TreeView 
+                                        x:Name="treeStructureItems"
+                                        ItemsSource="{Binding TreeSearchItems}"
+                                        ItemTemplate="{StaticResource CheckBoxItemTemplate}"
+                                        Margin="20"
+                                        FontSize="14"
+                                        >
+            <TreeView.InputBindings>
+                <!-- LeftDoubleClick -->
+                <MouseBinding Gesture="LeftClick" 
+                          Command="{Binding GridFieldClickedCommand}" 
+                          CommandParameter="{Binding ElementName=treeStructureItems, Path=SelectedItem}" />
+                <!--<MouseBinding MouseAction="LeftDoubleClick"
+                                    Command="{Binding GridFieldClickedCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeView}}"
+                                    CommandParameter="{Binding ElementName=treeStructureItems, Path=SelectedItem}" />-->
+            </TreeView.InputBindings>
+
+
+            <!--<TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Path= Child}">
+                    <StackPanel Orientation="Horizontal" Margin="4" >
+                        <CheckBox Name="chk" Margin="2" IsChecked="{Binding IsChecked}" Tag="{Binding Path=Name}" ></CheckBox>
+                        <TextBlock Text="{Binding Path=Name}" Margin="2"  >
+                        </TextBlock>
+                        <StackPanel.Effect>
+                            <DropShadowEffect BlurRadius="2" Color="LightGray"  Opacity=".2" ></DropShadowEffect>
+                        </StackPanel.Effect>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>-->
+
+            <TreeView.ItemContainerStyle>
+                <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="OnPreviewMouseRightButtonDown" />
+                    <Setter Property="IsExpanded" Value="True" />
+                    <!--<Setter Property=" Value="OnCollapsed" />-->
+                    
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=OperationType}" Value="1">
+                            <!-- Insert -->
+                            <Setter Property="Foreground" Value="Blue"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=OperationType}" Value="2">
+                            <!-- Replace -->
+                            <Setter Property="Foreground" Value="Green"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=OperationType}" Value="4">
+                            <!-- CopyToAdd -->
+                            <Setter Property="Foreground" Value="Red"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=OperationType}" Value="8">
+                            <!-- InsertSaveAs -->
+                            <Setter Property="Foreground" Value="Purple"></Setter>
+                        </DataTrigger>
+                        
+
+                    </Style.Triggers>
+                    
+                </Style>
+            </TreeView.ItemContainerStyle>
+
+        </TreeView>
+
+    </Grid>
+</Page>

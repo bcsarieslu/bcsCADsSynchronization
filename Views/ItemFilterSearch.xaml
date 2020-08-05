@@ -1,0 +1,126 @@
+﻿<Page x:Class="BCS.CADs.Synchronization.Views.ItemFilterSearch"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
+      xmlns:vm="clr-namespace:BCS.CADs.Synchronization"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="ItemFilterSearch">
+
+    <!--
+          xmlns:local1="clr-namespace:BCS.CADs.Synchronization.ConfigProperties"
+    xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels"
+    
+    -->
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/AddTemplateStyle.xaml" />-->
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CommonStyle.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <!--<ViewModels:AddFromTemplateStringImageToResource x:Key="StringToResource" />-->
+            <!--<DataTemplate x:Key="GroupingHeaderTemplate">
+                <TextBlock Text="{Binding Name}" Style="{StaticResource GroupHeaderStyle}"/>
+            </DataTemplate>-->
+            <!--<CollectionViewSource
+                Source="{Binding ListClassItems, Source={x:Static Application.Current}}"
+                x:Key="ListClassItemsView" />-->
+            <!--<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>-->
+            <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference win}"/>
+            
+        </ResourceDictionary>
+    </Page.Resources>
+    <Page.DataContext>
+        <con:MainWindowViewModel/>
+    </Page.DataContext>
+
+    <Grid>
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="0,15,0,0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Row="0" 
+                          Margin="0,5,0,10"
+                          Grid.Column="1" 
+                          Name="itemSearchClass"  
+                          SelectedIndex="0"
+                          ItemsSource="{Binding ListClassItems}"
+                          SelectedItem="{Binding SelectedClassItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                          IsSynchronizedWithCurrentItem="True"
+                          Style="{StaticResource ComboBoxStyle}"
+                          >
+                          <!--
+                    SelectionChanged="ListClassItems_SelectionChanged"
+                    Command="{Binding Source={StaticResource viewmodel},Path=SyncPlugIn}" CommandParameter="{Binding RelativeSource={RelativeSource self}}"
+                    SelectionChanged="{Binding ListClassItemsChanged}" 
+                    ComboBox ItemsSource="{Binding People}" SelectedItem="{Binding SelectedPerson}"
+                  Margin="16" Height="40" VerticalAlignment="Top"
+                  HorizontalContentAlignment="Stretch" >
+                    
+                            ItemsSource="{Binding Source={StaticResource ListClassItemsView}}"
+                            ItemsSource="{Binding ElementName=ucCountryCombo, Path=Countries}" 
+                          SelectedValuePath="code"  
+                          SelectedValue="{Binding ElementName=ucCountryCombo, Path=SelectedCountry}"-->
+
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                                <Image Width="24" Height="24" x:Name="classImage" Source="{Binding ThumbnailFullName}"/>
+                                <TextBlock Margin="10,0,0,0" Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+
+                </ComboBox>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+                <DataGrid x:Name="gridSelectedItems" IsReadOnly="True" CanUserAddRows="False"
+                        AutoGenerateColumns="False" 
+                        ItemsSource="{Binding ObsSearchFilterItems}"
+                        SelectedItem="{Binding SelectedSearchItem, Mode=TwoWay}"
+                        Grid.Row="3"
+		                Grid.Column="1"
+		                AlternationCount="2"
+		                MinRowHeight="26" 
+                        SelectionMode="Single" 
+                        FontSize="14"
+                        >
+                    <DataGrid.InputBindings>
+                        <!-- LeftDoubleClick -->
+                        <MouseBinding Gesture="LeftClick" 
+                          Command="{Binding GridFieldClickedCommand}" 
+                          CommandParameter="{Binding ElementName=gridSelectedItems, Path=SelectedItem}" />
+                    </DataGrid.InputBindings>
+                    
+                    <DataGrid.RowHeaderTemplate>
+                        <DataTemplate>
+                            <ToggleButton x:Name="RowHeaderToggleButton" Cursor="Hand"/>
+                        </DataTemplate>
+                    </DataGrid.RowHeaderTemplate>
+                    <DataGrid.Columns>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+            <Grid Grid.Row="3"/>
+        </Grid>
+    </Grid>
+</Page>

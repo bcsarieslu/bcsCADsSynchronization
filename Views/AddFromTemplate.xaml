@@ -1,0 +1,187 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" x:Class="BCS.CADs.Synchronization.Views.AddFromTemplate"
+      mc:Ignorable="d" 
+      Title="AddFromTemplate">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CommonStyle.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/AddTemplateStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
+                <!--<ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>-->
+                <!--<ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ButtonDefaultStyle.xaml"/>-->
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml" />
+                <!--RectangleButton GlassButton-->
+            </ResourceDictionary.MergedDictionaries>
+            <ViewModels:AddFromTemplateStringImageToResource x:Key="StringToResource" />
+            <DataTemplate x:Key="GroupingHeaderTemplate">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                    <!--<Image Width="24" Height="24" Source="{StaticResource Assembly}"/>-->
+                    <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding Name,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
+                    <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassThumbnail}" Style="{StaticResource GroupHeaderStyle}" />-->
+                    <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassThumbnail}" />-->
+                    <!--<Image Width="24" Height="24" x:Name="classImage" Source="pack://application:,,,/BCS.CADs.Synchronization;component/Images/Document.png" />-->
+                    <Image Margin="5,0,0,0" Width="24" Height="24" x:Name="classImage" Source="{Binding Name,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                    
+                    <!--<Image Source="pack://application:,,,/BCS.CADs.Synchronization;component/Images/image_to_use.png">-->
+                    <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassName,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
+                    <TextBlock Margin="10,0,0,0" Text="{Binding Name}" Style="{StaticResource GroupHeaderStyle}"/>
+                </StackPanel>
+            </DataTemplate>
+            <CollectionViewSource
+                Source="{Binding ListTemplates, Source={x:Static Application.Current}}"
+                x:Key="ListingDataView" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Page.DataContext>
+        <ViewModels:MainWindowViewModel/>
+    </Page.DataContext>
+
+    <Grid>
+        <Grid.Children>
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="2">
+                    <!--<Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="37*"/>
+                        <ColumnDefinition Width="763*"/>
+                    </Grid.ColumnDefinitions>-->
+
+                    <ListBox x:Name="templates" Grid.ColumnSpan="2" Margin="20"
+                 ItemsSource="{Binding Source={StaticResource ListingDataView}}">
+                        <ListBox.GroupStyle>
+                            <GroupStyle
+                    HeaderTemplate="{StaticResource GroupingHeaderTemplate}" />
+                        </ListBox.GroupStyle>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource AuctionItemBorderStyle}" Name="border">
+                                    <Grid Name="AuctionItemsGrid">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Polygon Grid.Row="0" Grid.Column="0" Grid.RowSpan="4"
+                                 Name="star"
+                                 Style="{StaticResource PolygonStyle}"
+                                 Points="9,2 11,7 17,7 12,10 14,15 9,12 4,15 6,10 1,7 7,7"/>
+
+                                        <CheckBox Name="chkSelected" IsChecked="{Binding IsSelected}" ></CheckBox>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,8,0"
+                                   Name="nameTitle"
+                                   Style="{StaticResource SmallTitleStyle}" Text="{DynamicResource AddFromTemplate_name}"  >
+                                        </TextBlock>
+                                        <TextBlock Name="NameDTDataType" Grid.Row="0" Grid.Column="2"
+                                   Text="{Binding Path=Name}"
+                                   Style="{StaticResource TextStyleTextBlock}" />
+
+
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,8,0"
+                                   Name="fileNameTitle"
+                                   Style="{StaticResource SmallTitleStyle}" Text="{DynamicResource AddFromTemplate_filename}"  >
+                                        </TextBlock>
+                                        <TextBlock Name="FileNameDTDataType" Grid.Row="1" Grid.Column="2"
+                                   Text="{Binding Path=FileName}"
+                                   Style="{StaticResource TextStyleTextBlock}" />
+
+
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,8,0"
+                                   Name="quantityTitle"
+                                   Style="{StaticResource SmallTitleStyle}" Text="{DynamicResource AddFromTemplate_quantity}" >
+                                        </TextBlock>
+                                        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
+                                            <!--<TextBlock Name="Dollar" Text="$" Style="{StaticResource TextStyleTextBlock}" />-->
+                                            <!--<TextBox Name="quantityDTDataType"
+                                       Text="{Binding Path=quantity}"/>-->
+                                            <TextBox Name="quantityDTDataType" Width="40" Text="{Binding Path=Quantity}" ></TextBox>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=SpecialFeatures}" Value="Color" >
+                                        <!--<DataTrigger.Value>
+                                        <local:SpecialFeatures>Color</local:SpecialFeatures>
+                                    </DataTrigger.Value>-->
+                                        <DataTrigger.Setters>
+                                            <Setter Property="BorderBrush" Value="DodgerBlue" TargetName="border" />
+                                            <Setter Property="Foreground" Value="Navy" TargetName="nameTitle" />
+                                            <Setter Property="Foreground" Value="Navy" TargetName="fileNameTitle" />
+                                            <Setter Property="Foreground" Value="Navy" TargetName="quantityTitle" />
+                                            <Setter Property="BorderThickness" Value="3" TargetName="border" />
+                                            <Setter Property="Padding" Value="5" TargetName="border" />
+                                        </DataTrigger.Setters>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=SpecialFeatures}" Value="Highlight" >
+                                        <!--<DataTrigger.Value>
+                                        <local:SpecialFeatures>Highlight</local:SpecialFeatures>
+                                    </DataTrigger.Value>-->
+                                        <Setter Property="BorderBrush" Value="Orange" TargetName="border" />
+                                        <Setter Property="Foreground" Value="Navy" TargetName="nameTitle" />
+                                        <Setter Property="Foreground" Value="Navy" TargetName="fileNameTitle" />
+                                        <Setter Property="Foreground" Value="Navy" TargetName="quantityTitle" />
+                                        <Setter Property="Visibility" Value="Visible" TargetName="star" />
+                                        <Setter Property="BorderThickness" Value="3" TargetName="border" />
+                                        <Setter Property="Padding" Value="5" TargetName="border" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true" >
+                                        <Setter TargetName="nameTitle" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                        <Setter TargetName="fileNameTitle" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                        <Setter TargetName="quantityTitle" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                    </DataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True" />
+                                            <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter TargetName="nameTitle" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                            <Setter TargetName="fileNameTitle" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                            <Setter TargetName="NameDTDataType" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                            <Setter TargetName="FileNameDTDataType" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                            <Setter TargetName="quantityTitle" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                            <!--<Setter TargetName="Dollar" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>-->
+                                            <Setter TargetName="quantityDTDataType" Property="TextBlock.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+
+                    </ListBox>
+
+                </Grid>
+                <!--Canvas.Top="50" Canvas.Left="60"-->
+                <!--<Canvas x:Name="CanvasViewFile" Grid.Row="1" Visibility="Collapsed"  Grid.Column="0"   >
+                    <local:ViewFile VerticalAlignment="Top" anvas.Top="50" Canvas.Left="60"  />
+                </Canvas>-->
+
+            </Grid>
+        </Grid.Children>
+
+
+
+    </Grid>
+</Page>
