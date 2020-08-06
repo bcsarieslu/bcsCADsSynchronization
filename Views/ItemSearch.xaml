@@ -101,7 +101,7 @@
                         FontSize="14"
                         SelectionMode="Single" 
                         >
-
+                    <!--HorizontalScrollBarVisibility="Visible"-->
                     <DataGrid.InputBindings>
                         <!-- LeftDoubleClick -->
                         <MouseBinding Gesture="LeftClick" 

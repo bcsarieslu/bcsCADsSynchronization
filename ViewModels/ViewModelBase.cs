@@ -859,6 +859,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
 
                     gridSelectedItems.ItemsSource = ObsSearchItems;
+                    gridSelectedItems.RowStyle= ClsSynchronizer.RowStyle;
+                    //gridSelectedItems.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+                    //gridSelectedItems.RowHeight = 0;
                     //ClsSynchronizer.ViewPage = (Frame)win.FindName("viewPage");
                     //ClsSynchronizer.ViewPage.Navigate(_ItemSearchView);
                     Window win = ClsSynchronizer.ActiveWindow;
@@ -2118,7 +2121,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _listTemplatesView.GroupDescriptions.Add(groupDescription);
 
             }
-
+            
             _listTemplatesView.Source = ListTemplates;
             SelectedDirectoryGridVisibility = Visibility.Visible;
 
@@ -2126,6 +2129,14 @@ namespace BCS.CADs.Synchronization.ViewModels
             rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("newFormTemplateFile_SP")));
             var loginView = (Frame)MyMainWindow.FindName("LoginView");
             var systemView = (Frame)MyMainWindow.FindName("SystemView");
+
+            //Modify by kenny 2020/08/05
+            //gridSelectedItems.ColumnHeaderStyle
+            //Grid auctionItemsGrid = (Grid)_addFromTemplateView.FindName("AuctionItemsGrid");
+            //auctionItemsGrid.ColumnHeaderStyle = null;
+            var itemSearchView = ClsSynchronizer.SyncListView;
+            DataGrid gridSelectedItems = (DataGrid)itemSearchView.FindName("gridSelectedItems");
+            gridSelectedItems.ColumnHeaderStyle = null;
 
             systemView.Visibility = Visibility.Collapsed;
             loginView.Visibility = Visibility.Collapsed;
@@ -2274,7 +2285,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             SelectedSearchItem.PlmProperties = newProperties;
             //Modify by kenny 2020/07/31 -------------------
-            //ObsSearchItems.Add(SelectedSearchItem);
+            ObsSearchItems.Add(SelectedSearchItem);
             //ObsSearchItems.Move(ObsSearchItems.IndexOf(SelectedSearchItem), 0);
             //----------------------------------------------
             if (ClsSynchronizer.IsActiveSubDialogView) 
@@ -2282,7 +2293,12 @@ namespace BCS.CADs.Synchronization.ViewModels
             else
                 ClsSynchronizer.NewSearchItem = SelectedSearchItem;
 
-            gridSelectedItems.ItemsSource = ObsSearchItems;
+            //gridSelectedItems.ItemsSource = null;// ObsSearchItems;
+
+            //Modify by kenny 2020/08/05 ----------------------
+            ClsSynchronizer.RowStyle = gridSelectedItems.RowStyle;
+            gridSelectedItems.RowStyle = RowStyleHeightzero();
+            //------------------------------------------------
 
             if (isDialog==false)
             {
@@ -2304,7 +2320,12 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.VmMessages.Status = "End";
         }
 
-
+        private Style RowStyleHeightzero()
+        {
+            Style style = new Style();
+            style.Setters.Add(new Setter(DataGridRow.HeightProperty, 0d));
+            return style;
+        }
 
         public void SyncFromPLMItemSearchView(Window win, bool isDialog)
         {
@@ -2663,32 +2684,18 @@ namespace BCS.CADs.Synchronization.ViewModels
         private void AddDataGridHeaderTextStyleColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
         {
 
-            gridSelectedItems.ColumnHeaderHeight = 70;
+            //gridSelectedItems.ColumnHeaderHeight = 70;
+            Style headerStyle = new Style(typeof(DataGridColumnHeader));
+            headerStyle.Setters.Add(new Setter(FrameworkElement.HeightProperty, 55d));
+            headerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            headerStyle.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Bottom));
+            gridSelectedItems.ColumnHeaderStyle = headerStyle;
+
+
             DataGridTemplateColumn col = new DataGridTemplateColumn();
 
             FrameworkElementFactory stackPanel = new FrameworkElementFactory(typeof(StackPanel));
-            Thickness marginThickness = new Thickness();
-
-            marginThickness.Left = -5;
-            marginThickness.Top = 0;
-            marginThickness.Right = -5;
-            marginThickness.Bottom = -3;
-            stackPanel.SetValue(StackPanel.MarginProperty, marginThickness);
-
-            VerticalAlignment verticalAlignment = new VerticalAlignment();
-            stackPanel.SetValue(StackPanel.VerticalAlignmentProperty, verticalAlignment);
-
-            //設定Header中的TextBlock樣式
-            FrameworkElementFactory txtBlock = new FrameworkElementFactory(typeof(TextBlock));
-            marginThickness.Left = 0;
-            marginThickness.Top = 0;
-            marginThickness.Right = 0;
-            marginThickness.Bottom = 7;
-            txtBlock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);  //水平置中
-            txtBlock.SetValue(TextBlock.TextProperty, plmProperty.Label);  //文字內容
-            txtBlock.SetValue(TextBox.BackgroundProperty, Brushes.Transparent);  //背景透明
-            txtBlock.SetValue(TextBox.MarginProperty, marginThickness);  //與其他元素的間距
-            stackPanel.AppendChild(txtBlock);
+            AddDataGridHeaderSearchControls(stackPanel, plmProperty);
 
             FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
             AddDataGridTextStyleBinding(txtBox, plmProperty);
@@ -2721,8 +2728,36 @@ namespace BCS.CADs.Synchronization.ViewModels
             col.CellTemplate = cellTemplate;
             //col.SetValue(DataGridTemplateColumn.HeaderTemplateProperty, cellTemplate);
             gridSelectedItems.Columns.Add(col);
+            gridSelectedItems.HorizontalScrollBarVisibility =ScrollBarVisibility.Visible;
 
         }
+
+        private void AddDataGridHeaderSearchControls(FrameworkElementFactory stackPanel, PLMProperty plmProperty)
+        {
+            Thickness marginThickness = new Thickness();
+
+            marginThickness.Left = -5;
+            marginThickness.Top = 0;
+            marginThickness.Right = -5;
+            marginThickness.Bottom = -3;
+            stackPanel.SetValue(StackPanel.MarginProperty, marginThickness);
+
+            VerticalAlignment verticalAlignment = new VerticalAlignment();
+            stackPanel.SetValue(StackPanel.VerticalAlignmentProperty, verticalAlignment);
+
+            //設定Header中的TextBlock樣式
+            FrameworkElementFactory txtBlock = new FrameworkElementFactory(typeof(TextBlock));
+            marginThickness.Left = 0;
+            marginThickness.Top = 0;
+            marginThickness.Right = 0;
+            marginThickness.Bottom = 7;
+            txtBlock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);  //水平置中
+            txtBlock.SetValue(TextBlock.TextProperty, plmProperty.Label);  //文字內容
+            txtBlock.SetValue(TextBox.BackgroundProperty, Brushes.Transparent);  //背景透明
+            txtBlock.SetValue(TextBox.MarginProperty, marginThickness);  //與其他元素的間距
+            stackPanel.AppendChild(txtBlock);
+        }
+
 
 
         //private void AddDataGridHeaderTextStyleColumn(DataGrid gridSelectedItems, PLMProperties plmProperty, int index)

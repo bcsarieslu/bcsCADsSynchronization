@@ -104,6 +104,9 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static string Status { get; set; } = "";
 
+        public static Style RowStyle { get; set; }
+
+
         //public enum SyncImages'
         public static Dictionary<string, string> SyncImages =new Dictionary<string, string>(){
             {"NewFormTemplateFile", "syncFromPLMDrawingImageIsEnableUse"}, {"SyncFromPLM", "syncFromPLMDrawingImageIsEnableUse"},{"SyncToPLM", "syncToPLMDrawingImageIsEnableUse"}, {"LoadFromPLM", "ConversionServerDrawingImageIsEnableUse"}, {"CopyToAdd", "CopyToAddDrawingImageStyleImageIsEnableUse"}, {"CopyToAddSearch", "CopyToAddDrawingImageStyleImageIsEnableUse"},{"LockOrUnlock", "FlaggedByDrawingImageIsEnableUse"}, {"PluginModule", "CreateRelatedItemDrawingImageIsEnableUse"},
