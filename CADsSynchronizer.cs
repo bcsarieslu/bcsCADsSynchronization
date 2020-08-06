@@ -18,6 +18,7 @@ using BCS.CADs.Synchronization.ConfigProperties;
 using System.Collections.ObjectModel;
 using BCS.CADs.Synchronization.ViewModels;
 using Microsoft.Win32;
+using System.Windows.Controls;
 //using System.Windows.Forms;
 #endregion
 
@@ -315,6 +316,24 @@ namespace BCS.CADs.Synchronization
             }
         }
 
+        /// <summary>
+        /// 更新輸入查詢條件值
+        /// </summary>
+        /// <param name="gridSelectedItems"></param>
+        /// <param name="searchItemType"></param>
+        protected internal void UpdateSearchItemType(DataGrid gridSelectedItems, SearchItem searchItemType)
+        {
+            try
+            {
+
+                _Plm.UpdateSearchItemType(gridSelectedItems, searchItemType);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         /// <summary>
         /// 取得圖檔

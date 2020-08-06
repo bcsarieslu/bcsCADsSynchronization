@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:BCS.CADs.Synchronization.Styles">
+                    xmlns:local="clr-namespace:BCS.CADs.Synchronization.ViewModels">
 
     <Style x:Key="TitleStyle" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Bold" />

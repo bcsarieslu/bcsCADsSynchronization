@@ -28,6 +28,7 @@ using static BCS.CADs.Synchronization.CADsSynchronizer;
 using AdornedControl;
 using System.Windows.Media.Animation;
 using System.Windows.Controls.Primitives;
+using System.Windows.Navigation;
 //using static BCS.CADs.Synchronization.ViewModels.VeiwModel;
 
 namespace BCS.CADs.Synchronization.ViewModels
@@ -377,7 +378,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     ResetOperationButtons(Visibility.Visible, Visibility.Visible , Visibility.Visible, Visibility.Visible, false );
                     Frame viewPage = (Frame)MyMainWindow.FindName("viewPage");
                     if (viewPage != null) viewPage.Visibility = Visibility.Hidden;
-
                     if (button != null)
                     {
                         StartStopWait(true);
@@ -789,7 +789,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //ClsSynchronizer.VmFunction = SyncType.NewFormTemplateFile
                     ClsSynchronizer.Status = "";
                     Frame viewPage;
-                    
                     switch (ClsSynchronizer.VmFunction)
                     {
                         case SyncType.NewFormTemplateFile:
@@ -804,14 +803,10 @@ namespace BCS.CADs.Synchronization.ViewModels
                             if (_syncCADsListDataGrid == null) _syncCADsListDataGrid = new SyncCADsList();
                             DataGrid gridSelectedItems = (DataGrid)_syncCADsListDataGrid.FindName("gridSelectedItems");
 
-                            //SearchItem newSearchItem = new SearchItem();
-                            //ObsSearchItems.Add(newSearchItem);
-                            //ObsSearchItems.Move(ObsSearchItems.IndexOf(newSearchItem), 0);
-                            //gridSelectedItems.ItemsSource = ObsSearchItems;
-
                             viewPage = (Frame)MyMainWindow.FindName("viewPage");
-							viewPage.Visibility = Visibility.Visible;
+                            viewPage.Visibility = Visibility.Visible;
                             viewPage.Navigate(_syncCADsListDataGrid);
+
                             break;
                     }
 
@@ -850,7 +845,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //ObsSearchItems.Move(ObsSearchItems.IndexOf(searchItemType), 0);
                     //------------------------------------------------
 
-
                     ClsSynchronizer.SearchItemsCollection = ObsSearchItems;
 
                     _ItemSearchView = (ClsSynchronizer.IsActiveSubDialogView == true) ? (ItemSearch)ClsSynchronizer.SyncSubListView : (ItemSearch)ClsSynchronizer.SyncListView;
@@ -860,12 +854,10 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     gridSelectedItems.ItemsSource = ObsSearchItems;
                     gridSelectedItems.RowStyle= ClsSynchronizer.RowStyle;
-                    //gridSelectedItems.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                    //gridSelectedItems.RowHeight = 0;
-                    //ClsSynchronizer.ViewPage = (Frame)win.FindName("viewPage");
-                    //ClsSynchronizer.ViewPage.Navigate(_ItemSearchView);
+
                     Window win = ClsSynchronizer.ActiveWindow;
-                    var viewPage = (Frame)win.FindName("viewPage");
+
+                    Frame viewPage = (Frame)win.FindName("viewPage");
                     viewPage.Visibility = Visibility.Visible;
                     viewPage.Navigate(_ItemSearchView);
 
@@ -873,6 +865,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 return _syncItemSearch;
             }
         }
+
 
         /// <summary>
         /// 更新輸入查詢條件值
@@ -2082,8 +2075,10 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             //MessageBox.Show("AddFromTemplatesView");
 
+            //var viewPage1 = (Frame)MyMainWindow.FindName("viewPage");
+            //ClearHistory(viewPage1);
+            //return;
             ClsSynchronizer.VmOperation = SyncOperation.AddTemplates;
-
             OperationStart("AddFromTemplatesView");
 
             Dictionary<string, List<ClassTemplateFile>> classesTemplates = ClsSynchronizer.VmSyncCADs.GetClassesTemplates();
@@ -2108,6 +2103,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             //@@@@@@@@@@@
             if (_addFromTemplateView == null) _addFromTemplateView = new AddFromTemplate();
+            //_addFromTemplateView = new AddFromTemplate();
 
             //if (_addFromTemplateView == null) _addFromTemplateView = new ItemFilterSearch();
 
@@ -2129,23 +2125,36 @@ namespace BCS.CADs.Synchronization.ViewModels
             rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("newFormTemplateFile_SP")));
             var loginView = (Frame)MyMainWindow.FindName("LoginView");
             var systemView = (Frame)MyMainWindow.FindName("SystemView");
-
-            //Modify by kenny 2020/08/05
-            //gridSelectedItems.ColumnHeaderStyle
-            //Grid auctionItemsGrid = (Grid)_addFromTemplateView.FindName("AuctionItemsGrid");
-            //auctionItemsGrid.ColumnHeaderStyle = null;
-            var itemSearchView = ClsSynchronizer.SyncListView;
-            DataGrid gridSelectedItems = (DataGrid)itemSearchView.FindName("gridSelectedItems");
-            gridSelectedItems.ColumnHeaderStyle = null;
-
+            
             systemView.Visibility = Visibility.Collapsed;
             loginView.Visibility = Visibility.Collapsed;
+
+
             var viewPage = (Frame)MyMainWindow.FindName("viewPage");
+            ClearHistory(viewPage);
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_addFromTemplateView);
 
             ClsSynchronizer.VmMessages.Status  = "End";
         }
+
+
+        public void ClearHistory(Frame viewPage)
+        {
+            if (!viewPage.CanGoBack && !viewPage.CanGoForward)
+            {
+                return;
+            }
+
+            var entry = viewPage.RemoveBackEntry();
+            while (entry != null)
+            {
+                entry = viewPage.RemoveBackEntry();
+            }
+
+            viewPage.Navigate(new PageFunction<string>() { RemoveFromJournal = true });
+        }
+
 
         public void OperationStart(string Operation)
         {
@@ -2310,9 +2319,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             DefaultSystemItemsDisplay();
 
-
             ClsSynchronizer.ActiveWindow = (isDialog == true) ? win : MyMainWindow;
-            var viewPage = (isDialog == true)? (Frame)win.FindName("viewPage"): (Frame)MyMainWindow.FindName("viewPage");
+            var viewPage = (isDialog == true) ? (Frame)win.FindName("viewPage") : (Frame)MyMainWindow.FindName("viewPage");
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_ItemSearchView);
 
@@ -2649,6 +2657,16 @@ namespace BCS.CADs.Synchronization.ViewModels
             gridSelectedItems.Columns.Add(col);
         }
 
+        private void AddDataGridDatePicker(FrameworkElementFactory datePickerFactoryElem, PLMProperty plmProperty, int index)
+        {
+
+            Binding dateBind = new Binding("PlmProperties[" + index + "].DisplayValue");
+            dateBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            dateBind.Mode = BindingMode.TwoWay;
+            datePickerFactoryElem.SetValue(DatePicker.SelectedDateProperty, dateBind);
+            datePickerFactoryElem.SetValue(DatePicker.DisplayDateProperty, dateBind);
+        }
+
 
         private void AddDataGridComboBoxColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
         {
@@ -2684,13 +2702,9 @@ namespace BCS.CADs.Synchronization.ViewModels
         private void AddDataGridHeaderTextStyleColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
         {
 
+            //Modify by kenny 2020/08/05
             //gridSelectedItems.ColumnHeaderHeight = 70;
-            Style headerStyle = new Style(typeof(DataGridColumnHeader));
-            headerStyle.Setters.Add(new Setter(FrameworkElement.HeightProperty, 55d));
-            headerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
-            headerStyle.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Bottom));
-            gridSelectedItems.ColumnHeaderStyle = headerStyle;
-
+            gridSelectedItems.ColumnHeaderHeight = 55d;
 
             DataGridTemplateColumn col = new DataGridTemplateColumn();
 
@@ -2700,6 +2714,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
             AddDataGridTextStyleBinding(txtBox, plmProperty);
             txtBox.SetValue(TextBox.HeightProperty,23d);
+            //txtBox.SetValue(TextBox.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
             stackPanel.AppendChild(txtBox);
 
             DataTemplate headerTemplate = new DataTemplate();
@@ -2712,8 +2727,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
                 AddDataGridImage(imagePickerFactoryElem, plmProperty, index);              
-                cellTemplate.VisualTree = imagePickerFactoryElem;
-                
+                cellTemplate.VisualTree = imagePickerFactoryElem;          
             }
             else
             {
@@ -2725,6 +2739,14 @@ namespace BCS.CADs.Synchronization.ViewModels
                 AddDataGridTextBlockBinding(txtBlockFactoryElem, index);
                 cellTemplate.VisualTree = txtBlockFactoryElem;
             }
+
+
+            //Style headerStyle = new Style(typeof(DataGridColumnHeader));
+            //headerStyle.Setters.Add(new Setter(FrameworkElement.HeightProperty, 55d));
+            //headerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            //headerStyle.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Bottom));
+            //col.HeaderStyle = headerStyle;
+
             col.CellTemplate = cellTemplate;
             //col.SetValue(DataGridTemplateColumn.HeaderTemplateProperty, cellTemplate);
             gridSelectedItems.Columns.Add(col);

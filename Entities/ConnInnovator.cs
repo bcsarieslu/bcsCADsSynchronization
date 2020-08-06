@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using BCS.CADs.Synchronization.ViewModels;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 #endregion
 
@@ -2160,6 +2161,55 @@ namespace BCS.CADs.Synchronization.Entities
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// 更新輸入查詢條件值
+        /// </summary>
+        /// <param name="gridSelectedItems"></param>
+        /// <param name="searchItemType"></param>
+        virtual protected internal void UpdateSearchItemType(DataGrid gridSelectedItems,SearchItem searchItemType)
+        {
+
+
+            foreach (DataGridColumn col in gridSelectedItems.Columns)
+            {
+
+                DataTemplate tempData = col.HeaderTemplate as DataTemplate;
+                StackPanel sp = tempData.LoadContent() as StackPanel;
+
+                TextBox headerValue = sp.Children[1] as TextBox;
+                PLMProperty dataContext = headerValue.DataContext as PLMProperty;
+
+                PLMProperty property = searchItemType.PlmProperties.Where(x => x.PropertyName == dataContext.PropertyName).FirstOrDefault();
+                property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
+                property.SyncValue = property.DisplayValue;
+                switch (property.DataType)
+                {
+                    case "item":
+                        if (String.IsNullOrWhiteSpace( property.SyncValue)==false)
+                        {
+                            Aras.IOM.Item item = AsInnovator.getItemByKeyedName(property.DataSource, property.SyncValue);
+                            property.SyncValue = (item != null) ? item.getID() : property.SyncValue;
+                        }                
+                        break;
+                    case "filter list":
+                    case "list":
+                        property.SyncValue = (property.PLMList.ListItems.Where(x => x.Label == property.SyncValue) != null) ? property.PLMList.ListItems.Where(x => x.Label == property.SyncValue).Select(x => x.Value ).FirstOrDefault() : property.DisplayValue;
+                        break;
+                    case "date":
+                        if (String.IsNullOrWhiteSpace(property.SyncValue) == false)
+                        {
+                            DateTime date = DateTime.Parse(property.SyncValue);
+                            if (date.Year > 1911) property.SyncValue = date.ToString("yyyy-MM-ddTHH:mm:ss");
+                        }
+                        break;
+                }
+                property.Value = property.SyncValue;
+
+            }
+        }
+
+
 
         #endregion
 
