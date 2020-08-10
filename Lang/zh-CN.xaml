@@ -13,52 +13,90 @@
     <sys:String x:Key="plm2cad_UnderText">PLM→CAD</sys:String>
     <sys:String x:Key="plmdownimage">从PLM下载图档</sys:String>
     <sys:String x:Key="lockunlock">上锁/解锁</sys:String>
-    <sys:String x:Key="plmdownimage_UnderText">图档下载</sys:String>
-    <sys:String x:Key="module">外挂模组</sys:String>
+    <!-- plmdownimage_UnderText -->
+    <sys:String x:Key="downloadCAD_UnderText">图档下载</sys:String>
+    <!--<sys:String x:Key="module">外挂模组</sys:String>-->
     <sys:String x:Key="login">登录</sys:String>
     <sys:String x:Key="logout">注销</sys:String>
-    <sys:String x:Key="systeminf">使用者系统资讯</sys:String>
+    <!--<sys:String x:Key="systeminf">使用者系统资讯</sys:String>-->
     <sys:String x:Key="search">查询</sys:String>
-    <sys:String x:Key="exeproject">执行项目</sys:String>
+    <sys:String x:Key="execute">确认执行</sys:String>
     <sys:String x:Key="propsync">属性同步</sys:String>
     <sys:String x:Key="filesync">档案同步</sys:String>
     <sys:String x:Key="synchronization">同步作业</sys:String>
     <sys:String x:Key="message">讯息</sys:String>
     <sys:String x:Key="flaggedBy">标记</sys:String>
-    <sys:String x:Key="copyToAdd">复制转新增</sys:String>
-    <sys:String x:Key="newedition">缩图</sys:String>
-    <sys:String x:Key="MainTitle">CAD集成</sys:String>
+    <sys:String x:Key="copyToAdd">另存为</sys:String>
+    <!-- newedition -->
+    <sys:String x:Key="thumbnail">缩图</sys:String>
+    <sys:String x:Key="mainTitle">CAD集成</sys:String>
     <sys:String x:Key="minimize">最小化</sys:String>
     <sys:String x:Key="maximize">放大/缩小</sys:String>
     <sys:String x:Key="close">关闭</sys:String>
-    <sys:String x:Key="SystemInformation">系统信息</sys:String>
+    <sys:String x:Key="SystemInformation">环境信息:</sys:String>
     <sys:String x:Key="OperatingSystem">操作系统:</sys:String>
     <sys:String x:Key="DotNetFrameworkVer">.Net Framework版本:</sys:String>
-    <sys:String x:Key="WindowsUsername">Windows使用者名称</sys:String>
+    <sys:String x:Key="WindowsUsername">本机使用者名称</sys:String>
     <sys:String x:Key="Domainname">域名:</sys:String>
-    <sys:String x:Key="RAM">内存大小:</sys:String>
-    <sys:String x:Key="Processor">处理器:</sys:String>
-    <sys:String x:Key="IPAddress_LAN">IP位置(LAN):</sys:String>
-    <sys:String x:Key="IP_Address_WAN">IP位置(WAN):</sys:String>
-    <sys:String x:Key="ApplicationVer">修订版本:</sys:String>
-    <sys:String x:Key="systemSetting">系统设定</sys:String>
+    <sys:String x:Key="RAM">内存量:</sys:String>
+    <sys:String x:Key="Processor">逻辑核心数:</sys:String>
+    <sys:String x:Key="IPAddress_LAN">IP位址 (LAN):</sys:String>
+    <sys:String x:Key="IP_Address_WAN">IP位址(WAN):</sys:String>
+    <sys:String x:Key="ApplicationVer">目前版本:</sys:String>
+    <sys:String x:Key="systemSetting">配置</sys:String>
     <sys:String x:Key="plugIn">插件模组</sys:String>
     <sys:String x:Key="about">关于</sys:String>
-    <sys:String x:Key="computerInfo">电脑资讯</sys:String>
+    <sys:String x:Key="computerInfo">环境信息</sys:String>
     <sys:String x:Key="notLogin">尚未登录</sys:String>
     <sys:String x:Key="scale">缩放</sys:String>
 
     <sys:String x:Key="filename">文件名称</sys:String>
     <sys:String x:Key="select">选取</sys:String>
-    <sys:String x:Key="AddFromTemplate_name">名称 :</sys:String>
+    <sys:String x:Key="AddFromTemplate_name">新文件名 :</sys:String>
     <sys:String x:Key="AddFromTemplate_filename">文件名称 :</sys:String>
-    <sys:String x:Key="AddFromTemplate_quantity">数量 :</sys:String>
-    <sys:String x:Key="done">执行</sys:String>
-    <sys:String x:Key="selectFolder">选择文件夹</sys:String>
+    <sys:String x:Key="AddFromTemplate_quantity">新增数量 :</sys:String>
+    <sys:String x:Key="done">确认完成</sys:String>
+    <sys:String x:Key="selectFolder">选择保存的路径</sys:String>
     <sys:String x:Key="time">时间</sys:String>
     <sys:String x:Key="itemName">项目名称</sys:String>
     <sys:String x:Key="description">描述</sys:String>
-    <sys:String x:Key="MainWindow_status">状态 :</sys:String>
-    <sys:String x:Key="NewFileName_newFileName">新文件名称 :</sys:String>
-    
+    <!--<sys:String x:Key="MainWindow_status">状态 :</sys:String>-->
+    <sys:String x:Key="newFileName">新文件名称 :</sys:String>
+
+    <sys:String x:Key="msg_NoFilesSelected">尚未挑选图档</sys:String>
+    <sys:String x:Key="msg_PleasePickASavedFilePath">请选择保存的文件路径</sys:String>
+    <sys:String x:Key="msg_TheSelectedCADItemHasNoDrawingFile">所择的CAD對象没有图档</sys:String>
+    <!--<sys:String x:Key="msg_responding_left_moumsg_TheSelectedCADItemHasNoDrawingFilese_event">滑鼠左键发生事件...</sys:String>-->
+    <sys:String x:Key="msg_CADFileDoesNotExistPLM">CAD图档不存在PLM系統</sys:String>
+    <!--<sys:String x:Key="msg_added_extension_inconsistent_with_system_file">添加的副档名与系统图档无关</sys:String>-->
+    <sys:String x:Key="msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile">插入的图档与父阶图档相同</sys:String>
+    <sys:String x:Key="msg_NotAllowedToExecute">{0},不可以执行</sys:String>
+    <sys:String x:Key="msg_GetLanguageFailed">取得语言失败</sys:String>
+    <sys:String x:Key="msg_FailedToCloneObject">复制{0}对象失败</sys:String>
+    <sys:String x:Key="msg_FailedToEditObject">编辑{0}对象失败</sys:String>
+    <sys:String x:Key="msg_FailedToAddObject">添加{0}对象失败</sys:String>
+    <sys:String x:Key="msg_FailToWinAuthHttpServerConnection">服务器连接失败</sys:String>
+    <sys:String x:Key="msg_FailToHttpServerConnection">服务器连接失败</sys:String>
+    <sys:String x:Key="msg_LoginFailed">登录失败</sys:String>
+    <sys:String x:Key="msg_InvalidWindow">无效的窗口</sys:String>
+    <!--<sys:String x:Key="msg_AddTemplate">添加范本</sys:String>-->
+    <!--<sys:String x:Key="msg_add_new_item">添加项目</sys:String>-->
+    <sys:String x:Key="msg_ConfigIdIsNull">{0} config_id为空值</sys:String>
+
+    <sys:String x:Key="menu_InsertSubPart">插入分件</sys:String>
+    <sys:String x:Key="menu_InsertSaveasSubPart">插入另存分件</sys:String>
+    <sys:String x:Key="menu_ReplaceAPart">替换分件(单笔)</sys:String>
+    <sys:String x:Key="menu_ReplaceAllParts">替换分件(全部)</sys:String>
+    <sys:String x:Key="menu_CopyToAdd">另存为新对象</sys:String>
+
+    <sys:String x:Key="label_CopyFileName">新文件名</sys:String>
+    <sys:String x:Key="label_NewFileName">新文件名</sys:String>
+
+    <sys:String x:Key="status_start">开始</sys:String>
+    <sys:String x:Key="status_finish">完成</sys:String>
+    <sys:String x:Key="status_end">结束</sys:String>
+
+
+
+
 </ResourceDictionary>

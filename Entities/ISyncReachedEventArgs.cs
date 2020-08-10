@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 #endregion
 
 namespace BCS.CADs.Synchronization.Entities 
@@ -82,6 +83,8 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         SyncMessages SyncMessages { get; set; }
 
+
+        ResourceDictionary LanguageResources { get; set; }
 
         //List<IntegrationEvents> integrationEvent { get; set; }
         //BCS.CADs.Synchronization.Classes.IntegrationEvents

@@ -6,25 +6,29 @@
     <sys:String x:Key="isLanguage">true</sys:String>
     <sys:String x:Key="temp2add">Template to add</sys:String>
     <sys:String x:Key="temp2add_UnderText">Template</sys:String>
-    <sys:String x:Key="cad2plm">CAD TO PLM</sys:String>
+    <sys:String x:Key="cad2plm">CAD to PLM</sys:String>
     <sys:String x:Key="cad2plm_UnderText">CAD→PLM</sys:String>
-    <sys:String x:Key="plm2cad">PLM TO CAD</sys:String>
+    <sys:String x:Key="plm2cad">PLM to CAD</sys:String>
     <sys:String x:Key="plm2cad_UnderText">PLM→CAD</sys:String>
     <sys:String x:Key="plmdownimage">CAD File Download</sys:String>
-    <sys:String x:Key="plmdownimage_UnderText">Download</sys:String>
-    <sys:String x:Key="module">Plug-in Module</sys:String>
+    <sys:String x:Key="lockunlock">Lock/Unlock</sys:String>
+    <!-- plmdownimage_UnderText -->
+    <sys:String x:Key="downloadCAD_UnderText">Download</sys:String>
+    <!--<sys:String x:Key="module">Plug-in Module</sys:String>-->
     <sys:String x:Key="login">Login</sys:String>
     <sys:String x:Key="logout">Logout</sys:String>
-    <sys:String x:Key="systeminf">System Information</sys:String>
+    <!--<sys:String x:Key="systeminf">System Information</sys:String>-->
     <sys:String x:Key="search">Search</sys:String>
-    <sys:String x:Key="exeproject">Execute Project</sys:String>
+    <!-- exeproject -->
+    <sys:String x:Key="execute">Execute</sys:String>
     <sys:String x:Key="propsync">Property Synchronization</sys:String>
     <sys:String x:Key="filesync">File Synchronization</sys:String>
     <sys:String x:Key="synchronization">Synchronization</sys:String>
     <sys:String x:Key="message">Message</sys:String>
     <sys:String x:Key="flaggedBy">FlaggedBy</sys:String>
-    <sys:String x:Key="copyToAdd">Copy To Add</sys:String>
-    <sys:String x:Key="newedition">Thumbnail</sys:String>
+    <sys:String x:Key="copyToAdd">Save As</sys:String>
+    <!-- newedition -->
+    <sys:String x:Key="thumbnail">Thumbnail</sys:String>
     <sys:String x:Key="mainTitle">CAD Integration</sys:String>
     <sys:String x:Key="minimize">Min</sys:String>
     <sys:String x:Key="maximize">Max</sys:String>
@@ -32,30 +36,65 @@
     <sys:String x:Key="SystemInformation">System Information:</sys:String>
     <sys:String x:Key="OperatingSystem">OperatingSystem:</sys:String>
     <sys:String x:Key="DotNetFrameworkVer">DotNetFrameworkVer:</sys:String>
-    <sys:String x:Key="WindowsUsername">Windows Username:</sys:String>
+    <sys:String x:Key="WindowsUsername">Windows Login:</sys:String>
     <sys:String x:Key="Domainname">Domain Name:</sys:String>
     <sys:String x:Key="RAM">RAM:</sys:String>
     <sys:String x:Key="Processor">Processor:</sys:String>
-    <sys:String x:Key="IPAddress_LAN">IPAddress_LAN:</sys:String>
-    <sys:String x:Key="IP_Address_WAN">IP_Address_WAN:</sys:String>
-    <sys:String x:Key="ApplicationVer">ApplicationVer:</sys:String>
+    <sys:String x:Key="IPAddress_LAN">IPAddress (LAN):</sys:String>
+    <sys:String x:Key="IP_Address_WAN">IPAddress (WAN):</sys:String>
+    <sys:String x:Key="ApplicationVer">Application Version:</sys:String>
     <sys:String x:Key="systemSetting">Setting</sys:String>
     <sys:String x:Key="plugIn">Plug In</sys:String>
     <sys:String x:Key="about">About</sys:String>
-    <sys:String x:Key="computerInfo">Computer Information</sys:String>
+    <sys:String x:Key="computerInfo">System Information</sys:String>
     <sys:String x:Key="notLogin">Please Login</sys:String>
     <sys:String x:Key="scale">Scale</sys:String>
 
     <sys:String x:Key="filename">File Name</sys:String>
     <sys:String x:Key="select">Select</sys:String>
-    <sys:String x:Key="AddFromTemplate_name">Name :</sys:String>
+    <sys:String x:Key="AddFromTemplate_name">New File Name :</sys:String>
     <sys:String x:Key="AddFromTemplate_filename">File Name :</sys:String>
     <sys:String x:Key="AddFromTemplate_quantity">Quantity :</sys:String>
     <sys:String x:Key="done">Done</sys:String>
-    <sys:String x:Key="selectFolder">Select Folder</sys:String>
+    <sys:String x:Key="selectFolder">Select saved path</sys:String>
     <sys:String x:Key="time">Time</sys:String>
     <sys:String x:Key="itemName">Item Name</sys:String>
     <sys:String x:Key="description">Description</sys:String>
-    <sys:String x:Key="MainWindow_status">Status :</sys:String>
-    <sys:String x:Key="NewFileName_newFileName">New File Name :</sys:String>
+    <!--<sys:String x:Key="MainWindow_status">Status :</sys:String>-->
+    <sys:String x:Key="newFileName">New File Name :</sys:String>
+
+    <sys:String x:Key="msg_NoFilesSelected">No files selected.</sys:String>
+    <sys:String x:Key="msg_PleasePickASavedFilePath">Please pick a saved file path.</sys:String>
+    <sys:String x:Key="msg_TheSelectedCADItemHasNoDrawingFile">The selected CAD item has no drawing file.</sys:String>
+    <!--<sys:String x:Key="msg_responding_left_mouse_event">Responding to left mouse button click event...</sys:String>-->
+    <sys:String x:Key="msg_CADFileDoesNotExistPLM">CAD file does not exist in PLM.</sys:String>
+    <!--<sys:String x:Key="msg_added_extension_inconsistent_with_system_file">The selected drawing file is the same as the parent drawing file.</sys:String>-->
+    <sys:String x:Key="msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile">The selected drawing file is the same as the parent drawing file.</sys:String>
+    <sys:String x:Key="msg_NotAllowedToExecute">{0},Not allowed to execute.</sys:String>
+    <sys:String x:Key="msg_GetLanguageFailed">Get Language failed.</sys:String>
+    <sys:String x:Key="msg_FailedToCloneObject">Failed to clone {0} object.</sys:String>
+    <sys:String x:Key="msg_FailedToEditObject">Failed to edit {0} object.</sys:String>
+    <sys:String x:Key="msg_FailedToAddObject">Failed to add {0} object.</sys:String>
+    <sys:String x:Key="msg_FailToWinAuthHttpServerConnection">Fail to obtain Server Connection.</sys:String>
+    <sys:String x:Key="msg_FailToHttpServerConnection">Fail to obtain Server Connection.</sys:String>
+    <sys:String x:Key="msg_LoginFailed">Login failed.</sys:String>
+    <sys:String x:Key="msg_InvalidWindow">Invalid Window.</sys:String>
+    <!--<sys:String x:Key="msg_AddTemplate">Add Template</sys:String>-->
+    <!--<sys:String x:Key="msg_add_new_item">End</sys:String>-->
+    <sys:String x:Key="msg_ConfigIdIsNull">{0} config_id is null</sys:String>
+
+    <sys:String x:Key="menu_InsertSubPart">Insert sub-part</sys:String>
+    <sys:String x:Key="menu_InsertSaveasSubPart">Insert Save As sub-part</sys:String>
+    <sys:String x:Key="menu_ReplaceAPart">Replace a part</sys:String>
+    <sys:String x:Key="menu_ReplaceAllParts">Replace all parts</sys:String>
+    <sys:String x:Key="menu_CopyToAdd">Save As</sys:String>
+
+    <sys:String x:Key="label_CopyFileName">New File Name</sys:String>
+    <sys:String x:Key="label_NewFileName">New File Name</sys:String>
+
+    <sys:String x:Key="status_start">Start</sys:String>
+    <sys:String x:Key="status_finish">Finish</sys:String>
+    <sys:String x:Key="status_end">End</sys:String>
+
+
 </ResourceDictionary>

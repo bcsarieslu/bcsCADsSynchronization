@@ -59,7 +59,7 @@ namespace BCS.CADs.Synchronization.Classes
             {
 
                 PLMProperty property;
-                bool isAddRevison = false;
+                bool isAddRevision = false;
 
                 //"name", "id", "data_type", "data_source", "is_required", "label" ,"keyed_name" ,"related_id","sort_order"
                 foreach (XElement xmlItem in _xmlSetting.Elements("Item").Where(x=>x.Attribute("type")?.Value == "Property"))
@@ -101,14 +101,14 @@ namespace BCS.CADs.Synchronization.Classes
                     if (property.DataType == "image")
                     {
                         CsProperties.Add(property);
-                        if (isAddRevison==false)AddRevisionProperty(itemtype);
+                        if (isAddRevision==false)AddRevisionProperty(itemtype);
                     }
                     else
                     {
-                        if (isAddRevison == false) AddRevisionProperty(itemtype);
+                        if (isAddRevision == false) AddRevisionProperty(itemtype);
                         CsProperties.Add(property);
                     }
-                    isAddRevison = true;
+                    isAddRevision = true;
                 }
 
 

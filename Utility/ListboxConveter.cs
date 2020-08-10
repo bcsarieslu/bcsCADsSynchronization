@@ -24,6 +24,7 @@ namespace BCS.CADs.Synchronization.Utility
         /// <returns>Collapsed if value is true, else Visible</returns>
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            //System.Diagnostics.Debugger.Break();
             dynamic instance = Activator.CreateInstance(value.GetType());
             instance = value;
             string name = instance.Label;
@@ -40,6 +41,7 @@ namespace BCS.CADs.Synchronization.Utility
         /// <returns>false if Visible, else true</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            //System.Diagnostics.Debugger.Break();
             string txtString = (string)value;
             ListViewItem lvItem = new ListViewItem();
             

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BCS.CADs.Synchronization.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -36,7 +37,7 @@ namespace WinResizer
 
             if (target == null)
             {
-                throw new Exception("Invalid Window handle");
+                throw new Exception(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_InvalidWindow"));
             }
         }
 

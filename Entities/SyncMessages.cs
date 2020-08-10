@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace BCS.CADs.Synchronization.Entities
 {
@@ -20,6 +21,7 @@ namespace BCS.CADs.Synchronization.Entities
 
         public List<ItemMessage> ItemMessages { get; set; } = new List<ItemMessage>();
 
+        
 
         public SyncMessages(SyncType function, SyncOperation operation, string name, string value, string status)
         {

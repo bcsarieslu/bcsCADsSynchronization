@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace BCS.CADs.Synchronization.Entities
 {
@@ -26,6 +27,8 @@ namespace BCS.CADs.Synchronization.Entities
             }
 
         }
+
+        public ResourceDictionary LanguageResources { get; set; }
 
         public bool IsResolveAllLightweightSuppres { get; set; } = true;
         public bool IsResolveAllSuppres { get; set; } = true;
@@ -54,7 +57,9 @@ namespace BCS.CADs.Synchronization.Entities
                 args.IsResolveAllLightweightSuppres = IsResolveAllLightweightSuppres;
                 args.IsResolveAllSuppres = IsResolveAllSuppres;
                 //args.SyncMessages = ClsSynchronizer.VmMessages;
+                args.LanguageResources = LanguageResources;
                 args.Url = ClsSynchronizer.VmSyncCADs.GetUrl();
+
                 SyncCommand.Invoke(SyncCadCommands.IsActiveCAD.ToString(), this, args);
                 return args.IsActiveCAD;
 
@@ -201,6 +206,8 @@ namespace BCS.CADs.Synchronization.Entities
                 args.IntegrationEvent = integrationEvent;
                 args.StructureChanges = structureChanges;
                 args.SyncMessages = ClsSynchronizer.VmMessages;
+
+                args.LanguageResources = LanguageResources;
                 args.Url = ClsSynchronizer.VmSyncCADs.GetUrl();
 
                 SyncCommand.Invoke(syncName, this, args);

@@ -13,52 +13,88 @@
     <sys:String x:Key="plm2cad_UnderText">PLM→CAD</sys:String>
     <sys:String x:Key="plmdownimage">從PLM下載圖檔</sys:String>
     <sys:String x:Key="lockunlock">上鎖/解鎖</sys:String>
-    <sys:String x:Key="plmdownimage_UnderText">圖檔下載</sys:String>
-    <sys:String x:Key="module">外掛模組</sys:String>
+    <!-- plmdownimage_UnderText -->
+    <sys:String x:Key="downloadCAD_UnderText">圖檔下載</sys:String>
+    <!--<sys:String x:Key="module">外掛模組</sys:String>-->
     <sys:String x:Key="login">登入</sys:String>
     <sys:String x:Key="logout">登出</sys:String>
-    <sys:String x:Key="systeminf">使用者系統資訊</sys:String>
+    <!--<sys:String x:Key="systeminf">使用者系統資訊</sys:String>-->
     <sys:String x:Key="search">查詢</sys:String>
-    <sys:String x:Key="exeproject">執行項目</sys:String>
+    <sys:String x:Key="execute">確認執行</sys:String>
     <sys:String x:Key="propsync">屬性同步</sys:String>
     <sys:String x:Key="filesync">檔案同步</sys:String>
     <sys:String x:Key="synchronization">同步作業</sys:String>
     <sys:String x:Key="message">訊息</sys:String>
     <sys:String x:Key="flaggedBy">標記</sys:String>
-    <sys:String x:Key="copyToAdd">複製轉新增</sys:String>
-    <sys:String x:Key="newedition">縮圖</sys:String>
+    <sys:String x:Key="copyToAdd">另存為</sys:String>
+    <!-- newedition -->
+    <sys:String x:Key="thumbnail">縮圖</sys:String>
     <sys:String x:Key="mainTitle">CAD整合</sys:String>
     <sys:String x:Key="minimize">最小化</sys:String>
     <sys:String x:Key="maximize">放大/縮小</sys:String>
     <sys:String x:Key="close">關閉</sys:String>
-    <sys:String x:Key="SystemInformation">系統資訊</sys:String>
+    <sys:String x:Key="SystemInformation">環境信息:</sys:String>
     <sys:String x:Key="OperatingSystem">作業系統:</sys:String>
     <sys:String x:Key="DotNetFrameworkVer">.Net Framework版本:</sys:String>
-    <sys:String x:Key="WindowsUsername">Windows使用者名稱</sys:String>
+    <sys:String x:Key="WindowsUsername">本機使用者名称</sys:String>
     <sys:String x:Key="Domainname">網域名稱:</sys:String>
-    <sys:String x:Key="RAM">記憶體大小:</sys:String>
-    <sys:String x:Key="Processor">處理器:</sys:String>
-    <sys:String x:Key="IPAddress_LAN">IP位置(LAN):</sys:String>
-    <sys:String x:Key="IP_Address_WAN">IP位置(WAN):</sys:String>
-    <sys:String x:Key="ApplicationVer">修訂版本:</sys:String>
-    <sys:String x:Key="systemSetting">系統設定</sys:String>
+    <sys:String x:Key="RAM">記憶體容量:</sys:String>
+    <sys:String x:Key="Processor">邏輯核心數:</sys:String>
+    <sys:String x:Key="IPAddress_LAN">IP位址 (LAN):</sys:String>
+    <sys:String x:Key="IP_Address_WAN">IP位址(WAN):</sys:String>
+    <sys:String x:Key="ApplicationVer">目前版本:</sys:String>
+    <sys:String x:Key="systemSetting">設定</sys:String>
     <sys:String x:Key="plugIn">插件模組</sys:String>
     <sys:String x:Key="about">關於</sys:String>
-    <sys:String x:Key="computerInfo">電腦資訊</sys:String>
-    <sys:String x:Key="notLogin">尚未登錄</sys:String>
+    <sys:String x:Key="computerInfo">環境信息</sys:String>
+    <sys:String x:Key="notLogin">尚未登入</sys:String>
     <sys:String x:Key="scale">縮放</sys:String>
 
     <sys:String x:Key="filename">檔案名稱</sys:String>
     <sys:String x:Key="select">選取</sys:String>
-    <sys:String x:Key="AddFromTemplate_name">名稱 :</sys:String>
+    <sys:String x:Key="AddFromTemplate_name">新檔名 :</sys:String>
     <sys:String x:Key="AddFromTemplate_filename">檔案名稱 :</sys:String>
-    <sys:String x:Key="AddFromTemplate_quantity">數量 :</sys:String>
-    <sys:String x:Key="done">執行</sys:String>
-    <sys:String x:Key="selectFolder">選擇資料夾</sys:String>
+    <sys:String x:Key="AddFromTemplate_quantity">新增數量 :</sys:String>
+    <sys:String x:Key="done">確認完成</sys:String>
+    <sys:String x:Key="selectFolder">選擇存檔位置</sys:String>
     <sys:String x:Key="time">時間</sys:String>
     <sys:String x:Key="itemName">項目名稱</sys:String>
     <sys:String x:Key="description">描述</sys:String>
-    <sys:String x:Key="MainWindow_status">狀態 :</sys:String>
-    <sys:String x:Key="NewFileName_newFileName">新圖檔名稱 :</sys:String>
-    
+    <!--<sys:String x:Key="MainWindow_status">狀態 :</sys:String>-->
+    <sys:String x:Key="newFileName">新圖檔名稱 :</sys:String>
+
+    <sys:String x:Key="msg_NoFilesSelected">尚未選取圖檔</sys:String>
+    <sys:String x:Key="msg_PleasePickASavedFilePath">請選擇儲存路徑</sys:String>
+    <sys:String x:Key="msg_TheSelectedCADItemHasNoDrawingFile">所選的CAD物件沒有圖檔</sys:String>
+    <!--<sys:String x:Key="msg_responding_left_mouse_event">滑鼠左鍵單擊事件...</sys:String>-->
+    <sys:String x:Key="msg_CADFileDoesNotExistPLM">CAD圖檔不存在PLM系統</sys:String>
+    <!--<sys:String x:Key="msg_added_extension_inconsistent_with_system_file">新增的副檔名與系統圖檔不一致</sys:String>-->
+    <sys:String x:Key="msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile">插入的圖檔與父階圖檔相同</sys:String>
+    <sys:String x:Key="msg_NotAllowedToExecute">{0},不允許執行</sys:String>
+    <sys:String x:Key="msg_GetLanguageFailed">取得語系失敗</sys:String>
+    <sys:String x:Key="msg_FailedToCloneObject">複製{0}物件失敗</sys:String>
+    <sys:String x:Key="msg_FailedToEditObject">編輯{0}物件失敗</sys:String>
+    <sys:String x:Key="msg_FailedToAddObject">新增{0}物件失敗</sys:String>
+    <sys:String x:Key="msg_FailToWinAuthHttpServerConnection">服務器連接失敗</sys:String>
+    <sys:String x:Key="msg_FailToHttpServerConnection">服務器連接失敗</sys:String>
+    <sys:String x:Key="msg_LoginFailed">登入失敗</sys:String>
+    <sys:String x:Key="msg_InvalidWindow">無效的窗口</sys:String>
+    <!--<sys:String x:Key="msg_AddTemplate">新增範本</sys:String>-->
+    <!--<sys:String x:Key="msg_add_new_item">新增項目</sys:String>-->
+    <sys:String x:Key="msg_ConfigIdIsNull">{0} config_id為空值</sys:String>
+
+    <sys:String x:Key="menu_InsertSubPart">插入分件</sys:String>
+    <sys:String x:Key="menu_InsertSaveasSubPart">插入另存分件</sys:String>
+    <sys:String x:Key="menu_ReplaceAPart">替換分件(單筆)</sys:String>
+    <sys:String x:Key="menu_ReplaceAllParts">替換分件(全部)</sys:String>
+    <sys:String x:Key="menu_CopyToAdd">另存為新物件</sys:String>
+
+    <sys:String x:Key="label_CopyFileName">新檔名</sys:String>
+    <sys:String x:Key="label_NewFileName">新檔名</sys:String>
+
+    <sys:String x:Key="status_start">開始</sys:String>
+    <sys:String x:Key="status_finish">完成</sys:String>
+    <sys:String x:Key="status_end">結束</sys:String>
+
+
 </ResourceDictionary>

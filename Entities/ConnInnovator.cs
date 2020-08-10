@@ -359,6 +359,52 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+
+        private string _language;
+        private ResourceDictionary _languageResources = null;
+
+        /// <summary>
+        /// 取得目前語系資源
+        /// </summary>
+        protected internal ResourceDictionary LanguageResources
+        {
+            get
+            {
+                SetLanguageResources();
+                return _languageResources;
+            }
+        }
+
+        /// <summary>
+        /// 設定語系資源
+        /// </summary>
+        protected internal void SetLanguageResources()
+        {
+            if (_language != ClsSynchronizer.Language || _languageResources == null)
+            {
+                _languageResources = new ResourceDictionary();
+                _languageResources.Source = new Uri($"pack://application:,,,/BCS.CADs.Synchronization;Component/Lang/{ClsSynchronizer.Language}.xaml", UriKind.Absolute);
+                _language = ClsSynchronizer.Language;
+                _asInnovator.LanguageResources = _languageResources;
+                _syncCADEvents.LanguageResources = _languageResources;
+            }
+        }
+
+        //csv
+
+        protected internal string GetLanguageByKeyName(string key)
+        {
+            try
+            {
+                var value = LanguageResources[key];
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
         private static string _image_ID;
 
         protected internal string Image_ID
@@ -418,6 +464,8 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
+
+                SetLanguageResources();
                 IsActiveLogin = false;
                 IsActiveLogin = (IsWinAuth) ? _asInnovator.WinAuthLogin(Url, Database) : _asInnovator.UserLogin(Url, Database, LoginName, Password);
                 if (IsActiveLogin) GetConfigurations();
@@ -965,7 +1013,7 @@ namespace BCS.CADs.Synchronization.Entities
                         List<PLMProperty> plmProperties = GetCADProperties(searchItem,calssTemplateFile.ClassName);
                         ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>(plmProperties);
 
-                        AddNewFileNameProperty(searchItem, newProperties, "Add New File Name","");
+                        AddNewFileNameProperty(searchItem, newProperties, GetLanguageByKeyName("label_NewFileName"),"");
                         searchItem.FilePath = filePath;
                         searchItem.PlmProperties = newProperties;
                         ObsSearchItems.Add(searchItem);
@@ -992,7 +1040,7 @@ namespace BCS.CADs.Synchronization.Entities
                 foreach (SearchItem searchItem in searchItems.Where(x=>x.IsViewSelected==true))
                 {
                     ObservableCollection<PLMProperty> plmProperties = (searchItem.PlmProperties.Count > 0) ? searchItem.PlmProperties : new ObservableCollection<PLMProperty>();
-                    AddNewFileNameProperty(searchItem, plmProperties, "Copy File Name","");
+                    AddNewFileNameProperty(searchItem, plmProperties, GetLanguageByKeyName("label_CopyFileName"), "");
                     searchItem.PlmProperties = plmProperties;
                 }
             }
@@ -1329,38 +1377,38 @@ namespace BCS.CADs.Synchronization.Entities
         /// <param name="cadItemId"></param>
         /// <param name="full"></param>
         /// <returns></returns>
-        virtual protected internal bool CheckAddCADFile(string itemId, string full)
-        {
-            try
-            {
+        //virtual protected internal bool CheckAddCADFile(string itemId, string full)
+        //{
+        //    try
+        //    {
 
-                Aras.IOM.Item item = AsInnovator.getItemById("CAD", itemId);
-                //檢查選取圖檔
-                if (item.getProperty(NativeProperty, "") == "")
-                {
-                    MessageBox.Show("圖檔不存在系統");
-                    return false;
-                }
+        //        Aras.IOM.Item item = AsInnovator.getItemById("CAD", itemId);
+        //        //檢查選取圖檔
+        //        if (item.getProperty(NativeProperty, "") == "")
+        //        {
+        //            MessageBox.Show(GetLanguageByKeyName("msg_CADFileDoesNotExistPLM"));
+        //            return false;
+        //        }
 
-                //檢查副檔名(擴展名)是否一致
-                Aras.IOM.Item file = AsInnovator.getItemById("File", item.getProperty(NativeProperty, ""));
-                if (Path.GetExtension(file.getProperty("filename", "")).ToLower()!= Path.GetExtension(full).ToLower())
-                {
-                    MessageBox.Show("新增的副檔名與系統圖檔不一致");
-                    return false;
-                }
+        //        //檢查副檔名(擴展名)是否一致
+        //        Aras.IOM.Item file = AsInnovator.getItemById("File", item.getProperty(NativeProperty, ""));
+        //        if (Path.GetExtension(file.getProperty("filename", "")).ToLower()!= Path.GetExtension(full).ToLower())
+        //        {
+        //            MessageBox.Show(GetLanguageByKeyName("msg_added_extension_inconsistent_with_system_file"));
+        //            return false;
+        //        }
 
-                //檢查新增圖檔是否存在系統
-                string fileName = Path.GetFileName(full);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                //throw ex;
-                string message = ex.Message;
-                return false;
-            }
-        }
+        //        //檢查新增圖檔是否存在系統
+        //        string fileName = Path.GetFileName(full);
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //throw ex;
+        //        string message = ex.Message;
+        //        return false;
+        //    }
+        //}
 
       
 
@@ -1939,7 +1987,7 @@ namespace BCS.CADs.Synchronization.Entities
                     if (structuralChange.Type != ChangeType.InsertSaveAs)  structuralChange.TargetFileName = searchItem.FileName;
                     structuralChange.TargetFilePath = searchItem.FilePath;
                     structuralChange.TargetItemConfigId = searchItem.ItemConfigId;
-                    if (searchItem.FileName == structuralChange.SourceFileName) throw new Exception("選取到的圖檔,與來源圖檔相同");//return false
+                    if (searchItem.FileName == structuralChange.SourceFileName) throw new Exception(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile"));//return false
 
                     structuralChange.IsExist = true;
                     targetSearchItem = searchItems.Where(x => x.FileName == searchItem.FileName).FirstOrDefault();
@@ -2181,7 +2229,10 @@ namespace BCS.CADs.Synchronization.Entities
                 PLMProperty dataContext = headerValue.DataContext as PLMProperty;
 
                 PLMProperty property = searchItemType.PlmProperties.Where(x => x.PropertyName == dataContext.PropertyName).FirstOrDefault();
-                property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
+
+                //property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
+                property.DisplayValue = dataContext.DisplayValue;
+
                 property.SyncValue = property.DisplayValue;
                 switch (property.DataType)
                 {
@@ -2197,11 +2248,7 @@ namespace BCS.CADs.Synchronization.Entities
                         property.SyncValue = (property.PLMList.ListItems.Where(x => x.Label == property.SyncValue) != null) ? property.PLMList.ListItems.Where(x => x.Label == property.SyncValue).Select(x => x.Value ).FirstOrDefault() : property.DisplayValue;
                         break;
                     case "date":
-                        if (String.IsNullOrWhiteSpace(property.SyncValue) == false)
-                        {
-                            DateTime date = DateTime.Parse(property.SyncValue);
-                            if (date.Year > 1911) property.SyncValue = date.ToString("yyyy-MM-ddTHH:mm:ss");
-                        }
+                        SetDatePLMPropertySyncValue(property);
                         break;
                 }
                 property.Value = property.SyncValue;
@@ -2214,6 +2261,34 @@ namespace BCS.CADs.Synchronization.Entities
         #endregion
 
         #region "                   方法(內部)"
+
+        /// <summary>
+        /// 重新設定SyncValue日期值
+        /// </summary>
+        /// <param name="property"></param>
+        private void SetDatePLMPropertySyncValue(PLMProperty property)
+        {
+            try
+            {
+
+                if (String.IsNullOrWhiteSpace(property.SyncValue) == false)
+                {
+                    DateTime date = DateTime.Parse(property.SyncValue);
+                    if (date.Year > 1911)
+                    {
+                        property.SyncValue = date.ToString("yyyy-MM-ddTHH:mm:ss");
+                        return;
+                    }
+                }
+                property.SyncValue = null;
+            }
+
+            catch (Exception ex)
+            {
+                property.SyncValue = null;
+            }
+        }
+
 
         /// <summary>
         /// 來源為子階,並目的替換子階
@@ -2400,7 +2475,7 @@ namespace BCS.CADs.Synchronization.Entities
                 {
                     //SyncVersionStatus
                     if (IsCheckRules(searchItem, isUserRules)) continue;
-                    if (itemMessage==null) itemMessage = ClsSynchronizer.VmMessages.AddItemMessage("Not allowed to execute", "", "", "Error");
+                    if (itemMessage==null) itemMessage = ClsSynchronizer.VmMessages.AddItemMessage(GetLanguageByKeyName("msg_NotAllowedToExecute"), "", "", "Error");
 
                     string message = (searchItem.AccessRights != SyncAccessRights.FlaggedByOthers.ToString()) ? "" : searchItem.AccessRights;
      
@@ -2452,7 +2527,7 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
-                if (searchItems==null) throw new Exception("Not allowed to execute");
+                if (searchItems==null) throw new Exception(GetLanguageByKeyName("msg_NotAllowedToExecute"));
                 ItemMessage itemMessage = null;
                 foreach (SearchItem searchItem in searchItems.Where(x => x.IsAdded == true ||  x.IsViewSelected == true))
                 {
@@ -2463,7 +2538,7 @@ namespace BCS.CADs.Synchronization.Entities
                     List<string> properties = searchItem.PlmProperties.Where(x => x.IsRequired == true && x.IsSyncPLM == true &&  String.IsNullOrWhiteSpace(x.DisplayValue)).Select(x => x.Label).ToList();
                     if (properties.Count == 0) continue;
 
-                    if (itemMessage == null) itemMessage = ClsSynchronizer.VmMessages.AddItemMessage("Not allowed to execute", "", "", "Error");
+                    if (itemMessage == null) itemMessage = ClsSynchronizer.VmMessages.AddItemMessage(GetLanguageByKeyName("msg_NotAllowedToExecute"), "", "", "Error");
                     ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(searchItem.FileName, String.Join(",", properties), "", "Start");
 
                 }

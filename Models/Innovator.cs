@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 #endregion
@@ -67,6 +68,33 @@ namespace BCS.CADs.Synchronization.Models
                 _syncCADEvents.ClassItems = value;
             }
 
+        }
+
+        private ResourceDictionary _languageResources;
+        protected internal ResourceDictionary LanguageResources
+        {
+            get
+            {
+                return _languageResources;
+            }
+            set
+            {
+                _languageResources = value;
+                _syncCADEvents.LanguageResources = _languageResources;
+            }
+        }
+
+        protected internal string GetLanguageByKeyName(string key)
+        {
+            try
+            {
+                var value = LanguageResources[key];
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
         }
 
         internal bool IsResolveAllLightweightSuppres
@@ -351,8 +379,8 @@ namespace BCS.CADs.Synchronization.Models
                 string aml = GetConfigList(listName, itemtype, selects);
 
                 Aras.IOM.Item itemList = AsInnovator.applyAML(aml);
-                if (itemList.isError()) new Exception($"Get Language failed.({itemList.getErrorString()})");
-                if (itemList.getItemCount() < 1) new Exception(String.Format("Get Language failed."));
+                if (itemList.isError()) new Exception(GetLanguageByKeyName("msg_GetLanguageFailed") + $"({itemList.getErrorString()})");
+                if (itemList.getItemCount() < 1) new Exception(String.Format(GetLanguageByKeyName("msg_GetLanguageFailed")));
 
                 Lists list = new Lists();
                 list.Name = listName;
@@ -700,7 +728,7 @@ namespace BCS.CADs.Synchronization.Models
                     _syncCADEvents.ExecCadEvents(AsInnovator, syncName, searchItem, integrationEvents, syncEventBefore, SyncType.CopyToAdd, ref cloneItem);
 
                     cloneItem = cloneItem.apply();
-                    if (cloneItem == null) new Exception($"Failed to clone {itemtype} object");
+                    if (cloneItem == null) new Exception(string.Format (GetLanguageByKeyName("msg_FailedToCloneObject"), itemtype) );
                     if (cloneItem.isError()) new Exception(cloneItem.getErrorString());
 
                     fileMessage.Status = "Finish";
@@ -754,7 +782,7 @@ namespace BCS.CADs.Synchronization.Models
                     item.setProperty(NativeProperty, newFileItem.getID());
 
                     item = item.apply();
-                    if (item == null) new Exception($"Failed to edit {itemtype} object");
+                    if (item == null) new Exception(String.Format (GetLanguageByKeyName("msg_FailedToEditObject"), itemtype));
                     if (item.isError()) new Exception(item.getErrorString());
 
                     searchItem.FileId = newFileItem.getID();
@@ -840,7 +868,7 @@ namespace BCS.CADs.Synchronization.Models
                 if (syncEventBefore != SyncEvents.None) _syncCADEvents.ExecCadEvents(AsInnovator, syncName, searchItem, integrationEvents, syncEventBefore, SyncType.Add, ref item);
 
                 Aras.IOM.Item newItem = item.apply();
-                if (newItem == null) new Exception($"Failed to add {itemtype} object"); 
+                if (newItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemtype)); 
                 if (newItem.isError()) new Exception(newItem.getErrorString());
 
                 fileMessage.Status = "Finish";
@@ -1598,7 +1626,7 @@ namespace BCS.CADs.Synchronization.Models
                     //newFile.setProperty("file_type", "");
                     newFile.attachPhysicalFile(Path.Combine(directory, fileName));
                     newFileItem = newFile.apply();
-                    if (newFileItem == null) new Exception($"Failed to add {itemtype} object");
+                    if (newFileItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemtype));
                     if (newFileItem.isError()) new Exception(newFileItem.getErrorString());
                 }
 
@@ -1662,7 +1690,7 @@ namespace BCS.CADs.Synchronization.Models
                     newItem.setProperty("sort_order", structrue.Order.ToString());
                     newItem.setProperty("bcs_instance_id", structrue.InstanceId);
                     Aras.IOM.Item linkItem = newItem.apply();
-                    if (linkItem == null) new Exception($"Failed to add {itemType} object");
+                    if (linkItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType) );
                     if (linkItem.isError()) new Exception(linkItem.getErrorString());
                 }
                 return;
@@ -1710,7 +1738,7 @@ namespace BCS.CADs.Synchronization.Models
 
                 
                 //if (sourceSearchItem.ItemConfigId == "") new Exception(sourceSearchItem.FileName + " config_id is null");
-                if (String.IsNullOrWhiteSpace(sourceSearchItem.ItemConfigId)) new Exception(sourceSearchItem.FileName + " config_id is null");
+                if (String.IsNullOrWhiteSpace(sourceSearchItem.ItemConfigId)) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), sourceSearchItem.FileName)) ;
                 Aras.IOM.Item lastItem = GetLastItem("CAD", sourceSearchItem.ItemConfigId);
 
                 //建立新連結
@@ -1718,7 +1746,7 @@ namespace BCS.CADs.Synchronization.Models
                 newItem.setProperty("source_id", lastItem.getID());
                 newItem.setProperty("related_id", item.getID());
                 linkItem = item.apply();
-                if (linkItem == null) new Exception($"Failed to add {itemType} object");
+                if (linkItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType));
                 if (linkItem.isError()) new Exception(newItem.getErrorString());
 
                 return;
@@ -1758,10 +1786,10 @@ namespace BCS.CADs.Synchronization.Models
 
                 HttpServerConnection asConnection = (isAuth) ? IomFactory.CreateWinAuthHttpServerConnection(strUrl, strDBName) : IomFactory.CreateHttpServerConnection(strUrl, strDBName, strLogin, strPassword);
 
-                if (asConnection == null) throw new Exception((isAuth) ? "Failure to obtain WinAuthHttpServerConnection." : "Failure to obtain HttpServerConnection.");
+                if (asConnection == null) throw new Exception((isAuth) ? GetLanguageByKeyName("msg_FailToWinAuthHttpServerConnection") : GetLanguageByKeyName("msg_FailToHttpServerConnection"));
 
                 Aras.IOM.Item itemLogin = asConnection.Login();
-                if (itemLogin == null) throw new Exception("Login failed.");
+                if (itemLogin == null) throw new Exception(GetLanguageByKeyName("msg_LoginFailed"));
                 if (itemLogin.isError()) throw new Exception(itemLogin.getErrorString());
 
                 _asServerConn.Add(connkey, asConnection);//"HttpServerConnection";"WinAuthHttpServerConnection"

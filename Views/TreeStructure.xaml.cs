@@ -41,14 +41,14 @@ namespace BCS.CADs.Synchronization.Views
             {
                 ContextMenu menu = new ContextMenu() { };
                 menu.FontSize = 14;
-                if (searchItem.IsInsert == true) AddMenuItem(menu, searchItem, "插入分件", true, false, false,false);
-                if (searchItem.IsInsertSaveAs == true) AddMenuItem(menu, searchItem, "插入另存分件", false, false, false, true);
+                if (searchItem.IsInsert == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_InsertSubPart") , true, false, false,false);//"插入分件"
+                if (searchItem.IsInsertSaveAs == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_InsertSaveasSubPart"), false, false, false, true);//"插入另存分件" 
                 if (searchItem.IsReplacement == true)
                 {
-                    AddMenuItem(menu, searchItem, "替換分件(單筆)", false,false,false, false);
-                    AddMenuItem(menu, searchItem, "替換分件(全部)", false,true,false, false);
+                    AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_ReplaceAPart"), false,false,false, false);//替換分件(單筆)
+                    AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_ReplaceAllParts"), false,true,false, false);// 替換分件(全部)
                 }
-                if (searchItem.IsCopyToAdd == true) AddMenuItem(menu, searchItem, "複製轉新增", false, false, true,false);
+                if (searchItem.IsCopyToAdd == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_CopyToAdd"), false, false, true,false);// 複製轉新增
                 (sender as TreeViewItem).ContextMenu = menu;
                 return;
             }

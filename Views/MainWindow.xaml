@@ -213,7 +213,7 @@
                     </Image>
                 </Button>
 
-                <Button x:Name="btn_Edit" IsEnabled="False" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource exeproject}" Command="{Binding EditPropertiesView}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">
+                <Button x:Name="btn_Edit" IsEnabled="False" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource execute}" Command="{Binding EditPropertiesView}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">
                     <Image>
                         <Image.Style>
                             <Style>
@@ -651,7 +651,7 @@
                                                 <Border Background="{TemplateBinding Background}">
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <Image Style="{StaticResource ConversionServerDrawingImageStyle}" Height="28" VerticalAlignment="Top"/>
-                                                        <TextBlock FontSize="10" Text="{DynamicResource plmdownimage_UnderText}" x:Name="loadFromPLM_Text"/>
+                                                        <TextBlock FontSize="10" Text="{DynamicResource downloadCAD_UnderText}" x:Name="loadFromPLM_Text"/>
                                                     </StackPanel>
                                                 </Border>
                                             </ControlTemplate>

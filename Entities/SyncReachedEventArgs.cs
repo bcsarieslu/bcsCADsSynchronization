@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 #endregion
 
 namespace BCS.CADs.Synchronization.Entities
@@ -94,6 +95,30 @@ namespace BCS.CADs.Synchronization.Entities
         /// 訊息
         /// </summary>
         public SyncMessages SyncMessages { get; set; }
+
+
+        /// <summary>
+        /// 取得目前語系資源
+        /// </summary>
+        public ResourceDictionary LanguageResources { get; set; }
+
+
+        public string GetLanguageByKeyName(string key)
+        {
+            try
+            {
+                var value = LanguageResources[key];
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+
+
+
 
         //public List<IntegrationEvents> integrationEvent { get; set; } = null;
         #endregion

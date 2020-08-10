@@ -29,8 +29,6 @@ using AdornedControl;
 using System.Windows.Media.Animation;
 using System.Windows.Controls.Primitives;
 using System.Windows.Navigation;
-using System.Resources;
-using System.Reflection;
 //using static BCS.CADs.Synchronization.ViewModels.VeiwModel;
 
 namespace BCS.CADs.Synchronization.ViewModels
@@ -293,19 +291,19 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         }
 
-        //private ICommand _leftButtonDownCommand;
+        private ICommand _leftButtonDownCommand;
 
-        //public ICommand LeftMouseButtonDown
-        //{
-        //    get
-        //    {
-        //        return _leftButtonDownCommand ?? (_leftButtonDownCommand = new RelayCommand(
-        //           x =>
-        //           {
-        //               MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_responding_left_mouse_event"));
-        //           }));
-        //    }
-        //}
+        public ICommand LeftMouseButtonDown
+        {
+            get
+            {
+                return _leftButtonDownCommand ?? (_leftButtonDownCommand = new RelayCommand(
+                   x =>
+                   {
+                       MessageBox.Show("Responding to left mouse button click event...");
+                   }));
+            }
+        }
 
         private bool _checkAllIsCheck = false;
         public bool CheckAllIsCheck
@@ -492,8 +490,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _checkLogin = new RelayCommand((x) =>
                 {
-
-
                     Button button = ((Button)x);
                     var parent = VisualTreeHelper.GetParent(button);
                     while (true)
@@ -851,6 +847,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     ClsSynchronizer.SearchItemsCollection = ObsSearchItems;
 
+
+
                     _ItemSearchView = (ClsSynchronizer.IsActiveSubDialogView == true) ? (ItemSearch)ClsSynchronizer.SyncSubListView : (ItemSearch)ClsSynchronizer.SyncListView;
                     if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
 
@@ -869,7 +867,10 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //------------------------------------------------
 
                     gridSelectedItems.ItemsSource = ObsSearchItems;
-                    gridSelectedItems.RowStyle= ClsSynchronizer.RowStyle;
+
+
+
+
 
                     Window win = ClsSynchronizer.ActiveWindow;
 
@@ -890,7 +891,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             _ItemSearchView = (ClsSynchronizer.IsActiveSubDialogView == true) ? (ItemSearch)ClsSynchronizer.SyncSubListView : (ItemSearch)ClsSynchronizer.SyncListView;
             if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
-
             DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
             ClsSynchronizer.VmSyncCADs.UpdateSearchItemType(gridSelectedItems, searchItemType);
             
@@ -907,16 +907,15 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
 
                     Window win;
-                    
-                    if (_ItemSearchView == null) { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
+                    if (_ItemSearchView == null) { MessageBox.Show("尚未選取圖檔"); return; }
                     TextBox txtSelectedItemId = (TextBox)_ItemSearchView.FindName("selectedItemId");
                     
                     if (ClsSynchronizer.IsActiveSubDialogView == true)
                     {
                         ClsSynchronizer.SubDialogReturnValue = txtSelectedItemId.Text;
-
-                        //if (ClsSynchronizer.SubDialogReturnValue == "") { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
-                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue)) { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
+                        
+                        //if (ClsSynchronizer.SubDialogReturnValue == "") { MessageBox.Show("尚未選取圖檔"); return; }
+                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue)) { MessageBox.Show("尚未選取圖檔"); return; }
                         ClsSynchronizer.SubDialogReturnKeyedName = txtSelectedItemId.Tag.ToString();
 
                         win = (Window)ClsSynchronizer.SyncSubDialogView;
@@ -924,8 +923,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     else
                     {
                         ClsSynchronizer.DialogReturnValue = txtSelectedItemId.Text;
-                        //if (ClsSynchronizer.DialogReturnValue == "") { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
-                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue)) { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
+                        //if (ClsSynchronizer.DialogReturnValue == "") { MessageBox.Show("尚未選取圖檔"); return; }
+                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue)) { MessageBox.Show("尚未選取圖檔"); return; }
                         ClsSynchronizer.DialogReturnKeyedName = txtSelectedItemId.Tag.ToString();
 
                         win = (Window)ClsSynchronizer.SyncDialogView;
@@ -1258,7 +1257,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //if (ClsSynchronizer.VmDirectory == "")
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory))
                     {
-                        MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_PleasePickASavedFilePath"));
+                        MessageBox.Show("尚未選取儲存路徑");
                         StartStopWait(false);
                         return false;
                     }
@@ -1375,11 +1374,11 @@ namespace BCS.CADs.Synchronization.ViewModels
                 //if (txtSelectedItemId.Text == "" || ClsSynchronizer.VmDirectory == "")
                 if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text) || String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory))
                 {
-
-                    //if (ClsSynchronizer.VmDirectory == "") MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_PleasePickASavedFilePath"));
-                    if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory)) MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_PleasePickASavedFilePath"));
-                    //if (txtSelectedItemId.Text == "") MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected"));
-                    if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text)) MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected"));
+                    
+                    //if (ClsSynchronizer.VmDirectory == "") MessageBox.Show("尚未選取儲存路徑");
+                    if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory)) MessageBox.Show("尚未選取儲存路徑");
+                    //if (txtSelectedItemId.Text == "") MessageBox.Show("尚未選取圖檔");
+                    if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text)) MessageBox.Show("尚未選取圖檔");
                     StartStopWait(false);
                     return false ;
                 }
@@ -1449,8 +1448,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _systemSetting = new RelayCommand((x) =>
                 {
                     CultureInfo culture1 = CultureInfo.CurrentCulture;
-                    
-                   _allLang = SelectLangs.GetAllLang();
+
+                    _allLang = SelectLangs.GetAllLang();
                     SystemSetting sysSet = new SystemSetting();
                     ComboBox langCB = (ComboBox)sysSet.FindName("langComboBox");
                     var getLanguageItem = langCB.Items.SourceCollection.OfType<LanguageList>().FirstOrDefault(a=>a.Label.ToLower() == culture1.DisplayName.ToLower());
@@ -1501,10 +1500,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     Button btn_OK = (Button)x;
                     var parent = VisualTreeHelper.GetParent(btn_OK);
 
+                    ResourceDictionary resourceDictionary = new ResourceDictionary();
+                    resourceDictionary.Source = new Uri($"pack://application:,,,/BCS.CADs.Synchronization;Component/Lang/{SelectedLang.Value}.xaml");
                     ClsSynchronizer.Language = SelectedLang.Value;
-                    ClsSynchronizer.VmSyncCADs.SetLanguageResources();
-                    ResourceDictionary resourceDictionary = ClsSynchronizer.VmSyncCADs.GetLanguageResources();
-
                     var language = MyMainWindow.Resources.MergedDictionaries.FirstOrDefault(a => ((string)a["isLanguage"])?.ToLower() == "true");
                     MyMainWindow.Resources.MergedDictionaries.Remove(language);
                     MyMainWindow.Resources.MergedDictionaries.Add(resourceDictionary);
@@ -2710,7 +2708,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             //Modify by kenny 2020/08/05
             //gridSelectedItems.ColumnHeaderHeight = 70;
-            gridSelectedItems.ColumnHeaderHeight = 65;
+            gridSelectedItems.ColumnHeaderHeight = 55d;
 
             DataGridTemplateColumn col = new DataGridTemplateColumn();
 
@@ -2719,14 +2717,14 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
             AddDataGridTextStyleBinding(txtBox, plmProperty);
-            txtBox.SetValue(TextBox.HeightProperty,25d);  //TextBox高度
-            txtBox.SetValue(TextBox.HeightProperty, 25d);
+            txtBox.SetValue(TextBox.HeightProperty,23d);
             //txtBox.SetValue(TextBox.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
             stackPanel.AppendChild(txtBox);
 
             DataTemplate headerTemplate = new DataTemplate();
             headerTemplate.VisualTree = stackPanel;
             col.HeaderTemplate = headerTemplate;
+
 
             DataTemplate cellTemplate = new DataTemplate();
             if (plmProperty.DataType== "image")
@@ -2735,20 +2733,12 @@ namespace BCS.CADs.Synchronization.ViewModels
                 AddDataGridImage(imagePickerFactoryElem, plmProperty, index);              
                 cellTemplate.VisualTree = imagePickerFactoryElem;          
             }
-            else if (plmProperty.DataType == "revision")
-            {
-                FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-                AddDataGridTextStyleBinding(txtboxFactoryElem, index);
-                cellTemplate.VisualTree = txtboxFactoryElem;
-            }
             else
             {
-                //Update
                 //FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
                 //AddDataGridTextStyleBinding(txtboxFactoryElem, index);
                 //cellTemplate.VisualTree = txtboxFactoryElem;
 
-                //Readonly
                 FrameworkElementFactory txtBlockFactoryElem = new FrameworkElementFactory(typeof(TextBlock));
                 AddDataGridTextBlockBinding(txtBlockFactoryElem, index);
                 cellTemplate.VisualTree = txtBlockFactoryElem;
@@ -2770,19 +2760,27 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         private void AddDataGridHeaderSearchControls(FrameworkElementFactory stackPanel, PLMProperty plmProperty)
         {
+            Thickness marginThickness = new Thickness();
+
+            marginThickness.Left = -5;
+            marginThickness.Top = 0;
+            marginThickness.Right = -5;
+            marginThickness.Bottom = -3;
+            stackPanel.SetValue(StackPanel.MarginProperty, marginThickness);
+
             VerticalAlignment verticalAlignment = new VerticalAlignment();
             stackPanel.SetValue(StackPanel.VerticalAlignmentProperty, verticalAlignment);
 
             //設定Header中的TextBlock樣式
-            Thickness marginThickness = new Thickness();
-            marginThickness.Right = 5;
-            marginThickness.Left = 5;
-            marginThickness.Bottom = 10;
             FrameworkElementFactory txtBlock = new FrameworkElementFactory(typeof(TextBlock));
+            marginThickness.Left = 0;
+            marginThickness.Top = 0;
+            marginThickness.Right = 0;
+            marginThickness.Bottom = 7;
             txtBlock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);  //水平置中
             txtBlock.SetValue(TextBlock.TextProperty, plmProperty.Label);  //文字內容
             txtBlock.SetValue(TextBox.BackgroundProperty, Brushes.Transparent);  //背景透明
-            txtBlock.SetValue(StackPanel.MarginProperty, marginThickness); //設定上下左右間隔
+            txtBlock.SetValue(TextBox.MarginProperty, marginThickness);  //與其他元素的間距
             stackPanel.AppendChild(txtBlock);
         }
 
@@ -3036,7 +3034,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     fileName = ClsSynchronizer.VmSyncCADs.GetFileNameByCADItemId(structuralChange.TargetItemId);
                     if (fileName == "")
                     {
-                        MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_TheSelectedCADItemHasNoDrawingFile"));
+                        MessageBox.Show("所選到的CAD,沒有圖檔");
                         ret = false;
                     }else
                     {
@@ -3517,9 +3515,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                 case "item":
                     styleValue = "tbItemStyle";
                     break;
-                case "revision":
-                    styleValue = "tbListRevStyle";
-                    break;
                 default:
                     return null;
             }
@@ -3545,11 +3540,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             resourceDictionary = new ResourceDictionary();
             resourceDictionary.Source = (isStyleGrid) ? new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/GridItemPicker.xaml") : new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/ItemPicker.xaml");
             resDictionary.Add("tbItemStyle", resourceDictionary);
-
-            resourceDictionary = new ResourceDictionary();
-            resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/RevisionListPicker.xaml") ;
-            resDictionary.Add("tbListRevStyle", resourceDictionary);
-            
 
             resourceDictionary.MergedDictionaries.Add(resourceDictionary);
             return resourceDictionary;

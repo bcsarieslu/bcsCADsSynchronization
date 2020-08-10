@@ -85,6 +85,7 @@ namespace BCS.CADs.Synchronization
         {
             try
             {
+
                 IsActiveLogin =false ;
                 _Plm.Url = strUrl;
                 _Plm.Database = strDBName;
@@ -92,6 +93,7 @@ namespace BCS.CADs.Synchronization
                 _Plm.Password  = strPassword;
                 _Plm.CADSoftware = CADSoftware;
                 _Plm.Login();
+                _syncCADEvents.LanguageResources = GetLanguageResources();
                 _syncCADEvents.IsResolveAllLightweightSuppres = _Plm.IsResolveAllLightweightSuppres;
                 _syncCADEvents.IsResolveAllSuppres = _Plm.IsResolveAllSuppres;
                 
@@ -822,20 +824,20 @@ namespace BCS.CADs.Synchronization
         /// <param name="cadItemId"></param>
         /// <param name="full"></param>
         /// <returns></returns>
-        protected internal bool CheckAddCADFile(string cadItemId,string full)
-        {
-            try
-            {
+        //protected internal bool CheckAddCADFile(string cadItemId,string full)
+        //{
+        //    try
+        //    {
 
-                return _Plm.CheckAddCADFile(cadItemId, full);
-            }
-            catch (Exception ex)
-            {
-                //throw ex;
-                string message = ex.Message;
-                return false;
-            }
-        }
+        //        return _Plm.CheckAddCADFile(cadItemId, full);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //throw ex;
+        //        string message = ex.Message;
+        //        return false;
+        //    }
+        //}
 
 
         /// <summary>
@@ -991,7 +993,7 @@ namespace BCS.CADs.Synchronization
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
                 saveFileDialog1.InitialDirectory = (selectedPath != "") ? Path.GetDirectoryName(selectedPath) : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 saveFileDialog1.Filter = filter;
-                saveFileDialog1.Title = "複製轉新增(圖檔名稱)";
+                saveFileDialog1.Title = ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("label_CopyFileName");// "複製轉新增(圖檔名稱)";
                 saveFileDialog1.ShowDialog();
                 if (saveFileDialog1.FileName != "")
                 {
@@ -1018,14 +1020,100 @@ namespace BCS.CADs.Synchronization
         /// <param name="win"></param>
         protected internal void LoadLanguage(dynamic win)
         {
-            ResourceDictionary dict = new ResourceDictionary();
-            dict.Source = new Uri($"pack://application:,,,/BCS.CADs.Synchronization;Component/Lang/{ClsSynchronizer.Language}.xaml", UriKind.Absolute);
+            ResourceDictionary dict = _Plm.LanguageResources;
             win.Resources.MergedDictionaries.Add(dict);
         }
 
+        /// <summary>
+        /// 取得目前語系資源
+        /// </summary>
+        /// <param name="win"></param>
+        public ResourceDictionary GetLanguageResources()
+        {
+            return _Plm.LanguageResources;
+        }
 
+        /// <summary>
+        /// 設定語系資源
+        /// </summary>
+        /// <param name="win"></param>
+        public void SetLanguageResources(string language)
+        {
+            ClsSynchronizer.Language = language;
+            SetLanguageResources();
+        }
 
+        /// <summary>
+        /// 設定語系資源
+        /// </summary>
+        /// <param name="win"></param>
+        protected internal void SetLanguageResources()
+        {
+            _Plm.SetLanguageResources();
+            _syncCADEvents.LanguageResources = GetLanguageResources();
+        }
 
+        private string GetSyncLanguagesCSV()
+        {
+
+           
+            StringBuilder sb = new StringBuilder();
+            sb.Append("key");
+            Dictionary<string, Dictionary<string,string>> dicLanguage = new Dictionary<string, Dictionary<string, string>>();
+            List<string> langs = new List<string>();
+            string path = AssemblyDirectory + @"\Lang"; 
+            foreach (var lang in Directory.GetFiles(path).Select(x => Path.GetFileNameWithoutExtension(x)))
+            {
+                sb.Append($",{lang}");
+                langs.Add(lang);
+                SetLanguageResources(lang);
+                ResourceDictionary resLang = GetLanguageResources();
+                foreach (string key in resLang.Keys)
+                {
+                    Dictionary<string, string> item = dicLanguage.Where(x => x.Key == key).Select(x=>x.Value).FirstOrDefault();
+                    if (item == null)
+                    {
+                        item = new Dictionary<string, string>();
+                        dicLanguage.Add(key, item);
+                    }
+                    item.Add(lang, resLang[key].ToString());                    
+                }
+            }
+
+            foreach (var keyItem in dicLanguage)
+            {
+                sb.Append($"\r\n{keyItem.Key}");
+                foreach (string lang in langs)
+                {
+                    var item = keyItem.Value.Where(x => x.Key == lang).Select(x=>x.Value).FirstOrDefault();
+                    string value = (item == null) ? "" : item;
+                    sb.Append($",{value}");
+                }
+            }
+
+            if (File.Exists(Path.Combine(AssemblyDirectory, "CADsSynchronizationLang.csv")))
+                File.Delete(Path.Combine(AssemblyDirectory, "CADsSynchronizationLang.csv"));
+
+            FileStream fs = new FileStream(Path.Combine(AssemblyDirectory, "CADsSynchronizationLang.csv"), FileMode.CreateNew);
+            using (StreamWriter writer = new StreamWriter(fs, Encoding.UTF8))
+            {
+                writer.Write(sb.ToString());
+            }
+            fs.Close();
+            fs.Dispose();
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 取得Language值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected internal string GetLanguageByKeyName(string key)
+        {
+            return _Plm.GetLanguageByKeyName(key);
+        }
 
         #endregion
 
