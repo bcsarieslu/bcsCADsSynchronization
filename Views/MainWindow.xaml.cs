@@ -110,6 +110,7 @@ namespace BCS.CADs.Synchronization.Views
             cache.Add(loadingAdorner, null);
             cache.Add(loginWindow, null);
 
+            ClsSynchronizer.MainWindows = this;
         }
 
 

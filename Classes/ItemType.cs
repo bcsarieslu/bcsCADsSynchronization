@@ -1,7 +1,10 @@
 ﻿#region "                   名稱空間"
 using BCS.CADs.Synchronization.ConfigProperties;
+using BCS.CADs.Synchronization.Models;
+using BCS.CADs.Synchronization.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -10,7 +13,7 @@ using System.Xml.Linq;
 namespace BCS.CADs.Synchronization.Classes
 {
 
-    public class ItemType
+    public class ItemType: NotifyPropertyBase
     {
             
         #region "                   宣告區"
@@ -21,13 +24,31 @@ namespace BCS.CADs.Synchronization.Classes
         #endregion
 
         #region "                   屬性"
-        public List<PLMProperty> CsProperties { get; set; } = new List<PLMProperty>();
+        //public List<PLMProperty> CsProperties { get; set; } = new List<PLMProperty>();
+        private ObservableCollection<PLMProperty> _plmProperties = new ObservableCollection<PLMProperty>();
+        public ObservableCollection<PLMProperty> PlmProperties
+        {
+            get { return _plmProperties; }
+            //set { SetProperty(ref _plmProperties, value); }//Modify by kenny 2020/08/04
+            set { SetProperty(ref _plmProperties, value, nameof(PLMProperty)); }
+        }
+
+
 
         /// <summary>
         /// 類別名稱
         /// </summary>
         [XmlSettingTagNameAttribute("name")]
         public string Name { get; set; }
+
+
+        /// <summary>
+        /// 查詢的型態
+        /// </summary>
+        public SearchType Type { get; set; }
+
+
+
 
         #endregion
 
@@ -41,13 +62,19 @@ namespace BCS.CADs.Synchronization.Classes
         /// 外部程式進入點
         /// </summary>
         /// <param name="xd"></param>
-        public ItemType(XElement xd, string itemtype)
+        public ItemType()
+        {
+        }
+
+        /// <summary>
+        /// 外部程式進入點
+        /// </summary>
+        /// <param name="xd"></param>
+        public void BuildItemType(XElement xd, string itemtype)
         {
             _xmlSetting = xd;
             BuildProperties(itemtype);
         }
-
-
 
         #endregion
 
@@ -60,12 +87,15 @@ namespace BCS.CADs.Synchronization.Classes
 
                 PLMProperty property;
                 bool isAddRevision = false;
-
+                
                 //"name", "id", "data_type", "data_source", "is_required", "label" ,"keyed_name" ,"related_id","sort_order"
                 foreach (XElement xmlItem in _xmlSetting.Elements("Item").Where(x=>x.Attribute("type")?.Value == "Property"))
                 {
                     //type =" Property " 
-                    property = new PLMProperty();
+
+                    string name = xmlItem.Elements("name")?.Single()?.Value;
+                    property = PlmProperties.Where(x => x.Name == name).FirstOrDefault();
+                    if (property==null) property = new PLMProperty();
 
                     //序號
                     string order = xmlItem.Elements("sort_order")?.Single()?.Value;
@@ -100,13 +130,13 @@ namespace BCS.CADs.Synchronization.Classes
 
                     if (property.DataType == "image")
                     {
-                        CsProperties.Add(property);
+                        PlmProperties.Add(property);
                         if (isAddRevision==false)AddRevisionProperty(itemtype);
                     }
                     else
                     {
                         if (isAddRevision == false) AddRevisionProperty(itemtype);
-                        CsProperties.Add(property);
+                        PlmProperties.Add(property);
                     }
                     isAddRevision = true;
                 }
@@ -125,12 +155,24 @@ namespace BCS.CADs.Synchronization.Classes
         {
 
             if (itemtype != "CAD") return;
-            PLMProperty property = new PLMProperty();
-            property.Name = "sys_revision";
-            property.DataType = "revision";
-            property.Label = "Revision";
-            CsProperties.Add(property);
+            AddProperty("sys_revision", "revision", "Version");
+            if (Type== SearchType.CADAllRevisionsSearch)
+            {
+                AddProperty("major_rev", "string", "major_rev");
+                AddProperty("generation", "string", "generation");
+            }
         }
+
+        private void AddProperty(string name,string dataType,string label)
+        {
+
+            PLMProperty property = new PLMProperty();
+            property.Name = name;
+            property.DataType = dataType;
+            property.Label = label;
+            PlmProperties.Add(property);
+        }
+
 
         #endregion
     }

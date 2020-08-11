@@ -361,12 +361,33 @@ namespace BCS.CADs.Synchronization
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        protected internal ItemType GetItemType(string name, bool isSearch)
+        protected internal ItemType GetItemType(string name, SearchType type)
         {
             try
             {
 
-                return _Plm.GetItemType(name, isSearch);
+                return _Plm.GetItemType(name, type);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
+        /// 取得物件所有版本
+        /// </summary>
+        /// <param name="searchItemType"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        protected internal ObservableCollection<SearchItem> GetAllRevisions(ItemType searchItemType, string itemId)
+        {
+            try
+            {
+
+                return _Plm.GetAllRevisions(searchItemType, itemId);
 
             }
             catch (Exception ex)

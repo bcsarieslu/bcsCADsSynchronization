@@ -55,7 +55,7 @@ namespace BCS.CADs.Synchronization.Entities
         private Dictionary<string, ItemType> _itemTypes = new Dictionary<string, ItemType>();
 
         private ItemType _cadItemType = null;
-
+        private ItemType _cadRevisionItemType = null;
 
         private SyncCADEvents _syncCADEvents = new SyncCADEvents();
         internal SyncCADEvents GetSyncCADEvents
@@ -401,6 +401,7 @@ namespace BCS.CADs.Synchronization.Entities
             }
             catch (Exception ex)
             {
+                string strError = ex.Message;
                 return "";
             }
         }
@@ -602,6 +603,87 @@ namespace BCS.CADs.Synchronization.Entities
                 return null;
             }
         }
+
+        /// <summary>
+        /// 取得物件所有版本
+        /// </summary>
+        /// <param name="searchItemType"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        virtual protected internal ObservableCollection<SearchItem> GetAllRevisions(ItemType searchItemType,string itemId)
+        {
+            try
+            {
+                ObservableCollection<SearchItem> ObsSearchItems = new ObservableCollection<SearchItem>();
+
+                //string propertyName = (LoadFromPLM) ? NativeProperty : "";
+                string propertyName = (searchItemType.Name == "CAD") ? NativeProperty : "";
+                Aras.IOM.Item qureyResult = _asInnovator.GetAllRevisions(searchItemType, propertyName, itemId);
+
+                int count = qureyResult.getItemCount();
+
+                for (var i = 0; i < qureyResult.getItemCount(); i++)
+                {
+                    SelectedSearchItem = new SearchItem();
+                    //SearchItem searchItem = new SearchItem();
+                    SelectedSearchItem.IsAdded = false;
+                    SelectedSearchItem.ItemConfigId = qureyResult.getItemByIndex(i).getProperty("config_id", "");
+                    SelectedSearchItem.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
+                    SelectedSearchItem.KeyedName = qureyResult.getItemByIndex(i).getProperty("keyed_name", "");
+
+                    //if (propertyName != "") SelectedSearchItem.FileId = qureyResult.getItemByIndex(i).getProperty(propertyName, "");
+                    if (String.IsNullOrWhiteSpace(propertyName) == false) SelectedSearchItem.FileId = qureyResult.getItemByIndex(i).getProperty(propertyName, "");
+
+                    SelectedSearchItem.ClassName = searchItemType.Name ;
+                    SelectedSearchItem.ClassThumbnail = GetClassThumbnail(SelectedSearchItem.ClassName);
+                    ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
+                    foreach (PLMProperty property in searchItemType.PlmProperties)
+                    {
+                        PLMProperty newProperty = property.Clone() as PLMProperty;
+
+                        //if (newProperty.Name != "")
+                        if (String.IsNullOrWhiteSpace(newProperty.Name) == false)
+                        {
+                            newProperty.IsInitial = false;
+                            newProperty.IsExist = true;
+                            newProperty.DataValue = qureyResult.getItemByIndex(i).getProperty(newProperty.Name, "");
+                            newProperty.SoruceSearchItem = SelectedSearchItem;
+
+                            //if (newProperty.DataType=="item" && newProperty.DataSource != "")
+                            if (newProperty.DataType == "item" && String.IsNullOrWhiteSpace(newProperty.DataSource) == false)
+                            {
+                                newProperty.DisplayValue = qureyResult.getItemByIndex(i).getProperty(newProperty.Name + "_keyed_name", "");
+                                newProperty.KeyedId = newProperty.DataValue;
+                                newProperty.KeyedName = newProperty.DisplayValue;
+
+                            }
+                            else if (newProperty.DataType == "revision")
+                            {
+                                newProperty.DisplayValue = qureyResult.getItemByIndex(i).getProperty("major_rev", "") + "." + qureyResult.getItemByIndex(i).getProperty("generation", "");
+
+                            }
+                            AddPropertyListItem(newProperty);
+                            SetDispalyValue(SelectedSearchItem, newProperty);
+
+                        }
+
+
+                        newProperties.Add(newProperty);
+                    }
+                    SelectedSearchItem.PlmProperties = newProperties;
+                    ObsSearchItems.Add(SelectedSearchItem);
+                }
+
+                return ObsSearchItems;
+            }
+            catch (Exception ex)
+            {
+                string strError = ex.Message;
+                return null;
+            }
+        }
+
+
 
         private void AddRevisionItem(Aras.IOM.Item item, PLMProperty property)//2020/08/05
         {
@@ -1617,31 +1699,41 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        virtual protected internal ItemType GetItemType(string name,bool isSearch)
+        virtual protected internal ItemType GetItemType(string name, SearchType type)
         {
             try
             {
 
-                if (isSearch == false && _cadItemType != null && name == "CAD") return _cadItemType;
-
+                //if (isSearch == false && _cadItemType != null && name == "CAD") return _cadItemType;
+                if (type == SearchType.CADRevisionSearch && _cadItemType != null) return _cadItemType;
+                if (type == SearchType.CADAllRevisionsSearch && _cadRevisionItemType != null ) return _cadRevisionItemType;
+                
                 ItemType itemType = _itemTypes.Where(x=>x.Key == name).Select(x=>x.Value).FirstOrDefault();
                 //itemType = _itemTypes.FirstOrDefault(x => x.Key == name)?.Value ?? string.Empty;
-                if (itemType != null && isSearch == true ) return itemType;
+                if (itemType != null && type == SearchType.Search) return itemType;
 
                 XElement itemTypeProperties = _asInnovator.GetSearchItemTypeProperties(name);
 
-                itemType = new ItemType(itemTypeProperties, name);
-                
+                itemType = new ItemType();
+                //itemType = new ItemType(itemTypeProperties, name);
+                itemType.Type  = type;
+                itemType.BuildItemType(itemTypeProperties, name);
+
                 //foreach (PLMProperties plmProperties in itemType.CsProperties.Where(x => x.DataSource != "" && (x.DataType == "list" || x.DataType == "filter list")))
-                foreach (PLMProperty plmProperty in itemType.CsProperties.Where(x => String.IsNullOrWhiteSpace(x.DataSource) ==false && (x.DataType == "list" || x.DataType == "filter list")))
+                foreach (PLMProperty plmProperty in itemType.PlmProperties.Where(x => String.IsNullOrWhiteSpace(x.DataSource) ==false && (x.DataType == "list" || x.DataType == "filter list")))
                 {
                     AddPropertyListItem(plmProperty);
+                    plmProperty.IsInitial = false;
+                    plmProperty.SoruceItemType = itemType;
                 }
 
                 itemType.Name = name;
 
-                if (isSearch == false && _cadItemType != null && name == "CAD")
+
+                if (type == SearchType.CADRevisionSearch)
                     _cadItemType = itemType;
+                else if(type == SearchType.CADAllRevisionsSearch)
+                    _cadRevisionItemType = itemType;
                 else
                     _itemTypes.Add(name, itemType);
 
@@ -2285,6 +2377,7 @@ namespace BCS.CADs.Synchronization.Entities
 
             catch (Exception ex)
             {
+                string strError = ex.Message;
                 property.SyncValue = null;
             }
         }

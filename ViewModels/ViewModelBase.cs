@@ -104,7 +104,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             get
             {
-
+                
                 _showCommand = _showCommand ?? new RelayCommand((x) =>
                 {
                     SearchItem searchItem = x as SearchItem;
@@ -859,7 +859,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //Modify by kenny 2020/08/05 ----------------------
                     if (ObsSearchItems.Count == 0 )
                     {
-                        ObsSearchItems.Add(ClsSynchronizer.NewSearchItem);
+                        //ObsSearchItems.Add(ClsSynchronizer.NewSearchItem);
+                        SelectedSearchItem = new SearchItem();
+                        ObsSearchItems.Add(SelectedSearchItem);
                         gridSelectedItems.RowStyle = RowStyleHeightzero();
                     }
                     else
@@ -1401,6 +1403,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     try
                     {
+                        
                         ShowMessagesView();
 
                     }
@@ -1430,9 +1433,26 @@ namespace BCS.CADs.Synchronization.ViewModels
             var viewPage = (Frame)MyMainWindow.FindName("viewPage");
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_addItemsMessageView);
+
         }
 
-
+        /// <summary>
+        /// 顯示多版本選取介面
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        private Boolean ShowRevisionList(string itemType, string itemId)
+        {
+            RevisionList revisionDialog = new RevisionList(itemType,itemId);
+            revisionDialog.Width = 800;
+            revisionDialog.Height = 600;
+            revisionDialog.Topmost = true;
+            revisionDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            revisionDialog.ShowDialog();
+            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
+            return false;
+        }
 
         private static ObservableCollection<LanguageList> _allLang;
         public static ObservableCollection<LanguageList> AllLang
@@ -2225,6 +2245,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         /// <param name="itemType"></param>
         /// <param name="isSub"></param>
         /// <param name="isCopyToAdd"></param>
+        
         public void LoadFromPLMView(Window win, bool isDialog, string itemType, bool isSub,bool isCopyToAdd)
         {
             //MainWindow = win;
@@ -2238,12 +2259,21 @@ namespace BCS.CADs.Synchronization.ViewModels
             OperationStart(displayName);
             //OperationStart("LoadFromPLMView");
 
-            ItemType itemTypeItem = ClsSynchronizer.VmSyncCADs.GetItemType(itemType,true);
+
+            ItemType itemTypeItem = (isDialog)? ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.Search) : ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.CADRevisionSearch);
             //List<SearchItem> searchItems = null;
 
             ObsSearchItems = new ObservableCollection<SearchItem>();
 
-            if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
+            //Modify by kenny 2020/08/10 -----------------------
+            //if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
+            bool isNew = false;
+            if (_ItemSearchView == null)
+            {
+                _ItemSearchView = new ItemSearch();
+                isNew = true;
+            }
+            //--------------------------------------------------
 
             if (ClsSynchronizer.IsActiveSubDialogView)
                 ClsSynchronizer.SyncSubListView = _ItemSearchView;
@@ -2265,18 +2295,24 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
 
-            int j = 0;
-            foreach (PLMProperty plmProperty in itemTypeItem.CsProperties)
+            
+
+            if (isNew)//Modify by kenny 2020/08/10
             {
-                
-                 //if (plmProperty.Label != "")
-                if (String.IsNullOrWhiteSpace(plmProperty.Label)==false)
+                int j = 0;
+                foreach (PLMProperty plmProperty in itemTypeItem.PlmProperties)
                 {
-                    //要排除預設的屬性
-                    AddDataGridColumn(gridSelectedItems, plmProperty, j);
+
+                    //if (plmProperty.Label != "")
+                    if (String.IsNullOrWhiteSpace(plmProperty.Label) == false)
+                    {
+                        //要排除預設的屬性
+                        AddDataGridColumn(gridSelectedItems, plmProperty, j);
+                    }
+                    j++;
                 }
-                j++;
             }
+           
 
             //ClsSynchronizer.NewSearchItem = new SearchItem();
             //ClsSynchronizer.NewSearchItem.ClassName = "CAD";
@@ -2285,7 +2321,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
 
             ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
-            foreach (PLMProperty property in itemTypeItem.CsProperties)
+            foreach (PLMProperty property in itemTypeItem.PlmProperties)
             {
                 PLMProperty newProperty = property.Clone() as PLMProperty;
                 // if (newProperty.Name != "")
@@ -2333,11 +2369,12 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             ClsSynchronizer.VmMessages.Status = "End";
         }
-
+        
         private Style RowStyleHeightzero()
         {
             Style style = new Style();
-            style.Setters.Add(new Setter(DataGridRow.HeightProperty, 0d));
+            //style.Setters.Add(new Setter(DataGridRow.HeightProperty, 0d));
+            style.Setters.Add(new Setter(property: FrameworkElement.HeightProperty, value: 0d));
             return style;
         }
 
@@ -2348,7 +2385,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.EditPropertiesView = _editPropertiesDataGrid;
             ClsSynchronizer.VmOperation = SyncOperation.EditorProperties;
 
-            ItemType itemType = ClsSynchronizer.VmSyncCADs.GetItemType("CAD" , false );
+            ItemType itemType = ClsSynchronizer.VmSyncCADs.GetItemType("CAD", SearchType.Search);
             if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
 
             if (ClsSynchronizer.IsActiveSubDialogView) 
@@ -2520,7 +2557,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         }
 
 
-        public void AddDataGridColumn(DataGrid gridSelectedItems, PLMProperty plmProperty,int index)
+        private  void AddDataGridColumn(DataGrid gridSelectedItems, PLMProperty plmProperty,int index)
         {
 
             //Modify by kenny 2020/07/31 --------------
@@ -2735,12 +2772,12 @@ namespace BCS.CADs.Synchronization.ViewModels
                 AddDataGridImage(imagePickerFactoryElem, plmProperty, index);              
                 cellTemplate.VisualTree = imagePickerFactoryElem;          
             }
-            else if (plmProperty.DataType == "revision")
-            {
-                FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-                AddDataGridTextStyleBinding(txtboxFactoryElem, index);
-                cellTemplate.VisualTree = txtboxFactoryElem;
-            }
+            //else if (plmProperty.DataType == "revision")
+            //{
+            //    FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
+            //    AddDataGridHeaderTextStyleBinding(txtboxFactoryElem, index);
+            //    cellTemplate.VisualTree = txtboxFactoryElem;
+            //}
             else
             {
                 //Update
@@ -2865,6 +2902,30 @@ namespace BCS.CADs.Synchronization.ViewModels
             txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
 
         }
+
+        private void AddDataGridHeaderTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, int index)
+        {
+
+            Binding textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
+            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            textboxBind.Mode = BindingMode.TwoWay;
+            txtboxFactoryElem.SetBinding(TextBox.DataContextProperty, textboxBind);
+
+            textboxBind.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+            textboxBind.Path = new PropertyPath("DisplayValue");
+            txtboxFactoryElem.SetBinding(TextBox.TextProperty, textboxBind);
+
+
+            textboxBind.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+            textboxBind.Path = new PropertyPath("DataSource");
+            txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
+
+            textboxBind = new Binding("DataType");
+            textboxBind.Converter = new StyleGridConverter();
+            txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
+
+        }
+
 
         private void AddDataGridTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, PLMProperty plmProperty)
         {

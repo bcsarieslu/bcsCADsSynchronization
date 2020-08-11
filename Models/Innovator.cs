@@ -93,6 +93,7 @@ namespace BCS.CADs.Synchronization.Models
             }
             catch (Exception ex)
             {
+                string strError = ex.Message;
                 return "";
             }
         }
@@ -1478,6 +1479,58 @@ namespace BCS.CADs.Synchronization.Models
                 string sqlCommand = " TOP 500 {0} from [innovator].[" + searchItemType.ClassName + "] as a {1} where {2}";
 
                 Aras.IOM.Item qureyResult = GetPLMSearchItems(sqlCommand, selectValue, sbLeftJoin.ToString(), where.ToString());
+                int count = qureyResult.getItemCount();
+
+
+                return qureyResult;
+            }
+            catch (Exception ex)
+            {
+                string strError = ex.Message;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 取得物件所有版本
+        /// </summary>
+        /// <param name="searchItemType"></param>
+        /// <param name="nativeProperty"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        protected internal Aras.IOM.Item GetAllRevisions(ItemType searchItemType, string nativeProperty,string itemId)
+        {
+            try
+            {
+
+                Aras.IOM.Item item = AsInnovator.getItemById(searchItemType.Name , itemId);
+
+                List<string> select = searchItemType.PlmProperties.Where(x => String.IsNullOrWhiteSpace(x.Name) == false).Where(x => x.DataType != "revision").Select(x => x.Name).ToList<string>();
+                select.Add("id");
+                select.Add("config_id");
+                select.Add("keyed_name");
+                select.Add("major_rev");
+                select.Add("generation");
+
+                string selectValue = "a." + String.Join(",a.", select);
+
+                StringBuilder sbSelects = new StringBuilder();
+                StringBuilder sbLeftJoin = new StringBuilder();
+
+                int i = 0;
+
+                foreach (PLMProperty property in searchItemType.PlmProperties.Where(x => String.IsNullOrWhiteSpace(x.Name) == false && x.DataType == "item" && x.DataSource != ""))
+                {
+                    sbSelects.Append(",");
+                    sbSelects.Append($"a{i}.keyed_name as {property.Name}_keyed_name");
+                    sbLeftJoin.Append($"left join [innovator].[{property.DataSource.ToUpper().Replace(" ", "_")}] as a{i} on a.{property.Name}=a{i}.id ");
+                    i++;
+                }
+
+                selectValue += sbSelects.ToString();
+                string sqlCommand = " TOP 500 {0} from [innovator].[" + searchItemType.Name  + "] as a {1} where a.config_id='{2}' order by a.generation asc";
+
+                Aras.IOM.Item qureyResult = GetPLMSearchItems(sqlCommand, selectValue, sbLeftJoin.ToString(), item.getProperty("config_id", ""));
                 int count = qureyResult.getItemCount();
 
 

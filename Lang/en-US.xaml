@@ -58,7 +58,8 @@
     <sys:String x:Key="done">Done</sys:String>
     <sys:String x:Key="selectFolder">Select saved path</sys:String>
     <sys:String x:Key="time">Time</sys:String>
-    <sys:String x:Key="itemName">Item Name</sys:String>
+    <!-- Item Name -->
+    <sys:String x:Key="itemName">Name</sys:String>
     <sys:String x:Key="description">Description</sys:String>
     <!--<sys:String x:Key="MainWindow_status">Status :</sys:String>-->
     <sys:String x:Key="newFileName">New File Name :</sys:String>

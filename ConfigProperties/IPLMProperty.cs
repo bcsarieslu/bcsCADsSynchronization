@@ -1,5 +1,6 @@
 ﻿
 #region "                   名稱空間"
+using BCS.CADs.Synchronization.Classes;
 using BCS.CADs.Synchronization.PLMList;
 using BCS.CADs.Synchronization.Search;
 using System;
@@ -29,6 +30,12 @@ namespace BCS.CADs.Synchronization.ConfigProperties
         /// 來源的SearchItem
         /// </summary>
         SearchItem SoruceSearchItem { get; set; }
+
+        /// <summary>
+        /// 來源的ItemType
+        /// </summary>
+        ItemType SoruceItemType { get; set; }
+
 
         /// <summary>
         /// 同步PLM

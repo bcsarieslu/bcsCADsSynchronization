@@ -167,6 +167,7 @@
     <Compile Include="ViewModels\NotifyPropertyBase.cs" />
     <Compile Include="ViewModels\PositioningCommand.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
+    <Compile Include="ViewModels\RevisionListViewModel.cs" />
     <Compile Include="ViewModels\ShowCommand.cs" />
     <Compile Include="ViewModels\SyncCommands.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
@@ -175,6 +176,9 @@
     </Compile>
     <Compile Include="Views\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ClassificationTree.xaml.cs">
+      <DependentUpon>ClassificationTree.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ItemFilterSearch.xaml.cs">
       <DependentUpon>ItemFilterSearch.xaml</DependentUpon>
@@ -206,6 +210,9 @@
     </Compile>
     <Compile Include="Views\PlugInFuncs.xaml.cs">
       <DependentUpon>PlugInFuncs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RevisionList.xaml.cs">
+      <DependentUpon>RevisionList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SubItemSearchDialog.xaml.cs">
       <DependentUpon>SubItemSearchDialog.xaml</DependentUpon>
@@ -290,6 +297,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ClassificationTree.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EditProperties.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -319,6 +330,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlugInFuncs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RevisionList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

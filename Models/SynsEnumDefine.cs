@@ -143,7 +143,7 @@ namespace BCS.CADs.Synchronization.Models
     /// </summary>
     public enum SyncVersionStatus { Uncompared, LatestVersion, NonLatestVersion, NonSystem };
 
-
+    public enum SearchType { Search, CADRevisionSearch, CADAllRevisionsSearch }
 
 
 }

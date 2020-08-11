@@ -112,6 +112,7 @@ namespace BCS.CADs.Synchronization.Entities
             }
             catch (Exception ex)
             {
+                string strError = ex.Message;
                 return "";
             }
         }

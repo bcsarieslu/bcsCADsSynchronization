@@ -1,14 +1,15 @@
-﻿<Window x:Class="BCS.CADs.Synchronization.Views.NewFileName"
+﻿<Window x:Class="BCS.CADs.Synchronization.Views.RevisionList"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:vm="clr-namespace:BCS.CADs.Synchronization.ViewModels"
-      xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
+      xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"    
       xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
       mc:Ignorable="d" 
-      d:DesignHeight="180" d:DesignWidth="400"
-      Title="{DynamicResource label_NewFileName}">
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="RevisionList">
+
 
     <Window.Resources>
         <ResourceDictionary>
@@ -17,22 +18,22 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/AddTemplateStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/MainStyle.xaml"/>
-                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--<ViewModels:MainWindowViewModel></ViewModels:MainWindowViewModel>-->
             <vm:NewFileNameViewModel x:Key="viewmodel"/>
         </ResourceDictionary>
     </Window.Resources>
-
+    
     <Window.DataContext>
-        <con:NewFileNameViewModel/>
+        <con:RevisionListViewModel/>
     </Window.DataContext>
 
     <Grid>
         <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="20*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="0,15,0,0" >
                 <Grid.ColumnDefinitions>
@@ -48,24 +49,45 @@
                 <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="closeDialogWindow" ToolTip="{DynamicResource close}" Command="{Binding CloseDialogWindow}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image Source="{StaticResource CloseDrawingImage}"/>
                 </Button>
+                <TextBox x:Name="selectedItemId" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedSearchItem.ItemId, Mode=TwoWay }" Tag="{Binding Path=SelectedSearchItem.KeyedName, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
+                <TextBlock x:Name="positionUse" Width="0.1" Height="0.1"/>
             </Grid>
 
             <Grid Grid.Row="1">
-                <StackPanel  >
-                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,10,0,0"
-                                   Name="fileNameTitle"
-                                   Text="{DynamicResource newFileName}"
-                                   >
-                    </TextBlock>
-                    <TextBox Name="newFileNameTextBox" Grid.Row="1" Grid.Column="2" Margin="0,10,0,0" Height="25" Width="390"
-                                   Text="{Binding  Mode=TwoWay, Path=PLM.NewFileName}"
-                                   Style="{StaticResource TextStyleTextBox}" />
+                <DataGrid x:Name="gridSelectedItems" IsReadOnly="False" CanUserAddRows="False"
+                        AutoGenerateColumns="False" 
+                        ItemsSource="{Binding ObsSearchItems}"
+                        SelectedItem="{Binding SelectedSearchItem, Mode=TwoWay}"
+                        Grid.Row="3"
+		                Grid.Column="1"
+		                Margin="10"
+		                AlternationCount="2"
+		                MinRowHeight="26" 
+                        FontSize="14"
+                        SelectionMode="Single" 
+                        >
+                    <DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftClick" 
+                          Command="{Binding GridFieldClickedCommand}" 
+                          CommandParameter="{Binding ElementName=gridSelectedItems, Path=SelectedItem}" />
+                    </DataGrid.InputBindings>
 
+                    <DataGrid.RowHeaderTemplate>
+                        <DataTemplate>
+                            <ToggleButton x:Name="RowHeaderToggleButton" Cursor="Hand"/>
+                        </DataTemplate>
+                    </DataGrid.RowHeaderTemplate>
+                    <DataGrid.Columns>
 
-                </StackPanel>
+                    </DataGrid.Columns>
+                </DataGrid>
 
             </Grid>
-            <Grid Grid.Row="3"/>
+            <Grid Grid.Row="2">
+                <Canvas x:Name="DialogCanvasViewFile" Grid.Row="2"  Visibility="Visible" Grid.Column="0">
+                    <local:ViewFile HorizontalContentAlignment="Left" VerticalContentAlignment="Top" x:Name="viewFile" Width="0" Height="0"/>
+                </Canvas>
+            </Grid>
         </Grid>
 
     </Grid>

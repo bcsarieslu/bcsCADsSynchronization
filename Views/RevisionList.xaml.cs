@@ -16,23 +16,24 @@ using System.Windows.Shapes;
 namespace BCS.CADs.Synchronization.Views
 {
     /// <summary>
-    /// NewFileName.xaml 的互動邏輯
+    /// RevisionList.xaml 的互動邏輯
     /// </summary>
-
-    public partial class NewFileName : Window
+    public partial class RevisionList : Window
     {
-
-        public NewFileName()
+        public RevisionList()
         {
             InitializeComponent();
             ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
         }
 
-        public NewFileName(string newFileName)
+        public RevisionList(string itemType,string itemId)
         {
             InitializeComponent();
             ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
-            DataContext = new NewFileNameViewModel(this, newFileName);
+            RevisionListViewModel DataContext = new RevisionListViewModel();
+            DataContext.SetView = this;
+            DataContext.ShowAllRevisions(itemType,itemId);
         }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿
 #region "                   名稱空間"
+using BCS.CADs.Synchronization.Classes;
 using BCS.CADs.Synchronization.Models;
 using BCS.CADs.Synchronization.PLMList;
 using BCS.CADs.Synchronization.Search;
@@ -55,6 +56,12 @@ namespace BCS.CADs.Synchronization.ConfigProperties
         /// 來源的SearchItem
         /// </summary>
         public SearchItem SoruceSearchItem { get; set; }
+
+
+        /// <summary>
+        /// 來源的ItemType
+        /// </summary>
+        public ItemType SoruceItemType { get; set; }
 
         /// <summary>
         /// 同步PLM
@@ -214,6 +221,7 @@ namespace BCS.CADs.Synchronization.ConfigProperties
             {
                 if (value != _displayValue)
                 {
+                    //System.Diagnostics.Debugger.Break();
                     _displayValue = value;
                     SetProperty(ref _displayValue, value, nameof(DisplayValue));
                     OnPropertyChanged("DisplayValue");
@@ -484,9 +492,9 @@ namespace BCS.CADs.Synchronization.ConfigProperties
             try
             {
                 //System.Diagnostics.Debugger.Break();
-                if ((currentProperty.DataType != "filter list" && currentProperty.DataType != "list") || currentProperty.SoruceSearchItem == null) return;
+                if ((currentProperty.DataType != "filter list" && currentProperty.DataType != "list") || (currentProperty.SoruceSearchItem == null && currentProperty.SoruceItemType == null)) return;
 
-                PLMProperty targetProperty = currentProperty.SoruceSearchItem.PlmProperties.Where(x => x.Pattern == currentProperty.Name).FirstOrDefault();
+                PLMProperty targetProperty =(currentProperty.SoruceItemType == null)? currentProperty.SoruceSearchItem.PlmProperties.Where(x => x.Pattern == currentProperty.Name).FirstOrDefault() : currentProperty.SoruceItemType.PlmProperties.Where(x => x.Pattern == currentProperty.Name).FirstOrDefault();
                 if (targetProperty == null) return;
 
                 string value = (currentProperty.DataValue == null) ? "" : currentProperty.DataValue;
