@@ -110,13 +110,18 @@ namespace BCS.CADs.Synchronization.ViewModels
                     SearchItem searchItem = x as SearchItem;
                     if (searchItem != null)
                     {
-                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail);
+                        //Modify by kenny 2020/08/12
+                        //ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail);
+                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem);
                         
                         //if (ClsSynchronizer.ViewFilePath == "")
                         if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath))
                         {
-                            PLMProperty thumbnail = searchItem.PlmProperties.Where(y => y.Name == ClsSynchronizer.VmSyncCADs.ThumbnailProperty).FirstOrDefault();
-                            if (thumbnail != null) ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(thumbnail.DataValue);
+                            if (searchItem.IsVersion==false)
+                            {
+                                PLMProperty thumbnail = searchItem.PlmProperties.Where(y => y.Name == ClsSynchronizer.VmSyncCADs.ThumbnailProperty).FirstOrDefault();
+                                if (thumbnail != null) ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(thumbnail.DataValue);
+                            }
                         }
 
                         //if (ClsSynchronizer.ViewFilePath == "") ClsSynchronizer.ViewFilePath = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
@@ -2769,15 +2774,17 @@ namespace BCS.CADs.Synchronization.ViewModels
             if (plmProperty.DataType== "image")
             {
                 FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
+                
                 AddDataGridImage(imagePickerFactoryElem, plmProperty, index);              
                 cellTemplate.VisualTree = imagePickerFactoryElem;          
             }
-            //else if (plmProperty.DataType == "revision")
-            //{
-            //    FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-            //    AddDataGridHeaderTextStyleBinding(txtboxFactoryElem, index);
-            //    cellTemplate.VisualTree = txtboxFactoryElem;
-            //}
+            else if (plmProperty.DataType == "revision")
+            {
+                FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
+                //AddDataGridHeaderTextStyleBinding(txtboxFactoryElem, index);
+                AddDataGridTextStyleBinding(txtboxFactoryElem, index, plmProperty.DataType);
+                cellTemplate.VisualTree = txtboxFactoryElem;
+            }
             else
             {
                 //Update
@@ -2870,16 +2877,17 @@ namespace BCS.CADs.Synchronization.ViewModels
             DataGridTemplateColumn col = new DataGridTemplateColumn();
             col.Header = plmProperty.Label;
             FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-            AddDataGridTextStyleBinding(txtboxFactoryElem, index);
+            AddDataGridTextStyleBinding(txtboxFactoryElem, index, plmProperty.DataType);
 
             DataTemplate cellTemplate = new DataTemplate();
             cellTemplate.VisualTree = txtboxFactoryElem;
             col.CellTemplate = cellTemplate;
-
+            
             gridSelectedItems.Columns.Add(col);
+            
         }
 
-        private void AddDataGridTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, int index)
+        private void AddDataGridTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, int index,string type)
         {
 
             Binding textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
@@ -2892,10 +2900,53 @@ namespace BCS.CADs.Synchronization.ViewModels
             textboxBind.Mode = BindingMode.TwoWay;
             txtboxFactoryElem.SetBinding(TextBox.TextProperty, textboxBind);
 
-            textboxBind = new Binding("DataSource");
+            //@@@@@@@@@@2020/08/11
+            //new MultiBinding : plmProperty.SoruceSearchItem.ItemId   plmProperty.SoruceSearchItem.ItemId
+
+            textboxBind = (type == "revision") ? new Binding("SoruceSearchItem.ItemId") : new Binding("DataSource");
             textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             textboxBind.Mode = BindingMode.TwoWay;
             txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
+
+
+            if (type == "revision")
+            {
+                textboxBind = new Binding("DataValue");//DataValue  DisplayValue
+                textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                textboxBind.Mode = BindingMode.OneWay;
+                txtboxFactoryElem.SetBinding(TextBox.ToolTipProperty, textboxBind);
+            }
+
+                //textboxBind = (type == "revision") ? new Binding("SoruceSearchItem.ItemId") : new Binding("DataSource");
+
+                //if (type == "revision")
+                //{
+                //    MultiBinding mlBind = new MultiBinding();
+                //    mlBind.StringFormat = "{}{0}";
+                //    textboxBind = new Binding("SoruceSearchItem.ClassName");
+                //    mlBind.Bindings.Add(textboxBind);
+                //    textboxBind = new Binding("SoruceSearchItem.ItemId");
+                //    mlBind.Bindings.Add(textboxBind);
+
+                //    mlBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                //    mlBind.Mode = BindingMode.TwoWay;
+                //    txtboxFactoryElem.SetBinding(TextBox.TagProperty, mlBind);
+                //}
+                //else
+                //{
+                //    textboxBind = new Binding("DataSource");
+                //    textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                //    textboxBind.Mode = BindingMode.TwoWay;
+                //    txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
+                //}
+
+
+                //textboxBind = new Binding("DataSource");
+                //textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                //textboxBind.Mode = BindingMode.TwoWay;
+                //txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
+
+                //plmProperty.SoruceSearchItem.ClassName
 
             textboxBind = new Binding("DataType");
             textboxBind.Converter = new StyleGridConverter();
@@ -2948,6 +2999,8 @@ namespace BCS.CADs.Synchronization.ViewModels
             textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             textboxBind.Mode = BindingMode.TwoWay;
             txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
+
+            if (plmProperty.DataType == "image" || plmProperty.DataType == "revision") return;
 
             textboxBind = new Binding("DataType");
             textboxBind.Converter = new StyleGridConverter();

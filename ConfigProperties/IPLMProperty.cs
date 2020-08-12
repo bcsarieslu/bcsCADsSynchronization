@@ -202,7 +202,7 @@ namespace BCS.CADs.Synchronization.ConfigProperties
         /// <summary>
         /// 系統所有版本+版次
         /// </summary>
-        ObservableCollection<PLMRevision> PlmRevisions { get; set; }
+        //ObservableCollection<PLMRevision> PlmRevisions { get; set; }
 
         /// <summary>
         /// 被選到的項目

@@ -93,7 +93,7 @@ namespace BCS.CADs.Synchronization.Search
         /// <summary>
         /// 系統所有版本+版次
         /// </summary>
-        ObservableCollection<PLMRevision> PlmRevisions { get; set; }
+        //ObservableCollection<PLMRevision> PlmRevisions { get; set; }
 
 
         /// <summary>
@@ -130,6 +130,12 @@ namespace BCS.CADs.Synchronization.Search
         /// 是否是最新版本
         /// </summary>
         bool IsCurrent { get; set; }
+
+        /// <summary>
+        /// 是否有版本屬性
+        /// </summary>
+        bool IsVersion { get; set; }
+
 
         /// <summary>
         /// 限制狀態

@@ -99,7 +99,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     Window win = (Window)ClsSynchronizer.SyncSubDialogView;
                     TextBox txtSelectedItemId = (TextBox)win.FindName("selectedItemId");
-                    MessageBox.Show(txtSelectedItemId.Text);
+                    //MessageBox.Show(txtSelectedItemId.Text);
                     if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text)) {
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected"));return; }
 
@@ -112,6 +112,57 @@ namespace BCS.CADs.Synchronization.ViewModels
         }
 
 
+        public ICommand GridFieldClickedCommand
+        {
+            get
+            {
+
+                _showCommand = _showCommand ?? new RelayCommand((x) =>
+                {
+                    Window win = (Window)ClsSynchronizer.SyncSubDialogView;
+                    //System.Diagnostics.Debugger.Break();
+                    SearchItem searchItem = x as SearchItem;
+                    if (searchItem != null)
+                    {
+                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail);
+
+                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath))
+                        {
+                            PLMProperty thumbnail = searchItem.PlmProperties.Where(y => y.Name == ClsSynchronizer.VmSyncCADs.ThumbnailProperty).FirstOrDefault();
+                            if (thumbnail != null) ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(thumbnail.DataValue);
+                        }
+
+                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath)) ClsSynchronizer.ViewFilePath = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
+
+                        Canvas canvas = (Canvas)win.FindName("DialogCanvasViewFile");
+                        TextBlock positionUse = (TextBlock)win.FindName("positionUse");
+                        canvas.Visibility = Visibility.Visible;
+                        ViewFile viewFile = (ViewFile)canvas.FindName("viewFile");
+
+                        Label lb = (Label)ClsSynchronizer.MainWindows.FindName("scaleLabel");
+                        Point pointToWindow = Mouse.GetPosition(positionUse);
+
+                        double size = (double.Parse(lb.Content.ToString()) / 100);
+                        Canvas.SetLeft(viewFile, pointToWindow.X - (20 * size));
+                        Canvas.SetTop(viewFile, pointToWindow.Y - (520 * size));
+
+                        if (viewFile != null)
+                        {
+                            Image image = (Image)viewFile.FindName("imageFile");
+                            if (image != null) image.Source = new BitmapImage(new Uri(ClsSynchronizer.ViewFilePath));
+                        }
+                        Storyboard myStoryboard = new Storyboard();
+                        myStoryboard.Children.Add((Storyboard)win.Resources["showMe"]);
+                        myStoryboard.Begin(viewFile);
+                    }
+                });
+
+
+                return _showCommand;
+            }
+        }
+
+
 
         private ICommand _itemPickerImageLeftClick { get; set; }
         public ICommand ItemPickerImageLeftClick
@@ -120,20 +171,66 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _itemPickerImageLeftClick = new RelayCommand((x) =>
                 {
+                    //System.Diagnostics.Debugger.Break();
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
-                    string itemType = txtProperty.Tag.ToString();
-                    //string itemType = txtProperty.Tag.ToString();
-                    //ShowAllRevisions("CAD",txtProperty);
+                    string itemId = txtProperty.Tag.ToString();
+                    string itemType = "CAD";
+                    if (ShowRevisionList(itemType, itemId))
+                    {
+                        var toolTip = txtProperty.ToolTip;
+                        string selectedItemId =ClsSynchronizer.DialogReturnValue;
+                        txtProperty.Text = ClsSynchronizer.VmSyncCADs.GetVersion(itemType, selectedItemId);
+                        txtProperty.ToolTip = toolTip;
+                    }
                 });
                 return _itemPickerImageLeftClick;
             }
         }
 
 
+
+        //private ICommand _itemPickerImageLeftClick { get; set; }
+        //public ICommand ItemPickerImageLeftClick
+        //{
+        //    get
+        //    {
+        //        _itemPickerImageLeftClick = new RelayCommand((x) =>
+        //        {
+        //            //MessageBox.Show("ItemPickerImageLeftClick");
+        //            //System.Diagnostics.Debugger.Break();
+        //            dynamic y = x;
+        //            TextBox txtProperty = (TextBox)y.TemplatedParent;
+        //            //string itemType = txtProperty.Tag.ToString();
+        //            ShowItemSearchDialog(txtProperty, true);
+
+
+
+        //        });
+        //        return _itemPickerImageLeftClick;
+        //    }
+        //}
+
+
+
         #endregion
 
         #region "                   方法區
+
+        private Boolean ShowRevisionList(string itemType, string itemId)
+        {
+            RevisionList revisionDialog = new RevisionList(itemType, itemId);
+            revisionDialog.Width = 800;
+            revisionDialog.Height = 600;
+            revisionDialog.Topmost = true;
+            revisionDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            revisionDialog.ShowDialog();
+            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
+            return false;
+        }
+
+
+
         public void ShowAllRevisions(string itemType, string itemId)
         {
 
@@ -191,57 +288,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             gridSelectedItems.ItemsSource = ObsSearchItems;
 
         }
-
-        public ICommand GridFieldClickedCommand
-        {
-            get
-            {
-
-                _showCommand = _showCommand ?? new RelayCommand((x) =>
-                {
-                    Window win = (Window)ClsSynchronizer.SyncSubDialogView;
-
-                    SearchItem searchItem = x as SearchItem;
-                    if (searchItem != null)
-                    {
-                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail);
-
-                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath))
-                        {
-                            PLMProperty thumbnail = searchItem.PlmProperties.Where(y => y.Name == ClsSynchronizer.VmSyncCADs.ThumbnailProperty).FirstOrDefault();
-                            if (thumbnail != null) ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(thumbnail.DataValue);
-                        }
-
-                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath)) ClsSynchronizer.ViewFilePath = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
-
-                        Canvas canvas = (Canvas)win.FindName("DialogCanvasViewFile");
-                        TextBlock positionUse = (TextBlock)win.FindName("positionUse");
-                        canvas.Visibility = Visibility.Visible;
-                        ViewFile viewFile = (ViewFile)canvas.FindName("viewFile");
-
-                        Label lb = (Label)ClsSynchronizer.MainWindows.FindName("scaleLabel");
-                        Point pointToWindow = Mouse.GetPosition(positionUse);
-
-                        double size = (double.Parse(lb.Content.ToString()) / 100);
-                        Canvas.SetLeft(viewFile, pointToWindow.X - (20 * size));
-                        Canvas.SetTop(viewFile, pointToWindow.Y - (520 * size));
-
-                        if (viewFile != null)
-                        {
-                            Image image = (Image)viewFile.FindName("imageFile");
-                            if (image != null) image.Source = new BitmapImage(new Uri(ClsSynchronizer.ViewFilePath));
-                        }
-                        Storyboard myStoryboard = new Storyboard();
-                        myStoryboard.Children.Add((Storyboard)win.Resources["showMe"]);
-                        myStoryboard.Begin(viewFile);
-                    }
-                });
-
-
-                return _showCommand;
-            }
-        }
-
 
 
 

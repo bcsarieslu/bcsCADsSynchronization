@@ -459,6 +459,46 @@ namespace BCS.CADs.Synchronization.Entities
         }
 
         /// <summary>
+        /// 取得圖檔
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        virtual protected internal string GetImageFullName(SearchItem searchItem)
+        {
+            try
+            {
+
+                var value = searchItem.Thumbnail;
+                PLMProperty plmProperty=  searchItem.PlmProperties.Where(x => x.DataType == "revision").FirstOrDefault();
+                if (plmProperty != null)
+                {
+                    searchItem.IsVersion = true;
+                    if (plmProperty.Value!= plmProperty.DisplayValue)
+                    {
+                        List<string> list = plmProperty.DisplayValue.Split('.').ToList();
+                        Aras.IOM.Item item = _asInnovator.GetRevisionItem(searchItem.ClassName, searchItem.ItemConfigId, list[0], list[1]);
+                        value = item.getProperty(ThumbnailProperty, "");
+                        if (value == "") return "";
+                    }else
+                    {
+                        Aras.IOM.Item item = AsInnovator.getItemById(searchItem.ClassName, searchItem.ItemId);
+                        value = item.getProperty(ThumbnailProperty, "");
+                    }
+                }
+
+                return GetImageFullName(value);
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                return "";
+            }
+        }
+
+
+
+        /// <summary>
         /// Aras Innovator Login 
         /// </summary>
         virtual public void Login()
@@ -582,6 +622,7 @@ namespace BCS.CADs.Synchronization.Entities
                             else if(newProperty.DataType == "revision")//Modify by kenny 2020/08/05
                             {
                                 AddRevisionItem(qureyResult.getItemByIndex(i), newProperty);
+                                searchItemType.IsVersion = true;
                             }
                             AddPropertyListItem(newProperty);
                             SetDispalyValue(SelectedSearchItem, newProperty);
@@ -660,7 +701,9 @@ namespace BCS.CADs.Synchronization.Entities
                             else if (newProperty.DataType == "revision")
                             {
                                 newProperty.DisplayValue = qureyResult.getItemByIndex(i).getProperty("major_rev", "") + "." + qureyResult.getItemByIndex(i).getProperty("generation", "");
-
+                                newProperty.DataValue = newProperty.DisplayValue;
+                                newProperty.Value = newProperty.DisplayValue;
+                                SelectedSearchItem.IsVersion = true;
                             }
                             AddPropertyListItem(newProperty);
                             SetDispalyValue(SelectedSearchItem, newProperty);
@@ -684,22 +727,50 @@ namespace BCS.CADs.Synchronization.Entities
         }
 
 
-
+        /// <summary>
+        /// 加入版本項目
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="property"></param>
         private void AddRevisionItem(Aras.IOM.Item item, PLMProperty property)//2020/08/05
         {
             //select.Add("major_rev");
             //select.Add("generation");
             property.IsSystemAdd = true;
-            PLMRevision plmRevision = new PLMRevision();
-            plmRevision.IsSelected = true;
-            plmRevision.ItemId= item.getProperty("id", "");
-            plmRevision.ItemConfigId = item.getProperty("config_id", "");
-            plmRevision.MajorRevision = item.getProperty("major_rev", "");
-            plmRevision.Generation = item.getProperty("generation", "");
-            plmRevision.Revision = plmRevision.MajorRevision + "." + plmRevision.Generation;
-            property.PlmRevisions.Add(plmRevision);
-            property.DisplayValue = plmRevision.Revision;
+            //PLMRevision plmRevision = new PLMRevision();
+            //plmRevision.IsSelected = true;
+            //plmRevision.ItemId = item.getProperty("id", "");
+            //plmRevision.ItemConfigId = item.getProperty("config_id", "");
+            //plmRevision.MajorRevision = item.getProperty("major_rev", "");
+            //plmRevision.Generation = item.getProperty("generation", "");
+            //plmRevision.Revision = plmRevision.MajorRevision + "." + plmRevision.Generation;
+            //property.PlmRevisions.Add(plmRevision);
+            //property.DisplayValue = plmRevision.Revision;
+            property.DisplayValue = item.getProperty("major_rev", "") + "." + item.getProperty("generation", "");
         }
+
+        /// <summary>
+        /// 取得版本
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        virtual protected internal string GetVersion(string itemType, string itemId)
+        {
+            try
+            {
+                Aras.IOM.Item item = AsInnovator.getItemById(itemType, itemId);
+
+                return $"{item.getProperty("major_rev")}.{item.getProperty("generation")}";
+                
+            }
+            catch (Exception ex)
+            {
+                //string strError = ex.Message;
+                throw ex;
+            }
+        }
+
 
         /// <summary>
         /// 同步PLM屬性

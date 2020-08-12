@@ -1602,6 +1602,35 @@ namespace BCS.CADs.Synchronization.Models
             }
         }
 
+        /// <summary>
+        /// 取某一版本
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="configId"></param>
+        /// <param name="majorRev"></param>
+        /// <param name="generation"></param>
+        /// <returns></returns>
+        protected internal Aras.IOM.Item GetRevisionItem(string itemType, string configId, string majorRev, string generation)
+        {
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("<AML>");
+                stringBuilder.Append($"<Item type = '{itemType}' action = 'get' >");
+                stringBuilder.Append($"<config_id>{configId}</config_id>");
+                stringBuilder.Append($"<major_rev>{majorRev}</major_rev>");
+                stringBuilder.Append($"<generation>{generation}</generation>");
+                stringBuilder.Append("</Item>");
+                stringBuilder.Append("</AML>");
+                string aml = stringBuilder.ToString();
+                return AsInnovator.applyAML(aml);
+            }
+            catch (Exception ex)
+            {
+                //string strError = ex.Message;
+                throw ex;
+            }
+        }
 
         #endregion
 

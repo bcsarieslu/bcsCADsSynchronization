@@ -367,12 +367,12 @@ namespace BCS.CADs.Synchronization.ConfigProperties
         /// <summary>
         /// 系統所有版本+版次
         /// </summary>
-        private ObservableCollection<PLMRevision> _plmRevisions = new ObservableCollection<PLMRevision>();
-        public ObservableCollection<PLMRevision> PlmRevisions
-        {
-            get { return _plmRevisions; }
-            set { SetProperty(ref _plmRevisions, value, nameof(PlmRevisions)); }
-        }
+        //private ObservableCollection<PLMRevision> _plmRevisions = new ObservableCollection<PLMRevision>();
+        //public ObservableCollection<PLMRevision> PlmRevisions
+        //{
+        //    get { return _plmRevisions; }
+        //    set { SetProperty(ref _plmRevisions, value, nameof(PlmRevisions)); }
+        //}
 
         private ICommand _selectedPLMRevisionChanged;
         public ICommand SelectedPLMRevisionChanged
@@ -478,6 +478,12 @@ namespace BCS.CADs.Synchronization.ConfigProperties
                     ResetSyncColorTypeValue((ListItems.Where(x => x.Label == DisplayValue) != null) ? ListItems.Where(x => x.Label == DisplayValue).Select(x => x.Value).FirstOrDefault() : "");
                     DataValue = (ListItems.Where(x => x.Label == DisplayValue) != null) ? ListItems.Where(x => x.Label == DisplayValue).Select(x => x.Value).FirstOrDefault() : "";
                     ResetTargetFilterListItems(this);
+                }
+                else if (DataType == "revision")
+                {
+                    _syncColorTypeValue = (DisplayValue != Value) ? (int)SyncColorType.SyncDifferentValues : (int)SyncColorType.Defalue;
+                    //ResetSyncColorTypeValue(DisplayValue);
+                    DataValue = DisplayValue;
                 }
                 else
                 {

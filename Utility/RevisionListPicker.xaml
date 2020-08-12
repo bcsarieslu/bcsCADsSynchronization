@@ -2,10 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Converter="clr-namespace:BCS.CADs.Synchronization.Utility"
                     xmlns:Views="clr-namespace:BCS.CADs.Synchronization.Views"
+                    xmlns:local1="clr-namespace:BCS.CADs.Synchronization.ConfigProperties"
                     xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels"
                     >
-
-    <!--<Converter:ItemPickerConveter x:Key="itemPickerConveter" />
+    <local1:PLMProperty x:Key="RegPLMPropertiesConverter"/>
+    <Converter:ItemPickerConveter x:Key="itemPickerConveter" />
     <ViewModels:StringImageToResource x:Key="StringToResource" />
     <ViewModels:StringImageToResource x:Key="Menu" />
     <ViewModels:RevisionListViewModel x:Key="RevisionListViewModel"/>
@@ -16,7 +17,33 @@
         </Border>
     </ControlTemplate>
 
-    <Style x:Key="tbItemStyle" TargetType="{x:Type TextBox}">
+    <Style x:Key="tbListRevStyle" TargetType="{x:Type TextBox}">
+        <Style.Triggers>
+            <!--<DataTrigger >
+                <Setter Property="Background" Value="{Binding SyncColorTypeValue, Mode=TwoWay,Converter={StaticResource RegPLMPropertiesConverter }}" />
+            </DataTrigger>-->
+            <!--<DataTrigger Binding="{Binding IsModify, Mode=TwoWay,Converter={StaticResource RegPLMPropertiesConverter }}" Value="True" >
+                <Setter Property="Background" Value="Red"/>
+            </DataTrigger>-->
+            <!--<DataTrigger >
+                <Setter Property="Background" Value="Red"/>
+            </DataTrigger>-->
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStop Color="Aquamarine" Offset="0"/>
+                                <GradientStop Color="Beige" Offset="0.2"/>
+                                <GradientStop Color="Firebrick" Offset="0.5"/>
+                                <GradientStop Color="DarkMagenta" Offset="0.9"/>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -51,11 +78,10 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>-->
+    </Style>
 
 
-
-    <Converter:ListboxConveter x:Key="listboxConveter" />
+    <!--<Converter:ListboxConveter x:Key="listboxConveter" />
     <ControlTemplate x:Key="IconButton" TargetType="{x:Type ToggleButton}">
         <Border>
             <ContentPresenter />
@@ -111,6 +137,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
 </ResourceDictionary>

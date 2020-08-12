@@ -103,12 +103,12 @@ namespace BCS.CADs.Synchronization.Search
         /// <summary>
         /// 系統所有版本+版次
         /// </summary>
-        private ObservableCollection<PLMRevision> _plmRevisions = new ObservableCollection<PLMRevision>();
-        public ObservableCollection<PLMRevision> PlmRevisions
-        {
-            get { return _plmRevisions; }
-            set { SetProperty(ref _plmRevisions, value, nameof(PlmRevisions)); }
-        }
+        //private ObservableCollection<PLMRevision> _plmRevisions = new ObservableCollection<PLMRevision>();
+        //public ObservableCollection<PLMRevision> PlmRevisions
+        //{
+        //    get { return _plmRevisions; }
+        //    set { SetProperty(ref _plmRevisions, value, nameof(PlmRevisions)); }
+        //}
 
         /// <summary>
         /// 子階資訊 <子階config_id,List<sort_order>>
@@ -153,6 +153,11 @@ namespace BCS.CADs.Synchronization.Search
         /// 是否是最新版本
         /// </summary>
         public bool IsCurrent { get; set; } = false;
+
+        /// <summary>
+        /// 是否有版本屬性
+        /// </summary>
+        public bool IsVersion { get; set; } = false;
 
         /// <summary>
         /// 限制狀態

@@ -357,6 +357,26 @@ namespace BCS.CADs.Synchronization
         }
 
         /// <summary>
+        /// 取得圖檔
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        protected internal string GetImageFullName(SearchItem searchItem)
+        {
+            try
+            {
+
+                return _Plm.GetImageFullName(searchItem);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+
+        /// <summary>
         /// 取得Item Type
         /// </summary>
         /// <param name="name"></param>
@@ -388,6 +408,25 @@ namespace BCS.CADs.Synchronization
             {
 
                 return _Plm.GetAllRevisions(searchItemType, itemId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 取得版本
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        virtual protected internal string GetVersion(string itemType, string itemId)
+        {
+            try
+            {
+                return _Plm.GetVersion(itemType, itemId);
 
             }
             catch (Exception ex)
