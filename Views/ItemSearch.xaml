@@ -99,7 +99,6 @@
                         SelectedItem="{Binding SelectedSearchItem, Mode=TwoWay}"
                         Grid.Row="3"
 		                Grid.Column="1"
-                        ColumnWidth="*"
 		                Margin="0,4,10,10"
 		                AlternationCount="2"
 		                MinRowHeight="26" 
