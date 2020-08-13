@@ -48,7 +48,8 @@ namespace BCS.CADs.Synchronization.ViewModels
             FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
             AddDataGridTextStyleBinding(txtBox, plmProperty);
             txtBox.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度
-            txtBox.SetValue(TextBox.HeightProperty, 25d);
+            //txtBox.SetValue(TextBox.HeightProperty, 25d);
+            txtBox.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
             stackPanel.AppendChild(txtBox);
 
             DataTemplate headerTemplate = new DataTemplate();

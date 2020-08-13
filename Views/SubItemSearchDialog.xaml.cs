@@ -33,5 +33,9 @@ namespace BCS.CADs.Synchronization.Views
             Left = Left + e.HorizontalChange;
             Top = Top + e.VerticalChange;
         }
+        private void btnActionClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

@@ -52,40 +52,44 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="20*" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Margin="0,15,0,0" >
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
                 <!--<Button x:Name="btn_Search" Grid.Column="1" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding SyncItemSearch}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">-->
                 <Button x:Name="btn_Search" Grid.Column="1" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding SyncItemSearch}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}" >
                     <Image Source="{StaticResource ExecuteSearchDrawingImage}"/>
                 </Button>
+                <Button x:Name="btn_ClearSearch" Grid.Column="2" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}" >
+                    <Image Source="{StaticResource ClearSearchCriteriaDrawingImage}"/>
+                </Button>
                 <!-- <TextBox x:Name="selectedItemId" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedSearchItem.ItemId, ElementName=gridSelectedItems, Mode=TwoWay }" HorizontalAlignment="Stretch" />-->
-                <TextBox x:Name="selectedItemId" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedSearchItem.ItemId, Mode=TwoWay }" Tag="{Binding Path=SelectedSearchItem.KeyedName, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
+                <TextBox x:Name="selectedItemId" Visibility="Hidden" IsEnabled="False"  Grid.Column="3" Text="{Binding Path=SelectedSearchItem.ItemId, Mode=TwoWay }" Tag="{Binding Path=SelectedSearchItem.KeyedName, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
 
-                <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding DoneSelecting}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
+                <Button Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="Done" Command="{Binding DoneSelecting}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image Source="{StaticResource CheckmarkDrawingImage}"/>
                 </Button>
-                <Button Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="closeDialogWindow" ToolTip="{DynamicResource close}" Command="{Binding CloseDialogWindow}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
+                <Button Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="closeDialogWindow" ToolTip="Close" Command="{Binding CloseDialogWindow}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image Source="{StaticResource CloseDrawingImage}"/>
                 </Button>
-                
-                <!-- Command="{Binding SyncExecute}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" -->
-                <Button Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource GlassButton}" Name="selectedDirectory" ToolTip="{DynamicResource selectFolder}" Click="SelectFolder_Click"  >
+
+                <Button Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource GlassButton}" Name="selectedDirectory" ToolTip="select Folder" Click="SelectFolder_Click"  >
                     <Image Source="{StaticResource BrowseFolderDrawingImage}"/>
                 </Button>
-                <TextBox  IsReadOnly="True" Margin="15,0,0,0"  x:Name="CADdirectory" Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource TextBoxStyle}" />
+                <TextBox IsReadOnly="True" Margin="15,0,0,0"  x:Name="CADdirectory" Grid.Column="4" VerticalAlignment="Center" Style="{StaticResource TextBoxStyle}" />
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
             </Grid>
 
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="25"/>
-                    <ColumnDefinition Width="25*"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/>
+                    
                 </Grid.ColumnDefinitions>
                 
                 <!--AutoGenerateColumns="False" CanUserSortColumns="False"-->
@@ -95,7 +99,8 @@
                         SelectedItem="{Binding SelectedSearchItem, Mode=TwoWay}"
                         Grid.Row="3"
 		                Grid.Column="1"
-		                Margin="10"
+                        ColumnWidth="*"
+		                Margin="0,4,10,10"
 		                AlternationCount="2"
 		                MinRowHeight="26" 
                         FontSize="14"

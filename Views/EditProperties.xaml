@@ -35,6 +35,7 @@
                 Grid.Row="3"
 		        Grid.Column="1"
 		        Margin="10"
+                ColumnWidth="*"
 		        AlternationCount="2"
                 FontSize="16"
 		        MinRowHeight="26" 
