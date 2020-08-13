@@ -29,6 +29,12 @@ namespace BCS.CADs.Synchronization.Search
         /// CAD類別名稱
         /// </summary>
         string ClassName { get; set; }
+
+        /// <summary>
+        /// CAD類別名稱
+        /// </summary>
+        string ItemType { get; set; }
+
         /// <summary>
         /// 檔名
         /// </summary>

@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
+//using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,15 +23,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static BCS.CADs.Synchronization.CADsSynchronizer;
+//using static BCS.CADs.Synchronization.CADsSynchronizer;
 
 using AdornedControl;
 using System.Windows.Media.Animation;
-using System.Windows.Controls.Primitives;
+//using System.Windows.Controls.Primitives;
 using System.Windows.Navigation;
-using System.Resources;
-using System.Reflection;
-//using static BCS.CADs.Synchronization.ViewModels.VeiwModel;
+//using System.Resources;
+//using System.Reflection;
+
 
 namespace BCS.CADs.Synchronization.ViewModels
 {
@@ -59,15 +59,12 @@ namespace BCS.CADs.Synchronization.ViewModels
         private TreeStructure _treeStructure = null;
         private PlugInFuncs _plugInFuncsView = null;
         private ItemSearch _ItemSearchView = null;
-        //public MainWindow MyMainWindow { get { return (MainWindow)MyCache.CacheInstance["MainWindow"]; } }
 
         private MainWindow _myMainWindow;
         public MainWindow MyMainWindow { get { return (MainWindow)MyCache.CacheInstance["MainWindow"]; } set { _myMainWindow = value; } }
 
-
         private ConnPLM _Plm;
 
-        //private readonly dynamic _view;
         private readonly Window _view;
         public MainWindowViewModel()
         {
@@ -110,11 +107,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     SearchItem searchItem = x as SearchItem;
                     if (searchItem != null)
                     {
-                        //Modify by kenny 2020/08/12
-                        //ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail);
-                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem);
-                        
-                        //if (ClsSynchronizer.ViewFilePath == "")
+
+                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem, ClsSynchronizer.VmFunction);
+
                         if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath))
                         {
                             if (searchItem.IsVersion==false)
@@ -124,7 +119,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                             }
                         }
 
-                        //if (ClsSynchronizer.ViewFilePath == "") ClsSynchronizer.ViewFilePath = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
                         if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath)) ClsSynchronizer.ViewFilePath = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
 
                         Canvas canvas = (Canvas)MyMainWindow.FindName("CanvasViewFile");
@@ -245,7 +239,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public ConnPLM PLM
         {
             get { return _Plm; }
-            //set { SetProperty(ref _Plm, value); }
             set { SetProperty(ref _Plm, value, nameof(PLM)); }
         }
 
@@ -264,7 +257,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         /// </summary>
         public bool IsActiveLogin { get; set; } = false;
 
-        //public List<SearchItem> _searchItems { get; set; }
         public List<SearchItem> GetSearchItems
         {
             get
@@ -598,8 +590,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                         GetSearchItems.ForEach(a => a.IsViewSelected = false);
 
                     }
-                
-                //ObsSearchItems = new ObservableCollection<SearchItem>(GetSearchItems.Where(y => y.FileName != ""));
+
                 ObsSearchItems = new ObservableCollection<SearchItem>(GetSearchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) == false));
                     if (_syncCADsListDataGrid == null) _syncCADsListDataGrid = new SyncCADsList();
                     ClsSynchronizer.SyncListView = _syncCADsListDataGrid;
@@ -627,8 +618,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     var CheckBox_All = (Button)MyMainWindow.FindName("btn_Execute");
                     if (CheckBox_All.IsFocused)
                     {
-                        
-                        //ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => y.FileName != "" && y.IsViewSelected == true));
                         ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) ==false && y.IsViewSelected == true));
                         if (_editPropertiesDataGrid == null) _editPropertiesDataGrid = new EditProperties();
                         ClsSynchronizer.EditPropertiesView = _editPropertiesDataGrid;
@@ -714,9 +703,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             btn = (Button)MyMainWindow.FindName("btn_Execute");
             btn.Visibility = visibilityExecute;
             btn.IsEnabled = isEnable;
-            //btn = (Button)MyMainWindow.FindName("btn_Message");
-            //btn.Visibility = visibilityMessage;
-            //btn.IsEnabled = isEnable;
+
 
         }
 
@@ -732,18 +719,15 @@ namespace BCS.CADs.Synchronization.ViewModels
             btn.Visibility = visibilityPlugIn;
             TextBlock txt = (TextBlock)MyMainWindow.FindName("showStatus");
             txt.Text = txt.Text.Split((char)58)[0];
-            
-            //if (txt.Text != "") txt.Text += " : ";
+
             if (String.IsNullOrWhiteSpace(txt.Text) == false ) txt.Text += " : ";
-            //< TextBlock x: Name = "showStatus
+
         }
 
         private void UpdateStatus( string status)
         {
             TextBlock txt = (TextBlock)MyMainWindow.FindName("showStatus");
             string value = txt.Text.Split((char)58)[0];
-            
-            //value = (value != "") ? value += " : " + status : status;
             value = (String.IsNullOrWhiteSpace(value) ==false ) ? value += " : " + status : status;
             txt.Text = value;
 
@@ -794,8 +778,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _syncCADsListView = new RelayCommand((x) =>
                 {
-
-                    //ClsSynchronizer.VmFunction = SyncType.NewFormTemplateFile
                     ClsSynchronizer.Status = "";
                     Frame viewPage;
                     switch (ClsSynchronizer.VmFunction)
@@ -839,41 +821,30 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
                     
                     SearchItem searchItemType = (ClsSynchronizer.IsActiveSubDialogView == true) ? ClsSynchronizer.NewSubSearchItem : ClsSynchronizer.NewSearchItem;
-                    //bool loadFromPLM = (ClsSynchronizer.VmFunction == SyncType.LoadFromPLM) ? true : false;
-
                     UpdateSearchItemType(searchItemType);//Modify by kenny 2020/08/03
                     ObsSearchItems = ClsSynchronizer.VmSyncCADs.SyncItemTypeSearch(searchItemType);
 
                     if (ObsSearchItems == null) ObsSearchItems = new ObservableCollection<SearchItem>();
 
-                    //ObsSearchItems.Add(ClsSynchronizer.NewSearchItem);
-                    //ObsSearchItems.Move(ObsSearchItems.IndexOf(ClsSynchronizer.NewSearchItem), 0);
-
-                    //Modify by kenny 2020/07/31 ---------------------
-                    //ObsSearchItems.Add(searchItemType);
-                    //ObsSearchItems.Move(ObsSearchItems.IndexOf(searchItemType), 0);
-                    //------------------------------------------------
 
                     ClsSynchronizer.SearchItemsCollection = ObsSearchItems;
 
                     _ItemSearchView = (ClsSynchronizer.IsActiveSubDialogView == true) ? (ItemSearch)ClsSynchronizer.SyncSubListView : (ItemSearch)ClsSynchronizer.SyncListView;
                     if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
-
                     DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
+                    //DataGrid gridSelectedItems = (_ItemSearchView == null || ObsSearchItems.Count == 0)? NewItemSearch(): (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
 
-                    //Modify by kenny 2020/08/05 ----------------------
-                    if (ObsSearchItems.Count == 0 )
+
+                    if (ObsSearchItems.Count == 0)
                     {
-                        //ObsSearchItems.Add(ClsSynchronizer.NewSearchItem);
-                        SelectedSearchItem = new SearchItem();
-                        ObsSearchItems.Add(SelectedSearchItem);
-                        gridSelectedItems.RowStyle = RowStyleHeightzero();
+                        //gridSelectedItems = NewItemSearch(ItemTypeName.CAD.ToString());
+                        Boolean isCopyToAdd = (ClsSynchronizer.VmFunction == SyncType.CopyToAddSearch);
+                        
+                        LoadFromPLMView(ClsSynchronizer.ActiveWindow, ClsSynchronizer.IsShowDialog, ClsSynchronizer.ShowDialogItemType, false, isCopyToAdd);
+                        return;
                     }
                     else
-                    {
                         gridSelectedItems.RowStyle = ClsSynchronizer.RowStyle;
-                    }
-                    //------------------------------------------------
 
                     gridSelectedItems.ItemsSource = ObsSearchItems;
                     gridSelectedItems.RowStyle= ClsSynchronizer.RowStyle;
@@ -888,6 +859,44 @@ namespace BCS.CADs.Synchronization.ViewModels
                 return _syncItemSearch;
             }
         }
+
+
+        //private DataGrid NewItemSearch(string itemType)
+        //{
+        //    _ItemSearchView = new ItemSearch();
+
+        //    ItemType itemTypeItem = ClsSynchronizer.SearchItemTypeItem;
+        //    DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
+        //    AddDataGridHeaderColumn(ClsSynchronizer.SearchItemTypeItem, gridSelectedItems);
+        //    gridSelectedItems.RowStyle = RowStyleHeightzero();
+
+
+        //    SelectedSearchItem = new SearchItem();
+        //    SelectedSearchItem.ItemType = itemType;
+
+
+        //    ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
+        //    foreach (PLMProperty property in itemTypeItem.PlmProperties)
+        //    {
+        //        PLMProperty newProperty = property.Clone() as PLMProperty;
+        //        if (String.IsNullOrWhiteSpace(newProperty.Name) == false)
+        //        {
+        //            newProperty.IsInitial = false;
+        //            newProperty.IsExist = true;
+        //        }
+        //        newProperty.SoruceSearchItem = SelectedSearchItem;
+        //        newProperties.Add(newProperty);
+        //    }
+
+        //    SelectedSearchItem.PlmProperties = newProperties;
+        //    ObsSearchItems.Add(SelectedSearchItem);
+        //    ClsSynchronizer.NewSearchItem = SelectedSearchItem;
+        //    ClsSynchronizer.RowStyle = gridSelectedItems.RowStyle;
+
+        //    return gridSelectedItems;
+        //}
+
+
 
         /// <summary>
         /// 更新輸入查詢條件值
@@ -921,8 +930,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     if (ClsSynchronizer.IsActiveSubDialogView == true)
                     {
                         ClsSynchronizer.SubDialogReturnValue = txtSelectedItemId.Text;
-
-                        //if (ClsSynchronizer.SubDialogReturnValue == "") { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
                         if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue)) { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
                         ClsSynchronizer.SubDialogReturnKeyedName = txtSelectedItemId.Tag.ToString();
 
@@ -1008,11 +1015,10 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                         ClsSynchronizer.VmOperation = SyncOperation.AddTemplates;
                         ObservableCollection<ClassTemplateFile> obslistTemplates = (ClsSynchronizer.Status != "Error") ? new ObservableCollection<ClassTemplateFile>(ListTemplates.Where(y => y.IsSelected == true)): ClsSynchronizer.ClassTemplateFiles;
-                        //ObservableCollection<ClassTemplateFile> obslistTemplates = new ObservableCollection<ClassTemplateFile>(ListTemplates.Where(y => y.IsSelected == true));
                         ClsSynchronizer.ClassTemplateFiles = obslistTemplates;
                         ObsSearchItems = (ClsSynchronizer.Status != "Error") ? ClsSynchronizer.VmSyncCADs.GetTemplatesProperties(obslistTemplates, ClsSynchronizer.VmDirectory) : ClsSynchronizer.SearchItemsCollection;
                         ClsSynchronizer.SearchItemsCollection = ObsSearchItems;
-                        //if (ObsSearchItems==null) DisplaySyncMessages(Visibility.Visible);
+
                     }
                     else
                     {
@@ -1020,13 +1026,9 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                         if (ClsSynchronizer.VmFunction == SyncType.CopyToAdd)
                             ClsSynchronizer.VmSyncCADs.SearchItemsCopyFileNameProperty(_searchItems);
-                        else
-                            ClsSynchronizer.VmSyncCADs.GetSelectedCADsProperties(_searchItems, ClsSynchronizer.VmFunction);
-                        //  if (ClsSynchronizer.VmSyncCADs.GetSelectedCADsProperties(_searchItems, ClsSynchronizer.VmFunction) == false) DisplaySyncMessages(Visibility.Visible);
-                        
-                        //ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => y.FileName != "" && y.IsViewSelected == true));
-                        ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) ==false  && y.IsViewSelected == true));
 
+
+                        ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) ==false  && y.IsViewSelected == true));
                     }
 
                     OperationStart("EditPropertiesView");
@@ -1081,13 +1083,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _treeStructureView = new RelayCommand((x) =>
                 {
 
-                    //System.Diagnostics.Debugger.Break();
-                    if (ClsSynchronizer.VmFunction == SyncType.SyncFromPLM)
-                    {
-                        ClsSynchronizer.VmOperation = SyncOperation.EditorProperties;
-                        ClsSynchronizer.VmSyncCADs.GetSelectedCADsProperties(_searchItems, ClsSynchronizer.VmFunction);
-                    }
-
                     ClsSynchronizer.VmOperation = SyncOperation.CADStructure;
 
                     OperationStart("TreeStructureView");
@@ -1119,8 +1114,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             string filename = "";
             if (activeItem != null)
                 filename = activeItem.FileName;
-            //else
-                //DisplaySyncMessages(Visibility.Visible);
+
 
             TreeSearchItems = new ObservableCollection<SearchItemsViewModel>();
             foreach (SearchItem searchItem in _searchItems.Where(y => y.FileName == filename))
@@ -1147,7 +1141,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                         treeSearchItem.IsInsert = false;                 
                     }
                     
-                    //PLMProperties property = searchItem.PlmProperties.Where(x => x.Name == "bcs_added_filename" && x.DisplayValue != "").SingleOrDefault();
                     PLMProperty property = searchItem.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) ==false).SingleOrDefault();
                     if (property != null)
                     {
@@ -1166,7 +1159,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                 TreeSearchItems.Add(treeSearchItem);
             }
 
-            //if (_treeStructure == null) _treeStructure = new TreeStructure();
             ClsSynchronizer.TreeStructureView = treeStructure;
             ClsSynchronizer.TreeSearchItemsCollection = TreeSearchItems;
 
@@ -1201,7 +1193,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                             ClsSynchronizer.Status = "Error";
                             UpdateStatus(ClsSynchronizer.Status);
                             ShowMessagesView();
-                            //DisplaySyncMessages(Visibility.Visible);
                             return;
                         }
 
@@ -1209,7 +1200,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                         if (ret == false) return;
 
                         ClsSynchronizer.VmMessages.Status = "End";
-                        //DisplaySyncMessages(Visibility.Visible);
                         StartStopWait(false);
                         ShowMessagesView();
 
@@ -1222,7 +1212,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                         string message = ex.Message;
                         ClsSynchronizer.Status = "Error";
-                        //DisplaySyncMessages(Visibility.Visible);
                         StartStopWait(false);
                         ShowMessagesView();
                     }
@@ -1242,17 +1231,12 @@ namespace BCS.CADs.Synchronization.ViewModels
                     UpdateStatus(ClsSynchronizer.Status);
 
                     ClsSynchronizer.VmOperation = SyncOperation.EditorProperties;
-                    ClsSynchronizer.VmSyncCADs.GetSelectedCADsProperties(_searchItems, ClsSynchronizer.VmFunction);
-                    
-                    //ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => y.FileName != "" && y.IsViewSelected == true));
                     ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) ==false  && y.IsViewSelected == true));
 
                     if (ClsSynchronizer.VmFunction != SyncType.SyncFromPLM) RefreshEditPropertiesView();
-                    //if (viewPage != null) viewPage.Visibility = Visibility.Hidden;
                     break;
 
                 case SyncOperation.CADStructure:
-
                     ClsSynchronizer.Status = (ClsSynchronizer.VmSyncCADs.SyncCADsFilesStructure(ref _searchItems, ClsSynchronizer.ItemStructureChanges, ClsSynchronizer.VmFunction)) ? "Operation Finish" : "Error";
                     UpdateStatus(ClsSynchronizer.Status);
                     ClsSynchronizer.ItemStructureChanges = null;
@@ -1261,8 +1245,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     break;
 
                 case SyncOperation.AddTemplates:
-                    
-                    //if (ClsSynchronizer.VmDirectory == "")
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory))
                     {
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_PleasePickASavedFilePath"));
@@ -1279,13 +1261,19 @@ namespace BCS.CADs.Synchronization.ViewModels
                 case SyncOperation.LoadListItems:
                     //win = ClsSynchronizer.ActiveWindow;
                     if (CheckItemSearchView() == false) return false ;
-                    
-                    //if (ClsSynchronizer.VmSelectedItemId != "")
+
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmSelectedItemId) ==false )
                     {
                         SearchItem searchItem = ClsSynchronizer.SearchItemsCollection.Where(y => y.ItemId == ClsSynchronizer.VmSelectedItemId).FirstOrDefault();
+                        SearchItem verSearchItem =  ClsSynchronizer.VmSyncCADs.GetVersionSearchItem(searchItem);//Modify by kenny 2020/08/12
+                        if (verSearchItem.FileId == "")
+                        {
+                            MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_CADFileDoesNotExistPLM"));
+                            StartStopWait(false);
+                            return false;
+                        }
                         List<SearchItem> searchItems = new List<SearchItem>();
-                        searchItems.Add(searchItem);
+                        searchItems.Add(verSearchItem);
 
                         ClsSynchronizer.Status = (ClsSynchronizer.VmSyncCADs.LoadFromPLM(ClsSynchronizer.VmDirectory, searchItems, ClsSynchronizer.VmFunction) != null) ? "Operation Finish" : "Error";
                         UpdateStatus(ClsSynchronizer.Status);
@@ -1293,12 +1281,12 @@ namespace BCS.CADs.Synchronization.ViewModels
                         ResetFunctionButtons();
                         if (viewPage != null) viewPage.Visibility = Visibility.Hidden;
                     }
+                    
                     break;
 
                 case SyncOperation.CopyToAddSearch:
                     if (CheckItemSearchView() == false) return false ;
-                    
-                    //if (ClsSynchronizer.VmSelectedItemId != "")
+
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmSelectedItemId) ==false )
                     {
                         ResetOperationButtons(Visibility.Visible, Visibility.Visible, Visibility.Visible, Visibility.Visible, true);
@@ -1313,8 +1301,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                         ClsSynchronizer.SearchItemsList = _searchItems;
 
                         ObsSearchItems = new ObservableCollection<SearchItem>();
-                        
-                        //if (_searchItems != null) ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => y.FileName != ""));
+
                         if (_searchItems != null) ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) ==false));
 
                         _syncCADsListDataGrid = new SyncCADsList();
@@ -1344,18 +1331,30 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                         ClsSynchronizer.SearchItemsList = _searchItems;
                         
-                        //ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => y.FileName != ""));
                         ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) ==false));
 
                         DataGrid gridSelectedItems = (DataGrid)_syncCADsListDataGrid.FindName("gridSelectedItems");
                         gridSelectedItems.ItemsSource = ObsSearchItems;
                         viewPage.Navigate(_syncCADsListDataGrid);
+                    }else if(ClsSynchronizer.VmFunction == SyncType.SyncFromPLM || ClsSynchronizer.VmFunction == SyncType.SyncToPLM)
+                    {
+                        ClsSynchronizer.Status = (ClsSynchronizer.VmSyncCADs.SyncCADsProperties(ref _searchItems, ClsSynchronizer.VmFunction)) ? "Operation Finish" : "Error";
+                        if (ClsSynchronizer.Status != "Error")
+                        {
+                            ClsSynchronizer.Status = (ClsSynchronizer.VmSyncCADs.SyncCADsFilesStructure(ref _searchItems, ClsSynchronizer.ItemStructureChanges, ClsSynchronizer.VmFunction)) ? "Operation Finish" : "Error";
+                        }
+                        UpdateStatus(ClsSynchronizer.Status);
+                        ClsSynchronizer.ItemStructureChanges = null;
+
+                        if (viewPage != null) viewPage.Visibility = Visibility.Hidden;
                     }
                     break;
 
             }
             return true;
         }
+
+
 
 
         private bool IsExecuteCopyToAdd(Frame viewPage)
@@ -1372,7 +1371,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         private bool CheckItemSearchView()
         {
-            //win = ClsSynchronizer.ActiveWindow;
+
             ClsSynchronizer.VmSelectedItemId = "";
             _ItemSearchView = (ClsSynchronizer.IsActiveSubDialogView) ? (ItemSearch)ClsSynchronizer.SyncSubListView : (ItemSearch)ClsSynchronizer.SyncListView;
             if (_ItemSearchView != null)
@@ -1383,9 +1382,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text) || String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory))
                 {
 
-                    //if (ClsSynchronizer.VmDirectory == "") MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_PleasePickASavedFilePath"));
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmDirectory)) MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_PleasePickASavedFilePath"));
-                    //if (txtSelectedItemId.Text == "") MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected"));
                     if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text)) MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected"));
                     StartStopWait(false);
                     return false ;
@@ -1414,7 +1411,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show(ex.Message);
                         string message = ex.Message;
                         StartStopWait(false);
                     }
@@ -1426,8 +1422,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public void ShowMessagesView()
         {
 
-            //MessageBox.Show("ShowMessagesView");
-            //ObsItemsMessage = new ObservableCollection<ItemMessage>(ClsSynchronizer.VmMessages.ItemMessages.Where(x => x.IsError == false));
             ObsItemsMessage = new ObservableCollection<ItemMessage>(ClsSynchronizer.VmMessages.ItemMessages);
             if (_addItemsMessageView == null) _addItemsMessageView = new ItemsMessage();       
 
@@ -1449,12 +1443,17 @@ namespace BCS.CADs.Synchronization.ViewModels
         /// <returns></returns>
         private Boolean ShowRevisionList(string itemType, string itemId)
         {
+            string itemDialogType = ClsSynchronizer.ShowDialogItemType;
             RevisionList revisionDialog = new RevisionList(itemType,itemId);
+            ClsSynchronizer.ShowDialogItemType = itemType;
+            ClsSynchronizer.IsShowDialog = true;
             revisionDialog.Width = 800;
             revisionDialog.Height = 600;
             revisionDialog.Topmost = true;
             revisionDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             revisionDialog.ShowDialog();
+            ClsSynchronizer.IsShowDialog = false;
+            ClsSynchronizer.ShowDialogItemType= itemDialogType;
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
             return false;
         }
@@ -1463,7 +1462,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public static ObservableCollection<LanguageList> AllLang
         {
             get { return _allLang; }
-            //set { SetProperty(ref _allLang, value); }
         }
 
         private ICommand _systemSetting { get; set; }
@@ -1551,9 +1549,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
 
                     var button = x as Button;
-                    //ClassPlugin plug = ClsSynchronizer.ClassPlugins.FirstOrDefault(y => y.Name == button.Tag.ToString());
                     ClassPlugin plug = ClsSynchronizer.ClassPlugins.Where(y => y.Name == button.Tag.ToString()).FirstOrDefault();
-                    //ClsSynchronizer.VmSyncCADs.
                     ClsSynchronizer.VmSyncCADs.RunFunction(plug, ClsSynchronizer.ActiveSearchItem);
                 });
                 return _syncPlugIn;
@@ -1599,6 +1595,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     ClsSynchronizer.VmDirectory = "";
                     ClsSynchronizer.VmSelectedItemId = "";
 
+                    _ItemSearchView = null;
                     CopyToAddView((Window)_view, false);
                     SelectedDirectoryGridVisibility = Visibility.Collapsed;
                     CheckBoxWPVisibility = Visibility.Collapsed;
@@ -1642,8 +1639,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     ResetOperationButtons(Visibility.Collapsed, Visibility.Collapsed, Visibility.Collapsed, Visibility.Visible,true );
                     ClsSynchronizer.VmFunction = SyncType.LoadFromPLM ;
 
+                    _ItemSearchView = null;
                     LoadFromPLMView((Window)_view, false);
-                    //LoadFromPLMView((Window)_view, true);
                     SelectedDirectoryGridVisibility = Visibility.Collapsed;
                     CheckBoxWPVisibility = Visibility.Collapsed;
                     ItemSearchViewControl(Visibility.Collapsed);
@@ -1665,7 +1662,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _itemPickerImageLeftClick = new RelayCommand((x) =>
                 {
-                    //MessageBox.Show("ItemPickerImageLeftClick");
                     //System.Diagnostics.Debugger.Break();
                     dynamic y = x;
                     TextBox txtProperty =(TextBox) y.TemplatedParent;
@@ -1687,24 +1683,12 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _gridItemPickerImageLeftClick = new RelayCommand((x) =>
                 {
-                    //System.Diagnostics.Debugger.Break();
+
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
-                    //string itemType = txtProperty.Tag.ToString();
 
                     ShowItemSearchDialog(txtProperty, true);
-                    //ClsSynchronizer.CurrentDialog = "SubItemSearchDialog";
-                    //SubItemSearchDialog itemSearchDialog = new SubItemSearchDialog(itemType);
-                    //itemSearchDialog.Width = 800;
-                    //itemSearchDialog.Height = 600;
-                    //itemSearchDialog.Topmost = true;
-                    //itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    //itemSearchDialog.ShowDialog();
 
-                    //if (ClsSynchronizer.SubDialogReturnValue != "")
-                    //{
-                    //    txtProperty.Text = ClsSynchronizer.SubDialogReturnKeyedName;
-                    //}
                     ClsSynchronizer.IsActiveSubDialogView = false;
                 });
                 return _gridItemPickerImageLeftClick;
@@ -1717,15 +1701,18 @@ namespace BCS.CADs.Synchronization.ViewModels
             string itemType = txtProperty.Tag.ToString();
 
             ClsSynchronizer.CurrentDialog =(isSubItemSearchDialog)? "SubItemSearchDialog": "ItemSearchDialog";
+            string itemDialogType = ClsSynchronizer.ShowDialogItemType;
+            ClsSynchronizer.ShowDialogItemType = itemType;
             SubItemSearchDialog itemSearchDialog = new SubItemSearchDialog(itemType);
+            ClsSynchronizer.IsShowDialog = true;
             itemSearchDialog.Width = 800;
             itemSearchDialog.Height = 600;
             itemSearchDialog.Topmost = true;
             itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ItemSearchViewControl(Visibility.Visible);
             itemSearchDialog.ShowDialog();
-
-            //if ( ClsSynchronizer.SubDialogReturnValue != "")
+            ClsSynchronizer.IsShowDialog = false ;
+            ClsSynchronizer.ShowDialogItemType = itemDialogType;
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue)==false)
             {
                 txtProperty.Text = (isSubItemSearchDialog) ? ClsSynchronizer.SubDialogReturnKeyedName: ClsSynchronizer.DialogReturnKeyedName;
@@ -1754,7 +1741,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.InnerException.Message);
                 MessageBox.Show(ex.Message);
             }
         }
@@ -1777,7 +1763,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 string strPassword = PLM.Password;
                 ClsSynchronizer.VmSyncCADs.Login(strUrl, strDBName, strLogin, strPassword);
                 ResetMainWindowDefaultValues();
-                //MessageBox.Show("IsActiveLogin:" + ClsSynchronizer.VmSyncCADs.IsActiveLogin.ToString());
+
                 if (ClsSynchronizer.VmSyncCADs.IsActiveLogin == true)
                 {
                     IsLogin = true;
@@ -1870,7 +1856,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             if (IsLogin == true)
             {
                 if (!string.IsNullOrEmpty(PLM.Image_ID))
-                    //uriSource = new Uri($@"/Broadway/CADImage/LoginImage/{PLM.Image_ID}/{ConnInnovator.Image_Filename}", UriKind.Relative);
                     uriSource = new Uri(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + $@"/Broadway/CADImage/LoginImage/{PLM.Image_ID}/{ConnInnovator.Image_Filename}", UriKind.Relative);
                 else
                     uriSource = new Uri(@"pack://application:,,,/BCS.CADs.Synchronization;component/Images/CreatedBy.png", UriKind.RelativeOrAbsolute);
@@ -1906,9 +1891,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             try
             {
-                //MessageBox.Show("GridDetailView");
-                
-                //ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(x => x.FileName != ""));
+
                 ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(x => String.IsNullOrWhiteSpace(x.FileName) ==false));
                 TreeSearchItems = new ObservableCollection<SearchItemsViewModel>();
                 foreach (SearchItem searchItem in _searchItems.Where(x => x.FileName == filename))
@@ -1928,11 +1911,10 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        //public ObservableCollection<AuctionItem> AuctionItems { get; set; } = new ObservableCollection<AuctionItem>();
         private CollectionViewSource _listTemplatesView;
         private CollectionViewSource _plugInFunctionsView;
 
-        //IList<ClassTemplateFile> listTemplates
+
         private ObservableCollection<ClassTemplateFile> _listTemplates;
         public ObservableCollection<ClassTemplateFile> ListTemplates
         {
@@ -1940,7 +1922,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             set
             {
                 SetProperty(ref _listTemplates, value);
-                //SetProperty(ref _listTemplates, value, nameof(ListTemplates));
             }
         }
 
@@ -1952,7 +1933,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             set
             {
                 SetProperty(ref _listClassItems, value);
-                //SelectedClassItem = value[0];
             }
         }
 
@@ -1975,7 +1955,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             set
             {
                 SetProperty(ref _classPlugins, value);
-                //SetProperty(ref _listTemplates, value, nameof(ClassPlugins));
             }
         }
 
@@ -1984,7 +1963,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             get { return ClsSynchronizer._vmObsSearchItems; }
             set
             {
-                //SetProperty(ref ClsSynchronizer._vmObsSearchItems, value);
                 SetProperty(ref ClsSynchronizer._vmObsSearchItems, value, nameof(ObsSearchItems));
             }
         }
@@ -2016,7 +1994,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             get { return _cadStructure; }
             set
             {
-                //SetProperty(ref _cadStructure, value);
                 SetProperty(ref _cadStructure, value, nameof(CadStructure));
             }
         }
@@ -2025,7 +2002,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public ObservableCollection<SearchItemsViewModel> TreeSearchItems
         {
             get { return _treeSearchItems; }
-            //set { SetProperty(ref _treeSearchItems, value); }
             set { SetProperty(ref _treeSearchItems, value, nameof(TreeSearchItems)); }
         }
         
@@ -2037,8 +2013,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         /// <param name="type"></param>
         public void SetSyncCADsListView(SyncType type)
         {
-
-            //MessageBox.Show("SetSyncCADsListView");
 
             ClsSynchronizer.VmOperation = SyncOperation.QueryListItems;
 
@@ -2052,9 +2026,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             ObsSearchItems = new ObservableCollection<SearchItem>();
             
-            //if (_searchItems!=null) ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(x => x.FileName != ""));
+
             if (_searchItems != null) ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(x => String.IsNullOrWhiteSpace(x.FileName) ==false));
-            //gridSelectedItems
             if (_syncCADsListDataGrid==null) _syncCADsListDataGrid = new SyncCADsList();
             DataGrid gridSelectedItems = (DataGrid)_syncCADsListDataGrid.FindName("gridSelectedItems");
 
@@ -2104,11 +2077,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         public void AddFromTemplatesView()
         {
 
-            //MessageBox.Show("AddFromTemplatesView");
 
-            //var viewPage1 = (Frame)MyMainWindow.FindName("viewPage");
-            //ClearHistory(viewPage1);
-            //return;
             ClsSynchronizer.VmOperation = SyncOperation.AddTemplates;
             OperationStart("AddFromTemplatesView");
 
@@ -2134,13 +2103,10 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             //@@@@@@@@@@@
             if (_addFromTemplateView == null) _addFromTemplateView = new AddFromTemplate();
-            //_addFromTemplateView = new AddFromTemplate();
-
-            //if (_addFromTemplateView == null) _addFromTemplateView = new ItemFilterSearch();
 
             ClsSynchronizer.SyncListView = _addFromTemplateView;
 
-            //ListBox listboxTemplateItems = (ListBox)_addFromTemplateView.FindName("templates");
+
             _listTemplatesView = (CollectionViewSource)_addFromTemplateView.FindResource("ListingDataView");
             if (_listTemplatesView.GroupDescriptions.Count() < 1)
             {
@@ -2191,13 +2157,13 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             ClsSynchronizer.VmMessages = new SyncMessages(ClsSynchronizer.VmFunction, ClsSynchronizer.VmOperation, Operation, "","Start");
             UpdateStatus("");
-            //DisplaySyncMessages(Visibility.Collapsed);
+
         }
 
         public void PlugInFunctionsView()
         {
 
-            //MessageBox.Show("PlugInFunctionsView");
+
             ClsSynchronizer.VmOperation = SyncOperation.None;
 
             OperationStart("PlugInFunctionsView");
@@ -2253,32 +2219,27 @@ namespace BCS.CADs.Synchronization.ViewModels
         
         public void LoadFromPLMView(Window win, bool isDialog, string itemType, bool isSub,bool isCopyToAdd)
         {
-            //MainWindow = win;
-            //MessageBox.Show("LoadFromPLMView");
-
-            //if (itemType == "") itemType = "CAD";
-            if (String.IsNullOrWhiteSpace(itemType)) itemType = "CAD";
+            if (String.IsNullOrWhiteSpace(itemType)) itemType = ItemTypeName.CAD.ToString();
             
             string displayName = isCopyToAdd ? "CopyToAddView" : "LoadFromPLMView";
             string displayKey = isCopyToAdd ? "copyToAdd" : "loadFromPLM";
             OperationStart(displayName);
-            //OperationStart("LoadFromPLMView");
 
 
             ItemType itemTypeItem = (isDialog)? ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.Search) : ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.CADRevisionSearch);
-            //List<SearchItem> searchItems = null;
+
+            if ((isDialog) == false) ClsSynchronizer.SearchItemTypeItem = itemTypeItem;
 
             ObsSearchItems = new ObservableCollection<SearchItem>();
 
-            //Modify by kenny 2020/08/10 -----------------------
-            //if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
+
             bool isNew = false;
             if (_ItemSearchView == null)
             {
                 _ItemSearchView = new ItemSearch();
                 isNew = true;
             }
-            //--------------------------------------------------
+
 
             if (ClsSynchronizer.IsActiveSubDialogView)
                 ClsSynchronizer.SyncSubListView = _ItemSearchView;
@@ -2299,37 +2260,18 @@ namespace BCS.CADs.Synchronization.ViewModels
 
 
             DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
+            if (isNew) AddDataGridHeaderColumn(itemTypeItem, gridSelectedItems);
 
-            
-
-            if (isNew)//Modify by kenny 2020/08/10
-            {
-                int j = 0;
-                foreach (PLMProperty plmProperty in itemTypeItem.PlmProperties)
-                {
-
-                    //if (plmProperty.Label != "")
-                    if (String.IsNullOrWhiteSpace(plmProperty.Label) == false)
-                    {
-                        //要排除預設的屬性
-                        AddDataGridColumn(gridSelectedItems, plmProperty, j);
-                    }
-                    j++;
-                }
-            }
            
 
-            //ClsSynchronizer.NewSearchItem = new SearchItem();
-            //ClsSynchronizer.NewSearchItem.ClassName = "CAD";
             SelectedSearchItem = new SearchItem();
-            SelectedSearchItem.ClassName = itemType;
+            SelectedSearchItem.ItemType = itemType;
 
 
             ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
             foreach (PLMProperty property in itemTypeItem.PlmProperties)
             {
                 PLMProperty newProperty = property.Clone() as PLMProperty;
-                // if (newProperty.Name != "")
                 if (String.IsNullOrWhiteSpace(newProperty.Name)==false)
                 {
                     newProperty.IsInitial = false;
@@ -2340,21 +2282,17 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
 
             SelectedSearchItem.PlmProperties = newProperties;
-            //Modify by kenny 2020/07/31 -------------------
             ObsSearchItems.Add(SelectedSearchItem);
-            //ObsSearchItems.Move(ObsSearchItems.IndexOf(SelectedSearchItem), 0);
-            //----------------------------------------------
+
             if (ClsSynchronizer.IsActiveSubDialogView) 
                 ClsSynchronizer.NewSubSearchItem = SelectedSearchItem;
             else
                 ClsSynchronizer.NewSearchItem = SelectedSearchItem;
 
-            //gridSelectedItems.ItemsSource = null;// ObsSearchItems;
 
-            //Modify by kenny 2020/08/05 ----------------------
             ClsSynchronizer.RowStyle = gridSelectedItems.RowStyle;
             gridSelectedItems.RowStyle = RowStyleHeightzero();
-            //------------------------------------------------
+
 
             if (isDialog==false)
             {
@@ -2375,10 +2313,25 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.VmMessages.Status = "End";
         }
         
+        private void AddDataGridHeaderColumn(ItemType itemTypeItem, DataGrid gridSelectedItems)
+        {
+            int j = 0;
+            foreach (PLMProperty plmProperty in itemTypeItem.PlmProperties)
+            {
+
+                if (String.IsNullOrWhiteSpace(plmProperty.Label) == false)
+                {
+                    //要排除預設的屬性
+                    ClsSynchronizer.VmCommon.AddDataGridHeaderColumn(gridSelectedItems, plmProperty, j);
+                }
+                j++;
+            }
+        }
+
+
         private Style RowStyleHeightzero()
         {
             Style style = new Style();
-            //style.Setters.Add(new Setter(DataGridRow.HeightProperty, 0d));
             style.Setters.Add(new Setter(property: FrameworkElement.HeightProperty, value: 0d));
             return style;
         }
@@ -2390,7 +2343,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.EditPropertiesView = _editPropertiesDataGrid;
             ClsSynchronizer.VmOperation = SyncOperation.EditorProperties;
 
-            ItemType itemType = ClsSynchronizer.VmSyncCADs.GetItemType("CAD", SearchType.Search);
+            ItemType itemType = ClsSynchronizer.VmSyncCADs.GetItemType(ItemTypeName.CAD.ToString(), SearchType.Search);
             if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
 
             if (ClsSynchronizer.IsActiveSubDialogView) 
@@ -2409,21 +2362,14 @@ namespace BCS.CADs.Synchronization.ViewModels
             int j = 0;
             List<string> checkPropertyList = new List<string>();
 
-            ////類別
-            //AddDataGridImageColumn(gridSelectedItems, plmProperty, index);
-            ////縮圖
-            //AddDataGridImageColumn(gridSelectedItems, plmProperty, index);
-            
-            //ClassItem classItem = ClsSynchronizer.VmSyncCADs.GetClassItems().Where(x => x.Name != "").FirstOrDefault();
             ClassItem classItem = ClsSynchronizer.VmSyncCADs.GetClassItems().Where(x => String.IsNullOrWhiteSpace(x.Name)==false).FirstOrDefault();
             foreach (PLMProperty plmProperty in classItem.CsProperties)
             {
                 
-                //if (plmProperty.Label != "" && isExistProperty(plmProperty))
                 if (String.IsNullOrWhiteSpace(plmProperty.Label)==false && isExistProperty(plmProperty))
                 {
                     //要排除預設的屬性
-                    AddDataGridColumnA(gridSelectedItems, plmProperty, j);
+                    ClsSynchronizer.VmCommon.AddDataGridColumn(gridSelectedItems, plmProperty, j);
                 }
                 j++;
             }
@@ -2450,7 +2396,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                if (searchItem != null) ListClassItems.Add(classItem);
             }
             
-            //ClassItem clsItem = (ListClassItems.Count == 0) ? classeItems.Where(x => x.Name != "").FirstOrDefault() : ListClassItems[0];
             ClassItem clsItem = (ListClassItems.Count == 0) ? classeItems.Where(x => String.IsNullOrWhiteSpace(x.Name)==false).FirstOrDefault() : ListClassItems[0];
 
             if (_itemFilterSearchView == null) _itemFilterSearchView = new ItemFilterSearch();
@@ -2472,7 +2417,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public void ItemFilterSearch_SelectionChanged(ClassItem clsItem)
         {
 
-            //MessageBox.Show("ItemFilterSearchView");
 
             ClsSynchronizer.VmOperation = SyncOperation.EditorProperties;
             List<ClassItem> classeItems = ClsSynchronizer.VmSyncCADs.GetClassItems();
@@ -2498,17 +2442,15 @@ namespace BCS.CADs.Synchronization.ViewModels
         private void AddGridSelectedItemsColumn(DataGrid gridSelectedItems, ClassItem clsItem)
         {
             gridSelectedItems.Columns.Clear();
-            AddDataGridImageColumn(gridSelectedItems);
+            ClsSynchronizer.VmCommon.AddDataGridImageColumn(gridSelectedItems);
             int j = 0;
             foreach (PLMProperty plmProperty in clsItem.CsProperties)
             {
                 
-                //if (plmProperty.Label != "" && isExistProperty(plmProperty))
                 if (String.IsNullOrWhiteSpace(plmProperty.Label) == false && isExistProperty(plmProperty))
                 {
                     //要排除預設的屬性
-                    //AddDataGridColumn(gridSelectedItems, plmProperty, j);
-                    AddDataGridColumnA(gridSelectedItems, plmProperty, j);
+                    ClsSynchronizer.VmCommon.AddDataGridColumn(gridSelectedItems, plmProperty, j);
                 }
                 j++;
             }
@@ -2523,7 +2465,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             if (plmProperty.Name  == ClsSynchronizer.VmSyncCADs.ThumbnailProperty) return true;
             if (ObsSearchItems.Count == 0 && plmProperty.IsSyncCAD) return true;
             
-            //foreach (ClassItem classItem in ClsSynchronizer.VmSyncCADs.GetClassItems().Where(x => x.Name != ""))
             foreach (ClassItem classItem in ClsSynchronizer.VmSyncCADs.GetClassItems().Where(x => String.IsNullOrWhiteSpace(x.Name) ==false))
             {
                 SearchItem searchItem = ObsSearchItems.Where(x => x.ClassName == classItem.Name).FirstOrDefault();
@@ -2542,10 +2483,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                 return new GetSelectedItemsCommand(list =>
                 {
 
-                    //SelectedItems.Clear();
-                    //IList items = (IList)list;
-                    //IEnumerable<SearchItem> collection = items.Cast<SearchItem>();
-                    //SelectedItems = collection.ToList();
                 });
             }
         }
@@ -2561,469 +2498,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             set { SetProperty(ref _selectedSearchItem, value, nameof(SelectedSearchItem)); }
         }
 
-
-        private  void AddDataGridColumn(DataGrid gridSelectedItems, PLMProperty plmProperty,int index)
-        {
-
-            //Modify by kenny 2020/07/31 --------------
-            AddDataGridHeaderTextStyleColumn(gridSelectedItems, plmProperty, index);
-            return;
-            //AddDataGridTextStyleColumn(gridSelectedItems, plmProperty, index);
-            //-----------------------------------------
-            //return;
-            
-            //switch (plmProperty.DataType)
-            //{
-            //    case "date":
-            //        //AddDataGridDateColumn(gridSelectedItems, plmProperty, index);
-            //        AddDataGridTextStyleColumn(gridSelectedItems, plmProperty, index);
-            //        break;
-            //    case "list":
-            //        //AddDataGridComboBoxColumn(gridSelectedItems, plmProperty, index);
-            //        AddDataGridTextStyleColumn(gridSelectedItems, plmProperty, index);
-            //        break;
-            //    case "filter list":
-            //        //AddDataGridComboBoxColumn(gridSelectedItems, plmProperty, index);
-            //        AddDataGridTextStyleColumn(gridSelectedItems, plmProperty, index);
-            //        break;
-            //    case "image":
-            //        AddDataGridImageColumn(gridSelectedItems, plmProperty, index);
-            //        break;
-            //    case "item":
-            //        AddDataGridTextStyleColumn(gridSelectedItems, plmProperty, index);
-            //        //AddDataGridTextStyleItemColumn(gridSelectedItems, plmProperty, index);
-            //        break;
-            //    default:
-            //        AddDataGridTextColumn(gridSelectedItems, plmProperty, index );
-            //        break;
-            //}
-            
-        }
-
-        private void AddDataGridColumnA(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-            switch (plmProperty.DataType)
-            {
-
-                case "image":
-                    AddDataGridImageColumn(gridSelectedItems, plmProperty, index);
-                    break;
-                default:
-                    AddDataGridTextColumn(gridSelectedItems, plmProperty, index);
-                    break;
-            }
-
-        }
-
-        private void AddDataGridImageColumn(DataGrid gridSelectedItems)
-        {
-            AddDataGridImageColumn(gridSelectedItems, null, -1);
-        }
-
-
-        private void AddDataGridImageColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-            
-            DataGridTemplateColumn col = new DataGridTemplateColumn();
-            col.Header = (plmProperty !=null)? plmProperty.Label:"";
-
-            //FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-            ////Binding imageBind = new Binding("PlmProperties[" + index + "].DataValue");
-            //Binding imageBind = (plmProperty != null) ? new Binding("PlmProperties[" + index + "].DataValue") : new Binding("Thumbnail");
-            //imageBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            //imageBind.Mode = BindingMode.TwoWay;
-            //imageBind.Converter = new ThumbnailToPathConverter();
-
-            //imagePickerFactoryElem.SetValue(Image.SourceProperty, imageBind);
-
-            //Style imgStyle = new Style();
-            //imgStyle.TargetType = typeof(Image);
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    Setter imgSetter = new Setter();
-            //    imgSetter.Property = (i==0)? Image.WidthProperty: Image.HeightProperty;
-            //    imgSetter.Value = (double)24;
-            //    imgStyle.Setters.Add(imgSetter);
-            //}
-            //imagePickerFactoryElem.SetValue(Image.StyleProperty, imgStyle);
-
-            FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-            AddDataGridImage(imagePickerFactoryElem, plmProperty, index);
-
-
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = imagePickerFactoryElem;
-            col.CellTemplate = cellTemplate;
-
-            gridSelectedItems.Columns.Add(col);
-        }
-
-        private void AddDataGridImage(FrameworkElementFactory imagePickerFactoryElem, PLMProperty plmProperty, int index)
-        {
-
-            //FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-            //Binding imageBind = new Binding("PlmProperties[" + index + "].DataValue");
-            Binding imageBind = (plmProperty != null) ? new Binding("PlmProperties[" + index + "].DataValue") : new Binding("Thumbnail");
-            imageBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            imageBind.Mode = BindingMode.TwoWay;
-            imageBind.Converter = new ThumbnailToPathConverter();
-
-            imagePickerFactoryElem.SetValue(Image.SourceProperty, imageBind);
-
-            Style imgStyle = new Style();
-            imgStyle.TargetType = typeof(Image);
-            for (int i = 0; i < 2; i++)
-            {
-                Setter imgSetter = new Setter();
-                imgSetter.Property = (i == 0) ? Image.WidthProperty : Image.HeightProperty;
-                imgSetter.Value = (double)24;
-                imgStyle.Setters.Add(imgSetter);
-            }
-            imagePickerFactoryElem.SetValue(Image.StyleProperty, imgStyle);
-        }
-
-
-        private void AddDataGridDateColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-            DataGridTemplateColumn col = new DataGridTemplateColumn();
-            col.Header = plmProperty.Label;
-            FrameworkElementFactory datePickerFactoryElem = new FrameworkElementFactory(typeof(DatePicker));
-            Binding dateBind = new Binding("PlmProperties[" + index + "].DisplayValue");
-            dateBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            dateBind.Mode = BindingMode.TwoWay;
-            datePickerFactoryElem.SetValue(DatePicker.SelectedDateProperty, dateBind);
-            datePickerFactoryElem.SetValue(DatePicker.DisplayDateProperty, dateBind);
-
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = datePickerFactoryElem;
-            col.CellTemplate = cellTemplate;
-            
-            //dateBind.BindsDirectlyToSource = "DataValue";
-            //e.Column = col;//Set the new generated column
-            gridSelectedItems.Columns.Add(col);
-        }
-
-        private void AddDataGridDatePicker(FrameworkElementFactory datePickerFactoryElem, PLMProperty plmProperty, int index)
-        {
-
-            Binding dateBind = new Binding("PlmProperties[" + index + "].DisplayValue");
-            dateBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            dateBind.Mode = BindingMode.TwoWay;
-            datePickerFactoryElem.SetValue(DatePicker.SelectedDateProperty, dateBind);
-            datePickerFactoryElem.SetValue(DatePicker.DisplayDateProperty, dateBind);
-        }
-
-
-        private void AddDataGridComboBoxColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-            
-            DataGridComboBoxColumn cboColumn = new DataGridComboBoxColumn();
-            cboColumn.Header = plmProperty.Label;
-            
-            cboColumn.ItemsSource = plmProperty.ListItems;
-            if (plmProperty.ColumnWidth > 0) cboColumn.Width = plmProperty.ColumnWidth;
-            cboColumn.DisplayMemberPath = "Label";
-
-            Binding dateBind = new Binding("PlmProperties[" + index + "].DataValue");
-            dateBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            dateBind.Mode = BindingMode.TwoWay;
-
-            //還是需要,不然選到的物件值會被清空
-            cboColumn.SelectedValueBinding = dateBind;
-            cboColumn.SelectedValuePath = "Value";
-            gridSelectedItems.Columns.Add(cboColumn);
-        }
-
-        private void AddDataGridTextColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index )
-        {
-            DataGridTextColumn textColumn = new DataGridTextColumn();
-            textColumn.Header = plmProperty.Label;
-            textColumn.Binding = new Binding("PlmProperties[" + index + "].DisplayValue");
-            if (plmProperty.ColumnWidth > 0) textColumn.Width = plmProperty.ColumnWidth;
-            gridSelectedItems.Columns.Add(textColumn);
-        }
-
-
-        private void AddDataGridHeaderTextStyleColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-            //Modify by kenny 2020/08/05
-            //gridSelectedItems.ColumnHeaderHeight = 70;
-            gridSelectedItems.ColumnHeaderHeight = 65;
-
-            DataGridTemplateColumn col = new DataGridTemplateColumn();
-
-            FrameworkElementFactory stackPanel = new FrameworkElementFactory(typeof(StackPanel));
-            AddDataGridHeaderSearchControls(stackPanel, plmProperty);
-
-            FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
-            AddDataGridTextStyleBinding(txtBox, plmProperty);
-            txtBox.SetValue(TextBox.HeightProperty,25d);  //TextBox高度
-            txtBox.SetValue(TextBox.HeightProperty, 25d);
-            //txtBox.SetValue(TextBox.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
-            stackPanel.AppendChild(txtBox);
-
-            DataTemplate headerTemplate = new DataTemplate();
-            headerTemplate.VisualTree = stackPanel;
-            col.HeaderTemplate = headerTemplate;
-
-            DataTemplate cellTemplate = new DataTemplate();
-            if (plmProperty.DataType== "image")
-            {
-                FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-                
-                AddDataGridImage(imagePickerFactoryElem, plmProperty, index);              
-                cellTemplate.VisualTree = imagePickerFactoryElem;          
-            }
-            else if (plmProperty.DataType == "revision")
-            {
-                FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-                //AddDataGridHeaderTextStyleBinding(txtboxFactoryElem, index);
-                AddDataGridTextStyleBinding(txtboxFactoryElem, index, plmProperty.DataType);
-                cellTemplate.VisualTree = txtboxFactoryElem;
-            }
-            else
-            {
-                //Update
-                //FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-                //AddDataGridTextStyleBinding(txtboxFactoryElem, index);
-                //cellTemplate.VisualTree = txtboxFactoryElem;
-
-                //Readonly
-                FrameworkElementFactory txtBlockFactoryElem = new FrameworkElementFactory(typeof(TextBlock));
-                AddDataGridTextBlockBinding(txtBlockFactoryElem, index);
-                cellTemplate.VisualTree = txtBlockFactoryElem;
-            }
-
-
-            //Style headerStyle = new Style(typeof(DataGridColumnHeader));
-            //headerStyle.Setters.Add(new Setter(FrameworkElement.HeightProperty, 55d));
-            //headerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
-            //headerStyle.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Bottom));
-            //col.HeaderStyle = headerStyle;
-
-            col.CellTemplate = cellTemplate;
-            //col.SetValue(DataGridTemplateColumn.HeaderTemplateProperty, cellTemplate);
-            gridSelectedItems.Columns.Add(col);
-            gridSelectedItems.HorizontalScrollBarVisibility =ScrollBarVisibility.Visible;
-
-        }
-
-        private void AddDataGridHeaderSearchControls(FrameworkElementFactory stackPanel, PLMProperty plmProperty)
-        {
-            VerticalAlignment verticalAlignment = new VerticalAlignment();
-            stackPanel.SetValue(StackPanel.VerticalAlignmentProperty, verticalAlignment);
-
-            //設定Header中的TextBlock樣式
-            Thickness marginThickness = new Thickness();
-            marginThickness.Right = 5;
-            marginThickness.Left = 5;
-            marginThickness.Bottom = 10;
-            FrameworkElementFactory txtBlock = new FrameworkElementFactory(typeof(TextBlock));
-            txtBlock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);  //水平置中
-            txtBlock.SetValue(TextBlock.TextProperty, plmProperty.Label);  //文字內容
-            txtBlock.SetValue(TextBox.BackgroundProperty, Brushes.Transparent);  //背景透明
-            txtBlock.SetValue(StackPanel.MarginProperty, marginThickness); //設定上下左右間隔
-            stackPanel.AppendChild(txtBlock);
-        }
-
-
-
-        //private void AddDataGridHeaderTextStyleColumn(DataGrid gridSelectedItems, PLMProperties plmProperty, int index)
-        //{
-
-        //    gridSelectedItems.ColumnHeaderHeight = 70;
-        //    DataGridTextColumn textColumn = new DataGridTextColumn();
-            
-        //    FrameworkElementFactory stackPanel = new FrameworkElementFactory(typeof(StackPanel));
-
-        //    VerticalAlignment verticalAlignment = new VerticalAlignment();
-        //    stackPanel.SetValue(StackPanel.VerticalAlignmentProperty, verticalAlignment);
-        //    FrameworkElementFactory txt1 = new FrameworkElementFactory(typeof(TextBlock));
-        //    txt1.SetValue(TextBlock.TextProperty, plmProperty.Label);
-        //    stackPanel.AppendChild(txt1);
-
-
-        //    FrameworkElementFactory txt2 = new FrameworkElementFactory(typeof(TextBox));
-        //    AddDataGridTextStyleBinding(txt2, index);
-
-        //    stackPanel.AppendChild(txt2);
-            
-        //    DataTemplate cellTemplate = new DataTemplate();
-        //    cellTemplate.VisualTree = stackPanel;
-
-        //    textColumn.SetValue(DataGridTextColumn.HeaderTemplateProperty, cellTemplate);
-
-        //    Binding textboxBind = new Binding("PlmProperties[" + index + "].DisplayValue");
-        //    textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-        //    textboxBind.Mode = BindingMode.TwoWay;
-        //    textColumn.Binding=textboxBind;
-
-        //    gridSelectedItems.Columns.Add(textColumn);
-
-        //}
-
-
-
-
-
-        private void AddDataGridTextStyleColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-            //System.Diagnostics.Debugger.Break();
-            DataGridTemplateColumn col = new DataGridTemplateColumn();
-            col.Header = plmProperty.Label;
-            FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
-            AddDataGridTextStyleBinding(txtboxFactoryElem, index, plmProperty.DataType);
-
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = txtboxFactoryElem;
-            col.CellTemplate = cellTemplate;
-            
-            gridSelectedItems.Columns.Add(col);
-            
-        }
-
-        private void AddDataGridTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, int index,string type)
-        {
-
-            Binding textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtboxFactoryElem.SetBinding(TextBox.DataContextProperty, textboxBind);
-
-            textboxBind = new Binding("DisplayValue");//DataValue  DisplayValue
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtboxFactoryElem.SetBinding(TextBox.TextProperty, textboxBind);
-
-            //@@@@@@@@@@2020/08/11
-            //new MultiBinding : plmProperty.SoruceSearchItem.ItemId   plmProperty.SoruceSearchItem.ItemId
-
-            textboxBind = (type == "revision") ? new Binding("SoruceSearchItem.ItemId") : new Binding("DataSource");
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
-
-
-            if (type == "revision")
-            {
-                textboxBind = new Binding("DataValue");//DataValue  DisplayValue
-                textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                textboxBind.Mode = BindingMode.OneWay;
-                txtboxFactoryElem.SetBinding(TextBox.ToolTipProperty, textboxBind);
-            }
-
-                //textboxBind = (type == "revision") ? new Binding("SoruceSearchItem.ItemId") : new Binding("DataSource");
-
-                //if (type == "revision")
-                //{
-                //    MultiBinding mlBind = new MultiBinding();
-                //    mlBind.StringFormat = "{}{0}";
-                //    textboxBind = new Binding("SoruceSearchItem.ClassName");
-                //    mlBind.Bindings.Add(textboxBind);
-                //    textboxBind = new Binding("SoruceSearchItem.ItemId");
-                //    mlBind.Bindings.Add(textboxBind);
-
-                //    mlBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                //    mlBind.Mode = BindingMode.TwoWay;
-                //    txtboxFactoryElem.SetBinding(TextBox.TagProperty, mlBind);
-                //}
-                //else
-                //{
-                //    textboxBind = new Binding("DataSource");
-                //    textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                //    textboxBind.Mode = BindingMode.TwoWay;
-                //    txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
-                //}
-
-
-                //textboxBind = new Binding("DataSource");
-                //textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                //textboxBind.Mode = BindingMode.TwoWay;
-                //txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
-
-                //plmProperty.SoruceSearchItem.ClassName
-
-            textboxBind = new Binding("DataType");
-            textboxBind.Converter = new StyleGridConverter();
-            txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
-
-        }
-
-        private void AddDataGridHeaderTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, int index)
-        {
-
-            Binding textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtboxFactoryElem.SetBinding(TextBox.DataContextProperty, textboxBind);
-
-            textboxBind.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
-            textboxBind.Path = new PropertyPath("DisplayValue");
-            txtboxFactoryElem.SetBinding(TextBox.TextProperty, textboxBind);
-
-
-            textboxBind.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
-            textboxBind.Path = new PropertyPath("DataSource");
-            txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
-
-            textboxBind = new Binding("DataType");
-            textboxBind.Converter = new StyleGridConverter();
-            txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
-
-        }
-
-
-        private void AddDataGridTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, PLMProperty plmProperty)
-        {
-
-
-
-            txtboxFactoryElem.SetValue(TextBox.DataContextProperty, plmProperty);
-
-            //textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
-            //textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            //textboxBind.Mode = BindingMode.TwoWay;
-            //txtboxFactoryElem.SetBinding(TextBox.DataContextProperty, textboxBind);
-
-            Binding textboxBind = new Binding("DisplayValue");//DataValue  DisplayValue
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtboxFactoryElem.SetBinding(TextBox.TextProperty, textboxBind);
-
-            textboxBind = new Binding("DataSource");
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtboxFactoryElem.SetBinding(TextBox.TagProperty, textboxBind);
-
-            if (plmProperty.DataType == "image" || plmProperty.DataType == "revision") return;
-
-            textboxBind = new Binding("DataType");
-            textboxBind.Converter = new StyleGridConverter();
-            txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
-        }
-
-
-
-
-        private void AddDataGridTextBlockBinding(FrameworkElementFactory txtBlockFactoryElem, int index)
-        {
-
-            Binding textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtBlockFactoryElem.SetBinding(TextBlock.DataContextProperty, textboxBind);
-
-            textboxBind = new Binding("DisplayValue");//DataValue  DisplayValue
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtBlockFactoryElem.SetBinding(TextBlock.TextProperty, textboxBind);
-
-        }
 
 
         private ICommand _syncInsertItem { get; set; }
@@ -3192,24 +2666,32 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         private bool ShowItemSearchDialog()
         {
+            string itemDialogType = ClsSynchronizer.ShowDialogItemType;
             ItemSearchDialog itemSearchDialog = new ItemSearchDialog();
+            ClsSynchronizer.IsShowDialog = true;
             itemSearchDialog.Width = 800;
             itemSearchDialog.Height = 600;
             itemSearchDialog.Topmost = true;
             itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             itemSearchDialog.ShowDialog();
+            ClsSynchronizer.IsShowDialog = false ;
+            ClsSynchronizer.ShowDialogItemType = itemDialogType;
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
             return false;
         }
 
         private bool ShowNewFileName(string fileName)
         {
+            string itemDialogType = ClsSynchronizer.ShowDialogItemType;
+            ClsSynchronizer.IsShowDialog = true;
             NewFileName newFileName = new NewFileName(fileName);
             newFileName.Width = 400;
             newFileName.Height = 200;
             newFileName.Topmost = true;
             newFileName.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             newFileName.ShowDialog();
+            ClsSynchronizer.IsShowDialog =false ;
+            ClsSynchronizer.ShowDialogItemType = itemDialogType;
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
             return false;
         }
@@ -3275,8 +2757,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _syncInsertItem = new RelayCommand((x) =>
                 {
                     //MessageBox.Show("SyncInsertItem");
-
-
                 });
                 return _syncInsertItem;
             }
@@ -3328,7 +2808,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             string thumbnail = value.ToString();
             ImagePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(thumbnail);
              
-            //if (ImagePath == "") ImagePath= @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
             if (String.IsNullOrWhiteSpace(ImagePath)) ImagePath= @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
             return ImagePath;
 
@@ -3345,9 +2824,6 @@ namespace BCS.CADs.Synchronization.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            //AddFromTemplate addFromTemplateView = (AddFromTemplate)ClsSynchronizer.SyncListView;
-            //return addFromTemplateView.FindResource(value as string);
-            //return @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/Part.png";
             return ClsSynchronizer.VmSyncCADs.GetClassItems().Where(x => x.Name == value as string).Select(x => x.ThumbnailFullName).FirstOrDefault();
         }
 
@@ -3364,8 +2840,6 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             string viewFilePath = (ClsSynchronizer.ViewFilePath!="")? ClsSynchronizer.ViewFilePath:@"pack://application:,,,/BCS.CADs.Synchronization;component/Images/Part.png";
             return viewFilePath;
-            //return @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/Part.png";
-            //return ClsSynchronizer.ViewFilePath;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -3425,12 +2899,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            //reverse conversion (false=>Visible, true=>collapsed) on any given parameter
-            //bool input = (null == parameter) ? (bool)value : !((bool)value);
 
             bool input = (bool)value;
-            //bool input = ((string)value == "Part") ? true : false;
-            //MessageBox.Show ((string)value);
             return (input) ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -3459,32 +2929,9 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             if (value == null)
                 return null;
-            //FrameworkElement targetElement = value as FrameworkElement;
+
             return _stylesConverter.GetStyle(_resourceDictionary, value);
 
-            //string styleValue = "tbListStyle";
-            //switch (value.ToString())
-            //{
-            //    case "tbCalendarStyle":
-            //    case "date":
-            //        styleValue = "tbCalendarStyle";
-            //        break;
-            //    case "list":
-            //    case "filter list":
-            //    case "tbListStyle":
-            //        break;
-            //    case "item":
-            //        styleValue = "tbItemStyle";
-            //        break;
-            //    default:
-            //        return null;
-            //}
-
-
-            //ResourceDictionary resourceDictionary = _resourceDictionary.Where(x => x.Key == styleValue).Select(x => x.Value).Single();
-            //if (resourceDictionary == null) return null;
-            //Style newStyle = (Style)resourceDictionary[styleValue];
-            //return newStyle;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -3497,19 +2944,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             if (_resourceDictionary.Count() == 0)
             {
                 ResourceDictionary resourceDictionary = _stylesConverter.StyleGridConverter(_resourceDictionary, false);
-                //ResourceDictionary resourceDictionary = new ResourceDictionary();
-                //resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/ListPicker.xaml");
-                //_resourceDictionary.Add("tbListStyle", resourceDictionary);
-
-                //resourceDictionary = new ResourceDictionary();
-                //resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/DatePicker.xaml");
-                //_resourceDictionary.Add("tbCalendarStyle", resourceDictionary);
-
-                //resourceDictionary = new ResourceDictionary();
-                //resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/ItemPicker.xaml");
-                //_resourceDictionary.Add("tbItemStyle", resourceDictionary);
-
-                //resourceDictionary.MergedDictionaries.Add(resourceDictionary);
             }
         }
 
@@ -3530,33 +2964,9 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             if (value == null)
                 return null;
-            //FrameworkElement targetElement = value as FrameworkElement;
+
             return _stylesConverter.GetStyle(_resourceDictionary, value);
 
-
-            //string styleValue = "tbListStyle";
-            //switch (value.ToString())
-            //{
-            //    case "tbCalendarStyle":
-            //    case "date":
-            //        styleValue = "tbCalendarStyle";
-            //        break;
-            //    case "list":
-            //    case "filter list":
-            //    case "tbListStyle":
-            //        break;
-            //    case "item":
-            //        styleValue = "tbItemStyle";
-            //        break;
-            //    default:
-            //        return null;
-            //}
-
-
-            //ResourceDictionary resourceDictionary = _resourceDictionary.Where(x => x.Key == styleValue).Select(x => x.Value).Single();
-            //if (resourceDictionary == null) return null;
-            //Style newStyle = (Style)resourceDictionary[styleValue];
-            //return newStyle;
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -3570,19 +2980,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
 
                 ResourceDictionary resourceDictionary = _stylesConverter.StyleGridConverter(_resourceDictionary,true);
-                //ResourceDictionary resourceDictionary = new ResourceDictionary();
-                //resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/ListPicker.xaml");
-                //_resourceDictionary.Add("tbListStyle", resourceDictionary);
-
-                //resourceDictionary = new ResourceDictionary();
-                //resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/DatePicker.xaml");
-                //_resourceDictionary.Add("tbCalendarStyle", resourceDictionary);
-
-                //resourceDictionary = new ResourceDictionary();
-                //resourceDictionary.Source = new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Utility/GridItemPicker.xaml");
-                //_resourceDictionary.Add("tbItemStyle", resourceDictionary);
-
-                //resourceDictionary.MergedDictionaries.Add(resourceDictionary);
             }
         }
 
@@ -3679,7 +3076,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public ObservableCollection<SearchItemsViewModel> Child
         {
             get { return _child; }
-            //set { SetProperty(ref _child, value); }
             set { SetProperty(ref _child, value, nameof(Child)); }
             
         }
@@ -3688,7 +3084,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public string Name
         {
             get { return _name; }
-            //set { SetProperty(ref _name, value); }
             set {
                 SetProperty(ref _name, value, nameof(Name));
                 _displayName = _name;
@@ -3760,7 +3155,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public int Order
         {
             get { return _order; }
-            //set { SetProperty(ref _order, value); }
             set { SetProperty(ref _order, value, nameof(Order)); }
         }
 
@@ -3771,7 +3165,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public string InstanceId
         {
             get { return _instanceId; }
-            //set { SetProperty(ref _order, value); }
             set { SetProperty(ref _instanceId, value, nameof(InstanceId)); }
         }
 
@@ -3803,7 +3196,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public Boolean IsInsertSaveAs
         {
             get { return _isInsertSaveAs; }
-            //set { SetProperty(ref _order, value); }
             set { SetProperty(ref _isInsertSaveAs, value, nameof(IsInsertSaveAs)); }
         }
 
@@ -3855,14 +3247,11 @@ namespace BCS.CADs.Synchronization.ViewModels
                     if (sonSearchItem.IsChecked==true)
                     {
                         
-                        //PLMProperties property = cadStructure.Child.PlmProperties.Where(x => x.Name == "bcs_added_filename" && x.DisplayValue != "").SingleOrDefault();
                         property = cadStructure.Child.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) ==false).SingleOrDefault();
                         if (property != null)
                         {
                             
-                            //sonSearchItem.DisplayName = (sonSearchItem.InstanceId != "") ? String.Format(property.DisplayValue + "<{0}>", sonSearchItem.InstanceId) : property.DisplayValue;
                             sonSearchItem.DisplayName = (String.IsNullOrWhiteSpace(sonSearchItem.InstanceId) ==false ) ? String.Format(property.DisplayValue + "<{0}>", sonSearchItem.InstanceId)  : property.DisplayValue ;
-                            //sonSearchItem.DisplayName = (String.IsNullOrWhiteSpace(sonSearchItem.InstanceId) == false) ? String.Format(property.DisplayValue + System.IO.Path.GetExtension(cadStructure.Child.FileName) + "<{0}>", sonSearchItem.InstanceId) : property.DisplayValue + System.IO.Path.GetExtension(cadStructure.Child.FileName);
                             sonSearchItem.OperationType = 4;
                         }
                     }

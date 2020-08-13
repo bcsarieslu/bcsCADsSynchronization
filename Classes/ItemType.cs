@@ -154,7 +154,7 @@ namespace BCS.CADs.Synchronization.Classes
         private void AddRevisionProperty(string itemtype)
         {
 
-            if (itemtype != "CAD") return;
+            if (itemtype != ItemTypeName.CAD.ToString()) return;
             AddProperty("sys_revision", "revision", "Version");
             if (Type== SearchType.CADAllRevisionsSearch)
             {

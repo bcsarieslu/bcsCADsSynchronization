@@ -389,27 +389,28 @@ namespace BCS.CADs.Synchronization.Models
                 //itemList.getItemByIndex(0).getRelationships(itemtype).getItemCount
                 for (var i=0; i< itemList.getItemByIndex(0).getRelationships(itemtype).getItemCount(); i++)
                 {
-                    PLMListItem listIfem = new PLMListItem();
+                    PLMListItem listItem = new PLMListItem();
                     //序號
-                    listIfem.Order = int.Parse(itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("sort_order","0"));
+                    listItem.Order = int.Parse(itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("sort_order","0"));
                     //標籤
-                    listIfem.Label = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label","");
+                    listItem.Label = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label","");
                     //值
-                    listIfem.Value = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("value", "");
+                    listItem.Value = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("value", "");
                     //過濾
-                    listIfem.Filter = isFilter ? itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("filter", ""):"";
+                    listItem.Filter = isFilter ? itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("filter", ""):"";
                     //是否為過濾
-                    listIfem.IsFilter = isFilter;
+                    listItem.IsFilter = isFilter;
 
                     //標籤其他語系
                     for (var j=0;j< code.Count();j++)
                     {
-                        listIfem.Labels.Add(code[j], itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label" , "", code[j]));
+                        listItem.Labels.Add(code[j], itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label" , "", code[j]));
                         
                         //if (listIfem.Label == "") listIfem.Label = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label", "", code[j]);//@@@@@
-                        if (String.IsNullOrWhiteSpace(listIfem.Label)) listIfem.Label = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label", "", code[j]);//@@@@@
+                        if (String.IsNullOrWhiteSpace(listItem.Label)) listItem.Label = itemList.getItemByIndex(0).getRelationships(itemtype).getItemByIndex(i).getProperty("label", "", code[j]);//@@@@@
                     }
-                    list.ListItems.Add(listIfem);
+                    if (listItem.Label == "") listItem.Label = listItem.Value;//Modify by kenny 2020/08/13
+                    list.ListItems.Add(listItem);
                 }
                 
 
@@ -556,7 +557,7 @@ namespace BCS.CADs.Synchronization.Models
                     //if (searchItem.ItemId != "")
                     if (String.IsNullOrWhiteSpace(searchItem.ItemId) ==false)
                     {
-                        Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                        Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                         if (item == null || searchItem.VersionStatus == SyncVersionStatus.NonLatestVersion.ToString()) continue;
 
                         ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(searchItem.FileName, "LockOrUnlock", "", "Start");
@@ -591,7 +592,7 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                 //if (isLock == 0 && item.getLockStatus() == 1) item.unlockItem();
                 if (isLock == IsLock.False && item.getLockStatus() == 1) item.unlockItem();
 
@@ -641,7 +642,7 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
 
                 bool isLocked = (item.getLockStatus() == 1) ? true : false;
                 if (item.getLockStatus() == 1) item.unlockItem();
@@ -701,7 +702,7 @@ namespace BCS.CADs.Synchronization.Models
                     string newFileName = property.DisplayValue + Path.GetExtension(searchItem.FileName);
                     fileMessage.Name = newFileName;
 
-                    string itemtype = "CAD";
+                    string itemtype = ItemTypeName.CAD.ToString();
                     Aras.IOM.Item item = AsInnovator.getItemById(itemtype, searchItem.ItemId);
                     Aras.IOM.Item cloneItem = item.clone(false);
 
@@ -742,7 +743,7 @@ namespace BCS.CADs.Synchronization.Models
                 foreach (SearchItem searchItem in searchItems.Where(x => x.IsNewVersion == true))
                 {
 
-                    Aras.IOM.Item  item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                    Aras.IOM.Item  item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                     if (searchItem.IsViewSelected==false)
                     {
                         item.setAction("version");
@@ -773,7 +774,7 @@ namespace BCS.CADs.Synchronization.Models
                 Dictionary<string, string> cloneItemIds = new Dictionary<string, string>();
                 foreach (SearchItem searchItem in searchItems.Where(x => x.IsViewSelected == true || x.IsNewVersion == true))
                 {
-                    string itemtype = "CAD";
+                    string itemtype = ItemTypeName.CAD.ToString();
                     Aras.IOM.Item item = AsInnovator.getItemById(itemtype, searchItem.ItemId);
                     item.setAction("edit");
                     item.setAttribute("version", "0");
@@ -807,7 +808,7 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                 if (item.getLockStatus() == 1) return true ;
 
                 //Events
@@ -847,7 +848,7 @@ namespace BCS.CADs.Synchronization.Models
                 SyncEvents syncEventAfter = SyncEvents.None;
 
                 ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(searchItem.FileName, "Add", "", "Start");
-                string itemtype = "CAD";
+                string itemtype = ItemTypeName.CAD.ToString();
                 Aras.IOM.Item item = AsInnovator.newItem(itemtype, "add");
 
                 item.setProperty("bcs_added_filename", filename);
@@ -945,7 +946,7 @@ namespace BCS.CADs.Synchronization.Models
             try
             {
 
-                Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                 item = (item.getProperty("is_current","0")=="0")? GetLastItem(item) : item;
                 if (isLock == IsLock.False  && item.getLockStatus() == 1) item.unlockItem();
                 int intLockStatus = item.getLockStatus();
@@ -1279,7 +1280,7 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                Aras.IOM.Item fileItem = AsInnovator.getItemById("File", fileId);
+                Aras.IOM.Item fileItem = AsInnovator.getItemById(ItemTypeName.File.ToString(), fileId);
                 if (fileItem == null) return false;
                 if (fileItem.isError()) return false;
                 if (fileName == "") fileName = fileItem.getProperty("filename", "");
@@ -1302,7 +1303,7 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                Aras.IOM.Item fileItem = AsInnovator.getItemById("File", fileId);
+                Aras.IOM.Item fileItem = AsInnovator.getItemById(ItemTypeName.File.ToString(), fileId);
                 if (fileItem == null) return false;
                 if (fileItem.isError()) return false;
                 return DownloadFile(searchItem, integrationEvents, syncEvent, item, fileItem, filePath, fileName);
@@ -1447,8 +1448,9 @@ namespace BCS.CADs.Synchronization.Models
                 select.Add("keyed_name");
                 //Modif by kenny 2020/08/05 ----------
                 select.Add("major_rev");
-                select.Add("generation");
+                select.Add("is_current");
                 //------------------------------------
+                select.Add("generation");
 
                 if (nativeProperty != "")
                 {
@@ -1475,8 +1477,9 @@ namespace BCS.CADs.Synchronization.Models
                 }
 
                 selectValue += sbSelects.ToString();
-                //string sqlCommand = " TOP 100 {0}{1} from [innovator].[" + searchItemType.ClassName + "] where {2}";
-                string sqlCommand = " TOP 500 {0} from [innovator].[" + searchItemType.ClassName + "] as a {1} where {2}";
+                ////string sqlCommand = " TOP 100 {0}{1} from [innovator].[" + searchItemType.ClassName + "] where {2}";
+                //string sqlCommand = " TOP 500 {0} from [innovator].[" + searchItemType.ClassName + "] as a {1} where {2}";
+                string sqlCommand = " TOP 500 {0} from [innovator].[" + searchItemType.ItemType + "] as a {1} where {2}"; //Modify by kenny 2020/08/13
 
                 Aras.IOM.Item qureyResult = GetPLMSearchItems(sqlCommand, selectValue, sbLeftJoin.ToString(), where.ToString());
                 int count = qureyResult.getItemCount();
@@ -1699,7 +1702,7 @@ namespace BCS.CADs.Synchronization.Models
 
                 if (File.Exists(Path.Combine(directory, fileName)))
                 {
-                    string itemtype = "File";
+                    string itemtype = ItemTypeName.File.ToString();
                     Aras.IOM.Item newFile = AsInnovator.newItem(itemtype, "add");
                     newFile.setProperty("filename", fileName);
                     newFile.setProperty("actual_filename", directory);
@@ -1821,7 +1824,7 @@ namespace BCS.CADs.Synchronization.Models
                 
                 //if (sourceSearchItem.ItemConfigId == "") new Exception(sourceSearchItem.FileName + " config_id is null");
                 if (String.IsNullOrWhiteSpace(sourceSearchItem.ItemConfigId)) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), sourceSearchItem.FileName)) ;
-                Aras.IOM.Item lastItem = GetLastItem("CAD", sourceSearchItem.ItemConfigId);
+                Aras.IOM.Item lastItem = GetLastItem(ItemTypeName.CAD.ToString(), sourceSearchItem.ItemConfigId);
 
                 //建立新連結
                 Aras.IOM.Item newItem = AsInnovator.newItem(itemType, "add");
@@ -2179,7 +2182,7 @@ namespace BCS.CADs.Synchronization.Models
                 stringBuilder.Append("<is_current>1</is_current>");
                 stringBuilder.Append("<is_required>1</is_required>");
                 stringBuilder.Append("<source_id>");
-                stringBuilder.Append(AsInnovator.getItemByKeyedName("ItemType", "CAD").getID());
+                stringBuilder.Append(AsInnovator.getItemByKeyedName("ItemType", ItemTypeName.CAD.ToString()).getID());
                 stringBuilder.Append("</source_id>");
                 stringBuilder.Append("<name condition='not in' >'created_on','created_by_id','config_id','permission_id','modified_on','modified_by_id','id'</name>");
                 stringBuilder.Append("</Item>");

@@ -351,7 +351,7 @@ namespace BCS.CADs.Synchronization.Entities
             {
                 if (!string.IsNullOrEmpty(Image_ID))
                 {
-                    Aras.IOM.Item it = _asInnovator.AsInnovator.getItemById("File", Image_ID);
+                    Aras.IOM.Item it = _asInnovator.AsInnovator.getItemById(ItemTypeName.File.ToString(), Image_ID);
                     Image_Filename = it.getProperty("filename", "");
                     return it;
                 }
@@ -463,27 +463,43 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
-        virtual protected internal string GetImageFullName(SearchItem searchItem)
+        virtual protected internal string GetImageFullName(SearchItem searchItem, SyncType type)
         {
             try
             {
 
                 var value = searchItem.Thumbnail;
                 PLMProperty plmProperty=  searchItem.PlmProperties.Where(x => x.DataType == "revision").FirstOrDefault();
+                string itemType = ItemTypeName.CAD.ToString();
                 if (plmProperty != null)
                 {
                     searchItem.IsVersion = true;
+                    
                     if (plmProperty.Value!= plmProperty.DisplayValue)
                     {
                         List<string> list = plmProperty.DisplayValue.Split('.').ToList();
-                        Aras.IOM.Item item = _asInnovator.GetRevisionItem(searchItem.ClassName, searchItem.ItemConfigId, list[0], list[1]);
+                        Aras.IOM.Item item = _asInnovator.GetRevisionItem(itemType, searchItem.ItemConfigId, list[0], list[1]);
                         value = item.getProperty(ThumbnailProperty, "");
                         if (value == "") return "";
                     }else
                     {
-                        Aras.IOM.Item item = AsInnovator.getItemById(searchItem.ClassName, searchItem.ItemId);
+                        Aras.IOM.Item item = AsInnovator.getItemById(itemType, searchItem.ItemId);
                         value = item.getProperty(ThumbnailProperty, "");
                     }
+                }else if ( type == SyncType.SyncToPLM)
+                {
+                    value = "";
+                    if (searchItem.CadItemConfigId== searchItem.ItemConfigId && searchItem.CadItemId != "")
+                    {
+                        Aras.IOM.Item item = AsInnovator.getItemById(itemType, searchItem.CadItemId);
+                        value = item.getProperty(ThumbnailProperty, "");
+                    }
+                    if (value == "") return "";
+                }
+                else if (type == SyncType.SyncFromPLM)
+                {
+                    Aras.IOM.Item item = AsInnovator.getItemById(itemType, searchItem.ItemId);
+                    value = item.getProperty(ThumbnailProperty, "");
                 }
 
                 return GetImageFullName(value);
@@ -496,7 +512,39 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+        /// <summary>
+        /// 取得所選到版本的SearchItem
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        virtual protected internal SearchItem GetVersionSearchItem(SearchItem searchItem)
+        {
+            try
+            {
 
+                var value = searchItem.Thumbnail;
+                PLMProperty plmProperty = searchItem.PlmProperties.Where(x => x.DataType == "revision").FirstOrDefault();
+                if (plmProperty != null)
+                {
+                    searchItem.IsVersion = true;
+                    if (plmProperty.Value != plmProperty.DisplayValue)
+                    {
+                        List<string> list = plmProperty.DisplayValue.Split('.').ToList();
+                        Aras.IOM.Item item = _asInnovator.GetRevisionItem(searchItem.ClassName, searchItem.ItemConfigId, list[0], list[1]);
+                        SearchItem versionSearchItem = GetActiveSearchItem(GetPLMSearchItem(item));
+                        return versionSearchItem;
+                    }
+                }
+
+                return searchItem;
+
+            }
+            catch (Exception ex)
+            {
+                //string message = ex.Message;
+                throw ex;
+            }
+        }
 
         /// <summary>
         /// Aras Innovator Login 
@@ -579,7 +627,7 @@ namespace BCS.CADs.Synchronization.Entities
                 ObservableCollection<SearchItem> ObsSearchItems = new ObservableCollection<SearchItem>();
 
                 //string propertyName = (LoadFromPLM) ? NativeProperty : "";
-                string propertyName = (searchItemType.ClassName == "CAD") ? NativeProperty : "";
+                string propertyName = (searchItemType.ItemType == ItemTypeName.CAD.ToString()) ? NativeProperty : "";
                 Aras.IOM.Item qureyResult = _asInnovator.GetItemTypeSearch(searchItemType, propertyName);
 
                 int count = qureyResult.getItemCount();
@@ -592,12 +640,13 @@ namespace BCS.CADs.Synchronization.Entities
                     SelectedSearchItem.ItemConfigId = qureyResult.getItemByIndex(i).getProperty("config_id", "");
                     SelectedSearchItem.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
                     SelectedSearchItem.KeyedName = qureyResult.getItemByIndex(i).getProperty("keyed_name", "");
-
+                    SelectedSearchItem.IsCurrent = (qureyResult.getItemByIndex(i).getProperty("is_current", "0") == "1") ? true : false;
+                    
                     //if (propertyName != "") SelectedSearchItem.FileId = qureyResult.getItemByIndex(i).getProperty(propertyName, "");
                     if (String.IsNullOrWhiteSpace(propertyName) == false) SelectedSearchItem.FileId = qureyResult.getItemByIndex(i).getProperty(propertyName, "");
 
-                    SelectedSearchItem.ClassName = searchItemType.ClassName;
-                    SelectedSearchItem.ClassThumbnail = GetClassThumbnail(SelectedSearchItem.ClassName);
+                    SelectedSearchItem.ItemType = searchItemType.ItemType; //Modify by kenny 2020/08/13
+                    SelectedSearchItem.ClassThumbnail = GetClassThumbnail(SelectedSearchItem.ItemType);
                     ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
                     foreach (PLMProperty property in searchItemType.PlmProperties)
                     {
@@ -609,6 +658,7 @@ namespace BCS.CADs.Synchronization.Entities
                             newProperty.IsInitial = false;
                             newProperty.IsExist = true;
                             newProperty.DataValue = qureyResult.getItemByIndex(i).getProperty(newProperty.Name, "");
+                            
                             newProperty.SoruceSearchItem = SelectedSearchItem;
 
                             //if (newProperty.DataType=="item" && newProperty.DataSource != "")
@@ -658,7 +708,7 @@ namespace BCS.CADs.Synchronization.Entities
                 ObservableCollection<SearchItem> ObsSearchItems = new ObservableCollection<SearchItem>();
 
                 //string propertyName = (LoadFromPLM) ? NativeProperty : "";
-                string propertyName = (searchItemType.Name == "CAD") ? NativeProperty : "";
+                string propertyName = (searchItemType.Name == ItemTypeName.CAD.ToString()) ? NativeProperty : "";
                 Aras.IOM.Item qureyResult = _asInnovator.GetAllRevisions(searchItemType, propertyName, itemId);
 
                 int count = qureyResult.getItemCount();
@@ -671,12 +721,12 @@ namespace BCS.CADs.Synchronization.Entities
                     SelectedSearchItem.ItemConfigId = qureyResult.getItemByIndex(i).getProperty("config_id", "");
                     SelectedSearchItem.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
                     SelectedSearchItem.KeyedName = qureyResult.getItemByIndex(i).getProperty("keyed_name", "");
-
+                   
                     //if (propertyName != "") SelectedSearchItem.FileId = qureyResult.getItemByIndex(i).getProperty(propertyName, "");
                     if (String.IsNullOrWhiteSpace(propertyName) == false) SelectedSearchItem.FileId = qureyResult.getItemByIndex(i).getProperty(propertyName, "");
 
-                    SelectedSearchItem.ClassName = searchItemType.Name ;
-                    SelectedSearchItem.ClassThumbnail = GetClassThumbnail(SelectedSearchItem.ClassName);
+                    SelectedSearchItem.ItemType = searchItemType.Name ;//Modify by kenny 2020/08/13
+                    SelectedSearchItem.ClassThumbnail = GetClassThumbnail(SelectedSearchItem.ItemType);
                     ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
                     foreach (PLMProperty property in searchItemType.PlmProperties)
                     {
@@ -917,6 +967,7 @@ namespace BCS.CADs.Synchronization.Entities
                         searchItem.KeyedName = ""; 
                         searchItem.ItemId =  "";
                         searchItem.ClassName = (classItem.Key!="")? classItem.Key:"";
+                        searchItem.ItemType = ItemTypeName.CAD.ToString();//Modify by kenny 2020/08/13
                         searchItem.ClassThumbnail = GetClassThumbnail(searchItem.ClassName);
                         searchItems.Add(searchItem);
                     });
@@ -994,6 +1045,7 @@ namespace BCS.CADs.Synchronization.Entities
                         }
                         searchItem.RestrictedStatus = GetRestrictedStatus(searchItem, rules, type).ToString();
                         searchItem.Thumbnail = qureyResult.getItemByIndex(i).getProperty(ThumbnailProperty, "");
+                        searchItem.VersionStatus = GetVersionStatus(searchItem).ToString();//Modify by kenny 2020/08/13
                     }
 
                 }
@@ -1006,6 +1058,27 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+        /// <summary>
+        /// 重新設定版本狀態
+        /// </summary>
+        /// <param name="searchItems"></param>
+        virtual protected internal void ResetVersionStatus(List<SearchItem> searchItems)
+        {
+
+            try
+            {
+
+                foreach (SearchItem searchItem in searchItems)
+                {
+                    searchItem.VersionStatus = GetVersionStatus(searchItem).ToString();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         /// <summary>
         /// 取得CAD圖檔在PLM系統的基本查詢屬性建立(含是否存在)AddNewSearchItem(searchItems, item, rules, "", addedFilename, itemId, fileId);
@@ -1026,7 +1099,7 @@ namespace BCS.CADs.Synchronization.Entities
                 addedFilename = item.getProperty("bcs_added_filename", "");
                 SearchItem searchItem = AddNewSearchItem(searchItems, item, rules, "", addedFilename, itemId, fileId);
                 searchItem.FileName = "";
-                Aras.IOM.Item fileItem = AsInnovator.getItemById("File", fileId);
+                Aras.IOM.Item fileItem = AsInnovator.getItemById(ItemTypeName.File.ToString(), fileId);
                 if (fileItem.isError() == false) searchItem.FileName = fileItem.getProperty("filename","");
                 
                 //if (searchItem.ClassName == "") searchItem.ClassName = GetClassKey(item);
@@ -1159,6 +1232,7 @@ namespace BCS.CADs.Synchronization.Entities
                         searchItem.ItemConfigId = "";
                         searchItem.KeyedName = ""; 
                         searchItem.ItemId = "";
+                        searchItem.ItemType = ItemTypeName.CAD.ToString(); //Modify by kenny 2020/08/13
                         searchItem.ClassName = calssTemplateFile.ClassName;
                         searchItem.ClassThumbnail = GetClassThumbnail(searchItem.ClassName);
                         searchItem.FileId = calssTemplateFile.FileId;
@@ -1215,7 +1289,7 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
 
-                Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById("CAD", itemId);
+                Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById(ItemTypeName.CAD.ToString(), itemId);
                 List<SearchItem> searchItems = GetPLMSearchItem(item);
                 
                 SearchItem searchItem = searchItems.First();
@@ -1235,10 +1309,10 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
 
-                Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById("CAD", itemId);
+                Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById(ItemTypeName.CAD.ToString(), itemId);
                 string fileId= item.getProperty(NativeProperty, "");
                 if (fileId == "") return "";
-                Aras.IOM.Item file =  _asInnovator.AsInnovator.getItemById("File", fileId);
+                Aras.IOM.Item file =  _asInnovator.AsInnovator.getItemById(ItemTypeName.File.ToString(), fileId);
                 return file.getProperty("filename", ""); 
             }
             catch (Exception ex)
@@ -1266,7 +1340,7 @@ namespace BCS.CADs.Synchronization.Entities
                         fileName = (property!=null)? property.DisplayValue + Path.GetExtension(searchItem.FileName) : fileName;
                     }
 
-                    Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                    Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                     item = (item.getProperty("is_current", "0") == "0") ? _asInnovator.GetLastItem(item) : item;
 
                     ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(fileName, "Download", "", "Start");
@@ -1323,6 +1397,7 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
+
                 List<ConditionalRule> rules = _product.PdRules;
                 string strRules = "";
                 rules?.ForEach(property => { strRules += ",b." + property.PrepertyName; });
@@ -1332,18 +1407,20 @@ namespace BCS.CADs.Synchronization.Entities
 
                 //List<string> compare = searchItems.Where(x => x.ItemId != "").Select(x => x.ItemId).ToList<string>();
                 List<string> compare = searchItems.Where(x => String.IsNullOrWhiteSpace(x.ItemId) ==false).Select(x => x.ItemId).ToList<string>();
-                
-                //@@@@@@@@@
+
+                //Modify by kenny 2010/08/12
+                //檢查是否是下載指定版本(預設全部是最新版本)
+                SearchItem activeSearchItem = GetActiveSearchItem(searchItems);
+                bool isLastVersion = activeSearchItem.IsCurrent;
+
                 if (compare.Count == 0)
                 {
-                    SearchItem activeSearchItem = GetActiveSearchItem(searchItems);
-                    
                     //if (activeSearchItem.CadItemId != "") { compare = new List<string>(); compare.Add(activeSearchItem.CadItemId); }
                     if (activeSearchItem.CadItemId != "") { compare = new List<string>(); compare.Add(activeSearchItem.CadItemId); }
                     else if (String.IsNullOrWhiteSpace(activeSearchItem.CadItemId) ==false) { compare = new List<string>(); compare.Add(activeSearchItem.CadItemConfigId); }
                     if (compare.Count > 0)
                     {
-                        Aras.IOM.Item item = AsInnovator.getItemById("CAD", compare[0]);
+                        Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), compare[0]);
                         if (item != null && item.isError() == false)
                         {
                             activeSearchItem.ItemId = compare[0];
@@ -1353,7 +1430,7 @@ namespace BCS.CADs.Synchronization.Entities
                             
                             //activeSearchItem.IsAdded = (activeSearchItem.FileName == "") ? true : false;
                             activeSearchItem.IsAdded = (String.IsNullOrWhiteSpace(activeSearchItem.FileName)) ? true : false;
-
+                            
                             activeSearchItem.IsExist = true;
                             activeSearchItem.ClassName = GetClassKey(item);
                             activeSearchItem.ClassThumbnail = GetClassThumbnail(activeSearchItem.ClassName);
@@ -1404,9 +1481,11 @@ namespace BCS.CADs.Synchronization.Entities
                                 string itemId;
                                 string addedFilename;
                                 string fileId = qureyResult.getItemByIndex(i).getProperty(NativeProperty, "");
-                                if (qureyResult.getItemByIndex(i).getProperty("is_current", "0") == "0")
+                                //Modify by kenny 2010/08/12
+                                //if (qureyResult.getItemByIndex(i).getProperty("is_current", "0") == "0")
+                                if (qureyResult.getItemByIndex(i).getProperty("is_current", "0") == "0" && isLastVersion==true)
                                 {
-                                    Aras.IOM.Item lastItem = _asInnovator.GetLastItem("CAD", qureyResult.getItemByIndex(i).getProperty("config_id", ""));
+                                    Aras.IOM.Item lastItem = _asInnovator.GetLastItem(ItemTypeName.CAD.ToString(), qureyResult.getItemByIndex(i).getProperty("config_id", ""));
                                     itemId = lastItem.getID();
                                     addedFilename = lastItem.getProperty("bcs_added_filename", "");
                                     fileId = lastItem.getProperty(NativeProperty, "");
@@ -1483,13 +1562,13 @@ namespace BCS.CADs.Synchronization.Entities
                 foreach (SearchItem searchItem in searchItems.Where(x => String.IsNullOrWhiteSpace(x.ItemId) ==false && String.IsNullOrWhiteSpace(x.FileId) ==false))
                 //foreach (SearchItem searchItem in searchItems.Where(x => x.ItemId != "" ))
                 {
-                    Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                    Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                     item = (item.getProperty("is_current", "0") == "0") ? _asInnovator.GetLastItem(item) : item;
                     
                     //if (searchItem.FileName == "")
                     if (String.IsNullOrWhiteSpace(searchItem.FileName))
                     {
-                        Aras.IOM.Item fileItem =  AsInnovator.getItemById("File", searchItem.FileId);
+                        Aras.IOM.Item fileItem =  AsInnovator.getItemById(ItemTypeName.File.ToString(), searchItem.FileId);
                         searchItem.FileName = fileItem.getProperty("filename","");
                     }
 
@@ -1506,7 +1585,9 @@ namespace BCS.CADs.Synchronization.Entities
                 }
                 itemMessage.Detail = "";
                 IntegrationEvents integrationEvent = null;
-                _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.OpenFiles.ToString(), ref searchItems, null, integrationEvent, SyncEvents.OpenFiles, SyncType.LoadFromPLM);
+
+                SearchItem activeSearchItem = GetActiveSearchItem(searchItems);
+                _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.OpenFiles.ToString(), ref activeSearchItem, null, integrationEvent, SyncEvents.OpenFiles, SyncType.LoadFromPLM);
 
                 //Events
                 itemMessage.Detail = "After Events";
@@ -1775,7 +1856,6 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
 
-                //if (isSearch == false && _cadItemType != null && name == "CAD") return _cadItemType;
                 if (type == SearchType.CADRevisionSearch && _cadItemType != null) return _cadItemType;
                 if (type == SearchType.CADAllRevisionsSearch && _cadRevisionItemType != null ) return _cadRevisionItemType;
                 
@@ -2071,7 +2151,7 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
-                Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId);
+                Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
 
                 if (isLock == 0 && item.getLockStatus() == 1) item.unlockItem();
                 if (isLock == IsLock.False && item.getLockStatus() == 1) item.unlockItem();
@@ -2144,7 +2224,7 @@ namespace BCS.CADs.Synchronization.Entities
                     structuralChange.SourceItemId = sourceSearchItem.ItemId;
                     structuralChange.SourceFilePath = sourceSearchItem.FilePath;
 
-                    Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById("CAD", structuralChange.TargetItemId);
+                    Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById(ItemTypeName.CAD.ToString(), structuralChange.TargetItemId);
                     SearchItem searchItem = GetPLMSearchItem(item).FirstOrDefault();
 
                     if (structuralChange.Type != ChangeType.InsertSaveAs)  structuralChange.TargetFileName = searchItem.FileName;
@@ -2394,27 +2474,27 @@ namespace BCS.CADs.Synchronization.Entities
                 PLMProperty property = searchItemType.PlmProperties.Where(x => x.PropertyName == dataContext.PropertyName).FirstOrDefault();
 
                 //property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
-                property.DisplayValue = dataContext.DisplayValue;
+                property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
 
-                property.SyncValue = property.DisplayValue;
+                property.DataValue = property.DisplayValue;
                 switch (property.DataType)
                 {
                     case "item":
-                        if (String.IsNullOrWhiteSpace( property.SyncValue)==false)
+                        if (String.IsNullOrWhiteSpace( property.DataValue) ==false)
                         {
-                            Aras.IOM.Item item = AsInnovator.getItemByKeyedName(property.DataSource, property.SyncValue);
-                            property.SyncValue = (item != null) ? item.getID() : property.SyncValue;
+                            Aras.IOM.Item item = AsInnovator.getItemByKeyedName(property.DataSource, property.DataValue);
+                            property.DataValue = (item != null) ? item.getID() : property.DataValue;
                         }                
                         break;
                     case "filter list":
                     case "list":
-                        property.SyncValue = (property.PLMList.ListItems.Where(x => x.Label == property.SyncValue) != null) ? property.PLMList.ListItems.Where(x => x.Label == property.SyncValue).Select(x => x.Value ).FirstOrDefault() : property.DisplayValue;
+                        property.DataValue = (property.PLMList.ListItems.Where(x => x.Label == property.DataValue) != null) ? property.PLMList.ListItems.Where(x => x.Label == property.DataValue).Select(x => x.Value ).FirstOrDefault() : property.DisplayValue;
                         break;
                     case "date":
-                        SetDatePLMPropertySyncValue(property);
+                        SetDatePLMPropertyDataValue(property);
                         break;
                 }
-                property.Value = property.SyncValue;
+                property.Value = property.DataValue;
 
             }
         }
@@ -2429,27 +2509,27 @@ namespace BCS.CADs.Synchronization.Entities
         /// 重新設定SyncValue日期值
         /// </summary>
         /// <param name="property"></param>
-        private void SetDatePLMPropertySyncValue(PLMProperty property)
+        private void SetDatePLMPropertyDataValue(PLMProperty property)
         {
             try
             {
 
-                if (String.IsNullOrWhiteSpace(property.SyncValue) == false)
+                if (String.IsNullOrWhiteSpace(property.DataValue) == false)
                 {
-                    DateTime date = DateTime.Parse(property.SyncValue);
+                    DateTime date = DateTime.Parse(property.DataValue);
                     if (date.Year > 1911)
                     {
-                        property.SyncValue = date.ToString("yyyy-MM-ddTHH:mm:ss");
+                        property.DataValue = date.ToString("yyyy-MM-ddTHH:mm:ss");
                         return;
                     }
                 }
-                property.SyncValue = null;
+                property.DataValue = null;
             }
 
             catch (Exception ex)
             {
                 string strError = ex.Message;
-                property.SyncValue = null;
+                property.DataValue = null;
             }
         }
 
@@ -2816,9 +2896,10 @@ namespace BCS.CADs.Synchronization.Entities
                     
                     //searchItem.ClassName = (classItem.Key != "") ? classItem.Key : GetClassKey(qureyResult.getItemByIndex(i));
                     searchItem.ClassName = (String.IsNullOrWhiteSpace(classItem.Key) ==false) ? classItem.Key : GetClassKey(qureyResult.getItemByIndex(i));
+                    searchItem.ItemType = ItemTypeName.CAD.ToString();//Modify by kenny 2020/08/13
                     searchItem.ClassThumbnail = GetClassThumbnail(searchItem.ClassName);
                     searchItem.RuleProperties = GetRuleProperties(rules, qureyResult.getItemByIndex(i));
-                    searchItems.Add(searchItem);
+                    
                     classItem.Value.Remove(searchItem.FileName);
                 }
 
@@ -3088,7 +3169,7 @@ namespace BCS.CADs.Synchronization.Entities
                         //表示不維護屬性,取得CAD Id @@@@@@@@@@@@@@@@
                     }
 
-                    Aras.IOM.Item item = AsInnovator.getItemById("CAD", searchItem.ItemId );
+                    Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId );
                     //@@@@@@@@@@@@@@@@@@
                     //foreach (var aa in structureChanges.Where(y=>y.SourceFileName== searchItem.FileName && y.IsExist == false){
 
@@ -3382,6 +3463,7 @@ namespace BCS.CADs.Synchronization.Entities
                 {
                     searchItem = new SearchItem();
                     searchItems.Add(searchItem);
+                    searchItem.ItemType = ItemTypeName.CAD.ToString(); //Modify by kenny 2020/08/13
                 }
                 searchItem.IsCurrent = (item.getProperty("is_current", "0")=="1")? true : false ;
                 

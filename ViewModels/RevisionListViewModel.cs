@@ -162,8 +162,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-
-
         private ICommand _itemPickerImageLeftClick { get; set; }
         public ICommand ItemPickerImageLeftClick
         {
@@ -175,7 +173,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
                     string itemId = txtProperty.Tag.ToString();
-                    string itemType = "CAD";
+                    string itemType = ItemTypeName.CAD.ToString();
                     if (ShowRevisionList(itemType, itemId))
                     {
                         var toolTip = txtProperty.ToolTip;
@@ -187,31 +185,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 return _itemPickerImageLeftClick;
             }
         }
-
-
-
-        //private ICommand _itemPickerImageLeftClick { get; set; }
-        //public ICommand ItemPickerImageLeftClick
-        //{
-        //    get
-        //    {
-        //        _itemPickerImageLeftClick = new RelayCommand((x) =>
-        //        {
-        //            //MessageBox.Show("ItemPickerImageLeftClick");
-        //            //System.Diagnostics.Debugger.Break();
-        //            dynamic y = x;
-        //            TextBox txtProperty = (TextBox)y.TemplatedParent;
-        //            //string itemType = txtProperty.Tag.ToString();
-        //            ShowItemSearchDialog(txtProperty, true);
-
-
-
-        //        });
-        //        return _itemPickerImageLeftClick;
-        //    }
-        //}
-
-
+        
 
         #endregion
 
@@ -253,12 +227,12 @@ namespace BCS.CADs.Synchronization.ViewModels
                     switch (plmProperty.DataType)
                     {
                         case "image":
-                            AddDataGridImageColumn(gridSelectedItems, plmProperty, j);
+                           ClsSynchronizer.VmCommon.AddDataGridImageColumn(gridSelectedItems, plmProperty, j);
                             break;
                         //case "item":
                         //    break;
                         default:
-                            AddDataGridTextBlockStyleColumn(gridSelectedItems, plmProperty, j);
+                            ClsSynchronizer.VmCommon.AddDataGridTextBlockStyleColumn(gridSelectedItems, plmProperty, j);
                             break;
                     }
                 }
@@ -295,79 +269,6 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         #region "                   方法區(內部)
 
-
-        private void AddDataGridTextBlockStyleColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-            //System.Diagnostics.Debugger.Break();
-            DataGridTemplateColumn col = new DataGridTemplateColumn();
-            col.Header = plmProperty.Label;
-            FrameworkElementFactory txtBlockFactoryElem = new FrameworkElementFactory(typeof(TextBlock));
-            AddDataGridTextBlockBinding(txtBlockFactoryElem, index);
-
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = txtBlockFactoryElem;
-            col.CellTemplate = cellTemplate;
-
-            gridSelectedItems.Columns.Add(col);
-        }
-
-        private void AddDataGridImageColumn(DataGrid gridSelectedItems, PLMProperty plmProperty, int index)
-        {
-
-
-            DataGridTemplateColumn col = new DataGridTemplateColumn();
-            col.Header = (plmProperty != null) ? plmProperty.Label : "";
-
-            FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-            AddDataGridImage(imagePickerFactoryElem, plmProperty, index);
-
-
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = imagePickerFactoryElem;
-            col.CellTemplate = cellTemplate;
-
-            gridSelectedItems.Columns.Add(col);
-        }
-
-
-        private void AddDataGridTextBlockBinding(FrameworkElementFactory txtBlockFactoryElem, int index)
-        {
-
-            Binding textboxBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtBlockFactoryElem.SetBinding(TextBlock.DataContextProperty, textboxBind);
-
-            textboxBind = new Binding("DisplayValue");//DataValue  DisplayValue
-            textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            textboxBind.Mode = BindingMode.TwoWay;
-            txtBlockFactoryElem.SetBinding(TextBlock.TextProperty, textboxBind);
-
-        }
-
-
-        private void AddDataGridImage(FrameworkElementFactory imagePickerFactoryElem, PLMProperty plmProperty, int index)
-        {
-
-            Binding imageBind = (plmProperty != null) ? new Binding("PlmProperties[" + index + "].DataValue") : new Binding("Thumbnail");
-            imageBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            imageBind.Mode = BindingMode.TwoWay;
-            imageBind.Converter = new ThumbnailToPathConverter();
-
-            imagePickerFactoryElem.SetValue(Image.SourceProperty, imageBind);
-
-            Style imgStyle = new Style();
-            imgStyle.TargetType = typeof(Image);
-            for (int i = 0; i < 2; i++)
-            {
-                Setter imgSetter = new Setter();
-                imgSetter.Property = (i == 0) ? Image.WidthProperty : Image.HeightProperty;
-                imgSetter.Value = (double)24;
-                imgStyle.Setters.Add(imgSetter);
-            }
-            imagePickerFactoryElem.SetValue(Image.StyleProperty, imgStyle);
-        }
 
 
         #endregion

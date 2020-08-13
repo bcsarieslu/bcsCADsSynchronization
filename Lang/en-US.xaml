@@ -61,7 +61,7 @@
     <!-- Item Name -->
     <sys:String x:Key="itemName">Name</sys:String>
     <sys:String x:Key="description">Description</sys:String>
-    <!--<sys:String x:Key="MainWindow_status">Status :</sys:String>-->
+    <sys:String x:Key="MainWindow_status">Status :</sys:String>
     <sys:String x:Key="newFileName">New File Name :</sys:String>
 
     <sys:String x:Key="msg_NoFilesSelected">No files selected.</sys:String>

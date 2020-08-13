@@ -54,7 +54,16 @@ namespace BCS.CADs.Synchronization
             {
                 return _Plm.ThumbnailProperty;
             }
-        } 
+        }
+
+
+        /// <summary>
+        /// 原始檔案屬性
+        /// </summary>
+        public string NativeProperty
+        {
+            get { return _Plm.NativeProperty; }
+        }
 
         #endregion
 
@@ -268,13 +277,24 @@ namespace BCS.CADs.Synchronization
                 ItemMessage itemMessage = ClsSynchronizer.VmMessages.AddItemMessage("GetCADStructure", "ExecCadEvent", "", "Start");
                 _syncCADEvents.ExecCadEvent(_Plm.AsInnovator, SyncCadCommands.GetActiveCADStructure.ToString(), ref searchItems, null, null, SyncEvents.OnGetCADStructure, type);
 
-
-                itemMessage.Value = "CADItemsStructure";
-                //當SyncType.SyncFromPLM,其結構是取PLM的結構
-                if (SyncType.SyncFromPLM == type) _Plm.CADItemsStructure(searchItems, type);
-
-                itemMessage.Value = "GetSearchItemsCADIds";
+                itemMessage.Value = "Get CAD Ids";
                 _Plm.GetSearchItemsCADIds(type,searchItems);
+                
+                //當SyncType.SyncFromPLM,其結構是取PLM的結構
+                if (SyncType.SyncFromPLM == type)
+                {
+                    itemMessage.Value = "CAD Structure";
+                    _Plm.CADItemsStructure(searchItems, type);
+                }
+
+                //Modify by kenny 2020/08/13 取得系統所有物件屬性
+                _Plm.GetCADProperties(searchItems, false);
+
+                _syncCADEvents.ExecCadEvent(_Plm.AsInnovator, SyncCadCommands.GetCADsProperties.ToString(), ref searchItems, null, null, SyncEvents.OnGetCADsProperties, type);
+
+                //Modify by kenny 2020/08/13 
+                _Plm.ResetVersionStatus(searchItems);
+
                 itemMessage.Status = "End";
             }
             catch (Exception ex)
@@ -361,12 +381,12 @@ namespace BCS.CADs.Synchronization
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
-        protected internal string GetImageFullName(SearchItem searchItem)
+        protected internal string GetImageFullName(SearchItem searchItem, SyncType type)
         {
             try
             {
 
-                return _Plm.GetImageFullName(searchItem);
+                return _Plm.GetImageFullName(searchItem, type);
 
             }
             catch (Exception ex)
@@ -374,8 +394,25 @@ namespace BCS.CADs.Synchronization
                 throw ex;
             }
         }
-        
 
+        /// <summary>
+        /// 取得所選到版本的SearchItem
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        virtual protected internal SearchItem GetVersionSearchItem(SearchItem searchItem)
+        {
+            try
+            {
+
+                return _Plm.GetVersionSearchItem(searchItem);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         /// <summary>
         /// 取得Item Type
         /// </summary>

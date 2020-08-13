@@ -4,6 +4,7 @@ using BCS.CADs.Synchronization.Classes;
 using BCS.CADs.Synchronization.Entities;
 using BCS.CADs.Synchronization.Models;
 using BCS.CADs.Synchronization.Search;
+using BCS.CADs.Synchronization.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +18,7 @@ using System.Windows.Controls;
 
 namespace BCS.CADs.Synchronization.ViewModels
 {
-    public static class ClsSynchronizer 
+    public static class ClsSynchronizer
     {
         #region "                   宣告區"
         public static ObservableCollection<SearchItem> _vmObsSearchItems;
@@ -28,6 +29,8 @@ namespace BCS.CADs.Synchronization.ViewModels
         #region "                   屬性"
 
         public static CADsSynchronizer VmSyncCADs { get; set; } = new CADsSynchronizer();
+
+        public static VMCommon VmCommon { get; set; } = new VMCommon();
 
         public static SyncType VmFunction { get; set; }
 
@@ -48,7 +51,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         public static List<SearchItem> SearchItemsList { get; set; }
 
         public static ObservableCollection<SearchItem> SearchItemsCollection { get; set; }
-        
+
         public static ObservableCollection<SearchItem> DialogSearchItemsCollection { get; set; }
 
         public static ObservableCollection<SearchItemsViewModel> TreeSearchItemsCollection { get; set; }
@@ -84,6 +87,10 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static Window ActiveWindow { get; set; }
 
+        public static bool IsShowDialog { get; set; } = false;
+
+        public static string ShowDialogItemType { get; set; } = "";
+
         public static string CurrentDialog { get; set; } = "";
 
         public static string DialogReturnValue { get; set; } = "";
@@ -106,6 +113,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static Style RowStyle { get; set; }
 
+        public static ItemType SearchItemTypeItem { get; set; }
 
         //public enum SyncImages'
         public static Dictionary<string, string> SyncImages =new Dictionary<string, string>(){
@@ -114,6 +122,10 @@ namespace BCS.CADs.Synchronization.ViewModels
             {"Executing", "Executing"},{"End", "End"},{"Error", "Error"},{"Finish", "Finish"}
         };
         //public static Frame ViewPage { get; set; } = null;
+
+        
+
+
         #endregion
 
 

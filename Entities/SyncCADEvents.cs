@@ -84,11 +84,9 @@ namespace BCS.CADs.Synchronization.Entities
 
             try
             {
-                //Aras.IOM.Item item = null;
                 List<SearchItem> searchItems = null;
                 
-                //Aras.IOM.Item item = (searchItem.ItemId != "") ? AsInnovator.getItemById("CAD", searchItem.ItemId) : null;
-                Aras.IOM.Item item = (String.IsNullOrWhiteSpace(searchItem.ItemId) ==false) ? AsInnovator.getItemById("CAD", searchItem.ItemId) : null;
+                Aras.IOM.Item item = (String.IsNullOrWhiteSpace(searchItem.ItemId) ==false) ? AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId) : null;
                 ExecCadEvent(AsInnovator, syncName, ref searchItems, ref searchItem, structureChanges, integrationEvent, syncEvent, type, ref item);
             }
             catch (Exception ex)
@@ -113,9 +111,8 @@ namespace BCS.CADs.Synchronization.Entities
             {
                 //Aras.IOM.Item item = null;
                 List<SearchItem> searchItems = null;
-                
-                //Aras.IOM.Item item = (searchItem.ItemId != "") ? AsInnovator.getItemById("CAD", searchItem.ItemId) : null;
-                Aras.IOM.Item item = (String.IsNullOrWhiteSpace(searchItem.ItemId) ==false) ? AsInnovator.getItemById("CAD", searchItem.ItemId) : null;
+
+                Aras.IOM.Item item = (String.IsNullOrWhiteSpace(searchItem.ItemId) ==false) ? AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId) : null;
                 ExecCadEvent(AsInnovator, syncName, ref searchItems, ref searchItem, structureChanges, integrationEvent, syncEvent, type, ref item);
             }
             catch (Exception ex)

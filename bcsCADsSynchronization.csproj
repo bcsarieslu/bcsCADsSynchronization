@@ -171,6 +171,7 @@
     <Compile Include="ViewModels\ShowCommand.cs" />
     <Compile Include="ViewModels\SyncCommands.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="ViewModels\VMCommon.cs" />
     <Compile Include="Views\AddFromTemplate.xaml.cs">
       <DependentUpon>AddFromTemplate.xaml</DependentUpon>
     </Compile>
