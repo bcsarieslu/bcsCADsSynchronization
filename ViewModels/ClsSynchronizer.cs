@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 #endregion
 
 namespace BCS.CADs.Synchronization.ViewModels
@@ -123,8 +124,25 @@ namespace BCS.CADs.Synchronization.ViewModels
         };
         //public static Frame ViewPage { get; set; } = null;
 
-        
 
+        //public static void DoEvents()
+        //{
+        //    Application.Current.Dispatcher.Invoke(DispatcherPriority.Render,
+        //                                          new Action(delegate { }));
+        //}
+
+        public static void DoEvents()
+        {
+            var frame = new DispatcherFrame();
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+                new DispatcherOperationCallback(
+                    delegate (object f)
+                    {
+                        ((DispatcherFrame)f).Continue = false;
+                        return null;
+                    }), frame);
+            Dispatcher.PushFrame(frame);
+        }
 
         #endregion
 

@@ -1774,6 +1774,7 @@ namespace BCS.CADs.Synchronization.Models
                     newItem.setProperty("related_id", structrue.Child.ItemId);
                     newItem.setProperty("sort_order", structrue.Order.ToString());
                     newItem.setProperty("bcs_instance_id", structrue.InstanceId);
+                    newItem.setProperty("bcs_is_suppressed", ((structrue.IsSuppressed == true) ? 1 : 0).ToString());//Modify by kenny 2020/08/13
                     Aras.IOM.Item linkItem = newItem.apply();
                     if (linkItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType) );
                     if (linkItem.isError()) new Exception(linkItem.getErrorString());

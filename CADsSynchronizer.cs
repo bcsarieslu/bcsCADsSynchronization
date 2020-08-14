@@ -280,13 +280,14 @@ namespace BCS.CADs.Synchronization
                 itemMessage.Value = "Get CAD Ids";
                 _Plm.GetSearchItemsCADIds(type,searchItems);
                 
+                
                 //當SyncType.SyncFromPLM,其結構是取PLM的結構
                 if (SyncType.SyncFromPLM == type)
                 {
                     itemMessage.Value = "CAD Structure";
                     _Plm.CADItemsStructure(searchItems, type);
                 }
-
+                
                 //Modify by kenny 2020/08/13 取得系統所有物件屬性
                 _Plm.GetCADProperties(searchItems, false);
 
@@ -294,6 +295,7 @@ namespace BCS.CADs.Synchronization
 
                 //Modify by kenny 2020/08/13 
                 _Plm.ResetVersionStatus(searchItems);
+                
 
                 itemMessage.Status = "End";
             }
