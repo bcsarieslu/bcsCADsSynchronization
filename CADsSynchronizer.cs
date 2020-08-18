@@ -360,6 +360,27 @@ namespace BCS.CADs.Synchronization
         }
 
         /// <summary>
+        /// 清空查詢欄位條件值
+        /// </summary>
+        /// <param name="gridSelectedItems"></param>
+        /// <param name="searchItemType"></param>
+        virtual protected internal void ClearSearchConditions(DataGrid gridSelectedItems, SearchItem searchItemType)
+        {
+
+            try
+            {
+
+                _Plm.ClearSearchConditions(gridSelectedItems, searchItemType);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
         /// 取得圖檔
         /// </summary>
         /// <param name="value"></param>

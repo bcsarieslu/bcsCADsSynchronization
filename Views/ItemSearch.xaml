@@ -33,6 +33,9 @@
                 x:Key="ListingDataView" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
+            <!--<vm1:MainWindowViewModel x:Key="viewmodel"/> SubItemSearchDialogViewModel 
+            <vm1:SubItemSearchDialogViewModel x:Key="viewmodel"/>
+            -->
             <vm1:MainWindowViewModel x:Key="viewmodel"/>
             <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference win}"/>
         </ResourceDictionary>
@@ -40,7 +43,10 @@
     <Page.DataContext>
         <con:MainWindowViewModel/>
     </Page.DataContext>
-
+    <!--
+    <con:SubItemSearchDialogViewModel/>
+    <con:MainWindowViewModel/>
+    -->
     <!--<Page.DataContext>
         <ViewModels:MainWindowViewModel/>
     </Page.DataContext>-->
@@ -65,7 +71,7 @@
                 <Button x:Name="btn_Search" Grid.Column="1" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding SyncItemSearch}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}" >
                     <Image Source="{StaticResource ExecuteSearchDrawingImage}"/>
                 </Button>
-                <Button x:Name="btn_ClearSearch" Grid.Column="2" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}" >
+                <Button x:Name="btn_ClearSearch" Grid.Column="2" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding ClearSearchConditions}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}" >
                     <Image Source="{StaticResource ClearSearchCriteriaDrawingImage}"/>
                 </Button>
                 <!-- <TextBox x:Name="selectedItemId" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedSearchItem.ItemId, ElementName=gridSelectedItems, Mode=TwoWay }" HorizontalAlignment="Stretch" />-->

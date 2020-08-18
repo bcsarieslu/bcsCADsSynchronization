@@ -165,10 +165,12 @@
     <Compile Include="ViewModels\LanguageList.cs" />
     <Compile Include="ViewModels\NewFileNameViewModel.cs" />
     <Compile Include="ViewModels\NotifyPropertyBase.cs" />
+    <Compile Include="ViewModels\PLMProperties.cs" />
     <Compile Include="ViewModels\PositioningCommand.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\RevisionListViewModel.cs" />
     <Compile Include="ViewModels\ShowCommand.cs" />
+    <Compile Include="ViewModels\SubItemSearchDialogViewModel.cs" />
     <Compile Include="ViewModels\SyncCommands.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\VMCommon.cs" />

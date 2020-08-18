@@ -1589,6 +1589,8 @@ namespace BCS.CADs.Synchronization.Entities
                 SearchItem activeSearchItem = GetActiveSearchItem(searchItems);
                 _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.OpenFiles.ToString(), ref activeSearchItem, null, integrationEvent, SyncEvents.OpenFiles, SyncType.LoadFromPLM);
 
+                _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.MoveFiles.ToString(), ref searchItems, null, integrationEvent, SyncEvents.OpenFiles, SyncType.LoadFromPLM);
+
                 //Events
                 itemMessage.Detail = "After Events";
                 _syncCADEvents.ExecCadEvents(AsInnovator, SyncCadCommands.SystemLoadFromPLM.ToString(), searchItems, null, IntegrationEvents, SyncEvents.OnLoadFromPLMDownloadAfter, SyncType.Download);
@@ -2499,6 +2501,31 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+        /// <summary>
+        /// 清空查詢欄位條件值
+        /// </summary>
+        /// <param name="gridSelectedItems"></param>
+        /// <param name="searchItemType"></param>
+        virtual protected internal void ClearSearchConditions(DataGrid gridSelectedItems, SearchItem searchItemType)
+        {
+
+            foreach (PLMProperty property in searchItemType.PlmProperties)
+            {
+                property.DisplayValue = "";
+                property.DataValue = "";
+                property.Value = "";
+            }
+
+
+            foreach (DataGridColumn col in gridSelectedItems.Columns)
+            {
+
+                DataTemplate tempData = col.HeaderTemplate as DataTemplate;
+                StackPanel sp = tempData.LoadContent() as StackPanel;
+                TextBox textBox = sp.Children[1] as TextBox;
+                textBox.Text = "";
+            }
+        }
 
 
         #endregion
@@ -3019,22 +3046,22 @@ namespace BCS.CADs.Synchronization.Entities
 
                         case "gt":
                             if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) > System.Convert.ToDecimal(conditionalRule.Value) ) ? true : false;
+                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) > System.Convert.ToDecimal(value) ) ? true : false;
                             break;
 
                         case "ge":
                             if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) >= System.Convert.ToDecimal(conditionalRule.Value)) ? true : false;
+                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) >= System.Convert.ToDecimal(value)) ? true : false;
                             break;
 
                         case "lt":
                             if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) < System.Convert.ToDecimal(conditionalRule.Value)) ? true : false;
+                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) < System.Convert.ToDecimal(value)) ? true : false;
                             break;
 
                         case "le":
                             if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) <= System.Convert.ToDecimal(conditionalRule.Value)) ? true : false;
+                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) <= System.Convert.ToDecimal(value)) ? true : false;
                             break;
                         default:
                             checkValue = true;

@@ -166,6 +166,16 @@ namespace BCS.CADs.Synchronization.Search
         public bool IsVersion { get; set; } = false;
 
         /// <summary>
+        /// 共用圖檔
+        /// </summary>
+        public bool IsCommonPart { get; set; } = false;
+
+        /// <summary>
+        /// 標準圖檔
+        /// </summary>
+        public bool IsStandardPart { get; set; } = false;
+
+        /// <summary>
         /// 限制狀態
         /// </summary>
         public string RestrictedStatus { get; set; } = SyncRestrictedStatus.None.ToString();

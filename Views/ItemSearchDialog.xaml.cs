@@ -3,6 +3,7 @@ using BCS.CADs.Synchronization.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,8 @@ namespace BCS.CADs.Synchronization.Views
         public ItemSearchDialog()
         {
             InitializeComponent();
+            ItemSearchLoadingAdorner();
+
             DataContext = new MainWindowViewModel(this,"",false );
             
 
@@ -33,6 +36,7 @@ namespace BCS.CADs.Synchronization.Views
         public ItemSearchDialog(string itemType)
         {
             InitializeComponent();
+            ItemSearchLoadingAdorner();
             DataContext = new MainWindowViewModel(this, itemType,false );
 
 
@@ -40,5 +44,17 @@ namespace BCS.CADs.Synchronization.Views
             //ClsSynchronizer.VmFunction = SyncType.LoadFromPLM;
             //LoadFromPLMView((Window)x);
         }
+
+        private void ItemSearchLoadingAdorner()
+        {
+            ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
+
+            var cache = MyCache.CacheInstance;
+            CacheItemPolicy policy = new CacheItemPolicy();
+            policy.AbsoluteExpiration = DateTime.Now.AddMinutes(30d);
+            var loadingAdorner = new CacheItem("ItemSearchLoadingAdorner", LoadingAdorner);
+            cache.Add(loadingAdorner, null);
+        }
+
     }
 }

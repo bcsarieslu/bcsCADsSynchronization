@@ -142,6 +142,15 @@ namespace BCS.CADs.Synchronization.Search
         /// </summary>
         bool IsVersion { get; set; }
 
+        /// <summary>
+        /// 共用圖檔
+        /// </summary>
+        bool IsCommonPart { get; set; }
+
+        /// <summary>
+        /// 標準圖檔
+        /// </summary>
+        bool IsStandardPart { get; set; }
 
         /// <summary>
         /// 限制狀態

@@ -83,7 +83,7 @@ namespace BCS.CADs.Synchronization.Models
     /// <summary>
     /// 程式觸發一些事件,對應Client CAD程式的方法
     /// </summary>
-    public enum SyncCadCommands { IsActiveCAD, ExportPropertyFile, AddTemplate, CopyToAdd, OpenFiles, CloseFiles, GetActiveCADDocument, GetActiveCADStructure, UpdateCADKeys, UpdateCADsProperties, GetSelectedCADsProperties, GetCADsProperties, RunFunction, SystemSyncToPLMProperties, SystemSyncFromPLMProperties, SystemSyncToPLMStructure, SystemSyncFromPLMStructure, SystemAddFromTemplate, SystemItemLocked, SystemLogin, SystemLoadFromPLM, SystemCopyToAdd }
+    public enum SyncCadCommands { IsActiveCAD, ExportPropertyFile, AddTemplate, CopyToAdd, OpenFiles, MoveFiles, CloseFiles, GetActiveCADDocument, GetActiveCADStructure, UpdateCADKeys, UpdateCADsProperties, GetSelectedCADsProperties, GetCADsProperties, RunFunction, SystemSyncToPLMProperties, SystemSyncFromPLMProperties, SystemSyncToPLMStructure, SystemSyncFromPLMStructure, SystemAddFromTemplate, SystemItemLocked, SystemLogin, SystemLoadFromPLM, SystemCopyToAdd }
 
     /// <summary>
     /// 功能事件
