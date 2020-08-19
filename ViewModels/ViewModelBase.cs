@@ -63,6 +63,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         public MainWindow MyMainWindow { get { return (MainWindow)MyCache.CacheInstance["MainWindow"]; } set { _myMainWindow = value; } }
 
         private ConnPLM _Plm;
+
         private readonly Window _view;
         public MainWindowViewModel()
         {
@@ -77,9 +78,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public MainWindowViewModel(Window view,string itemType,bool isSub)
         {
             _view = view;
-
-
-
 
             ClsSynchronizer.IsActiveSubDialogView = isSub;
             if (isSub) { 
@@ -515,7 +513,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                         PasswordBox passwordBox = (PasswordBox)LoginWindow.FindName("PasswordBox");
                         PLM.Password = passwordBox.Password;
-
                         UserLogin();
 
                         //ResetFunctionButtons();
@@ -583,6 +580,24 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
+        private ICommand _hiddenUserinformation { get; set; }
+        public ICommand HiddenUserinformation
+        {
+            get
+            {
+                _hiddenUserinformation = _hiddenUserinformation ?? new RelayCommand((x) =>
+                {
+                    Border userinformation = (Border)x;
+                    if (userinformation != null)
+                    {
+                        userinformation.Visibility = Visibility.Hidden;
+                    }
+                });
+
+
+                return _hiddenUserinformation;
+            }
+        }
 
         private ICommand _checkall { get; set; }
         public ICommand CheckAll
@@ -1886,8 +1901,6 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             ClsSynchronizer.IsShowDialog = false ;
             ClsSynchronizer.ShowDialogItemType = itemDialogType;
-
-            
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue)==false)
             {
                 txtProperty.Text = (isSubItemSearchDialog) ? ClsSynchronizer.SubDialogReturnKeyedName: ClsSynchronizer.DialogReturnKeyedName;
@@ -1903,9 +1916,15 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             try
             {
-                if (_editPropertiesDataGrid == null) _editPropertiesDataGrid = new EditProperties();
+                _editPropertiesDataGrid = ClsSynchronizer.EditPropertiesView;
+                if (_editPropertiesDataGrid == null)
+                {
+                    _editPropertiesDataGrid = new EditProperties();
+                    ClsSynchronizer.EditPropertiesView = _editPropertiesDataGrid;
+                }
 
-                ClsSynchronizer.EditPropertiesView = _editPropertiesDataGrid;
+                Grid formGrid = (Grid)_editPropertiesDataGrid.FindName("formContent");
+                SetFormContent(formGrid, false);
 
                 DataGrid gridSelectedItems = (DataGrid)_editPropertiesDataGrid.FindName("gridDetail");
                 gridSelectedItems.ItemsSource = ObsSearchItems;
@@ -1920,7 +1939,43 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
+        private void SetFormContent(Grid formGrid, bool isSelected)
+        {
+            double left = 10, top = 10, right = 0, bottom = 10;
+            foreach (var item in ObsSearchItems.FirstOrDefault(a => a.PlmProperties != null).PlmProperties)
+            {
+                StackPanel stackPanel = new StackPanel();
+                stackPanel.Orientation = Orientation.Vertical;
+                stackPanel.HorizontalAlignment = HorizontalAlignment.Left;
+                stackPanel.Margin = new Thickness(left, top, right, bottom);
 
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = item.Label;
+                stackPanel.Children.Add(textBlock);
+
+                TextBox textBox = new TextBox();
+                textBox.Height = 25d;
+                textBox.Width = 160d;
+                if (isSelected)
+                {
+                    textBox.DataContext = item;
+                    Binding binding = new Binding("DisplayValue");
+                    binding.Mode = BindingMode.TwoWay;
+                    binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                    textBox.SetBinding(TextBox.TextProperty, binding);
+                    textBox.SetBinding(TextBox.TagProperty, new Binding("DataSource"));
+                }
+                stackPanel.Children.Add(textBox);
+
+                formGrid.Children.Add(stackPanel);
+                top = top + 60;
+                if (top >= 300)
+                {
+                    top = 10;
+                    left = left + 200;
+                }
+            }
+        }
 
         private ICommand search_visibility { get; set; }
         
@@ -2190,15 +2245,14 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-
         private ObservableCollection<SearchItemsViewModel> _treeSearchItems;
         public ObservableCollection<SearchItemsViewModel> TreeSearchItems
         {
             get { return _treeSearchItems; }
             set { SetProperty(ref _treeSearchItems, value, nameof(TreeSearchItems)); }
         }
-
         
+
         /// <summary>
         /// 取得Active CADs 所有結構圖檔
         /// </summary>
@@ -2481,7 +2535,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
             if (isNew) AddDataGridHeaderColumn(itemTypeItem, gridSelectedItems);
 
-
+           
 
             SelectedSearchItem = new SearchItem();
             SelectedSearchItem.ItemType = itemType;
@@ -2723,7 +2777,17 @@ namespace BCS.CADs.Synchronization.ViewModels
             set { SetProperty(ref _selectedSearchItem, value, nameof(SelectedSearchItem)); }
         }
 
-
+        private SearchItem _editPropertiesSelectedSearchItem;
+        public SearchItem EditPropertiesSelectedSearchItem
+        {
+            get { return _editPropertiesSelectedSearchItem; }
+            //set { SetProperty(ref _selectedListItem, value); }
+            set {
+                SetProperty(ref _editPropertiesSelectedSearchItem, value, nameof(EditPropertiesSelectedSearchItem));
+                Grid formGrid = (Grid)ClsSynchronizer.EditPropertiesView.FindName("formContent");
+                SetFormContent(formGrid, true);
+            }
+        }
 
         private ICommand _syncInsertItem { get; set; }
         public ICommand SyncInsertItem

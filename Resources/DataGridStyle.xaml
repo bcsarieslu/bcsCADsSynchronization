@@ -64,6 +64,8 @@
         </Setter>
     </Style>
 
+    
+    
     <!--Style and template for the DataGridColumnHeader.-->
     <Style TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="Background" Value="{DynamicResource NormalBorderBrush}"/>

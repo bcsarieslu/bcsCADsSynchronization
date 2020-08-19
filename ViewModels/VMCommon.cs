@@ -45,12 +45,23 @@ namespace BCS.CADs.Synchronization.ViewModels
             FrameworkElementFactory stackPanel = new FrameworkElementFactory(typeof(StackPanel));
             AddDataGridHeaderSearchControls(stackPanel, plmProperty);
 
-            FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
-            AddDataGridTextStyleBinding(txtBox, plmProperty);
-            txtBox.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度
-            //txtBox.SetValue(TextBox.HeightProperty, 25d);
-            txtBox.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
-            stackPanel.AppendChild(txtBox);
+            if (plmProperty.DataType == "image" || plmProperty.DataType == "revision")
+            {
+                FrameworkElementFactory txtBlock = new FrameworkElementFactory(typeof(TextBlock));
+                AddDataGridTextBlockStyleBinding(txtBlock, plmProperty);
+                txtBlock.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度                                                               //txtBox.SetValue(TextBox.HeightProperty, 25d);
+                txtBlock.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
+                stackPanel.AppendChild(txtBlock);
+            }
+
+            else
+            {
+                FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
+                AddDataGridTextStyleBinding(txtBox, plmProperty);
+                txtBox.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度                                                               //txtBox.SetValue(TextBox.HeightProperty, 25d);
+                txtBox.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
+                stackPanel.AppendChild(txtBox);
+            }
 
             DataTemplate headerTemplate = new DataTemplate();
             headerTemplate.VisualTree = stackPanel;
@@ -67,6 +78,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             else if (plmProperty.DataType == "revision")
             {
                 FrameworkElementFactory txtboxFactoryElem = new FrameworkElementFactory(typeof(TextBox));
+                
                 AddDataGridTextStyleBinding(txtboxFactoryElem, index, plmProperty.DataType);
                 cellTemplate.VisualTree = txtboxFactoryElem;
             }
@@ -235,6 +247,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                 textboxBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 textboxBind.Mode = BindingMode.OneWay;
                 txtboxFactoryElem.SetBinding(TextBox.ToolTipProperty, textboxBind);
+                //System.Diagnostics.Debugger.Break();
+                //txtboxFactoryElem.SetValue(TextBox.IsReadOnlyProperty, true);
+                //txtboxFactoryElem.SetValue(TextBox.BackgroundProperty, Brushes.Yellow);
             }
 
             textboxBind = new Binding("DataType");
@@ -242,6 +257,40 @@ namespace BCS.CADs.Synchronization.ViewModels
             txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
 
         }
+
+        //public void AddDataGridTextBolckStyleBinding(FrameworkElementFactory txtboxFactoryElem, int index, string type)
+        //{
+
+        //    Binding textBolckBind = new Binding("PlmProperties[" + index + "]");//DataValue  DisplayValue  (原本有問題是:PlmProperties[" + index + "].DisplayValue)
+        //    textBolckBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        //    textBolckBind.Mode = BindingMode.TwoWay;
+        //    txtboxFactoryElem.SetBinding(TextBlock.DataContextProperty, textBolckBind);
+
+        //    textBolckBind = new Binding("DisplayValue");//DataValue  DisplayValue
+        //    textBolckBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        //    textBolckBind.Mode = BindingMode.TwoWay;
+        //    txtboxFactoryElem.SetBinding(TextBlock.TextProperty, textBolckBind);
+
+        //    textBolckBind = (type == "revision") ? new Binding("SoruceSearchItem.ItemId") : new Binding("DataSource");
+        //    textBolckBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        //    textBolckBind.Mode = BindingMode.TwoWay;
+        //    txtboxFactoryElem.SetBinding(TextBlock.TagProperty, textBolckBind);
+
+
+        //    if (type == "revision")
+        //    {
+        //        textBolckBind = new Binding("DataValue");//DataValue  DisplayValue
+        //        textBolckBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+        //        textBolckBind.Mode = BindingMode.OneWay;
+        //        txtboxFactoryElem.SetBinding(TextBlock.ToolTipProperty, textBolckBind);
+        //    }
+
+        //    textBolckBind = new Binding("DataType");
+        //    textBolckBind.Converter = new StyleGridConverter();
+        //    txtboxFactoryElem.SetValue(TextBlock.StyleProperty, textBolckBind);
+
+        //}
+
 
         public void AddDataGridTextStyleBinding(FrameworkElementFactory txtboxFactoryElem, PLMProperty plmProperty)
         {
@@ -265,7 +314,36 @@ namespace BCS.CADs.Synchronization.ViewModels
             txtboxFactoryElem.SetValue(TextBox.StyleProperty, textboxBind);
         }
 
+        public void AddDataGridTextBlockStyleBinding(FrameworkElementFactory txtBlockFactoryElem, PLMProperty plmProperty)
+        {
 
+            txtBlockFactoryElem.SetValue(TextBlock.DataContextProperty, plmProperty);
+
+            Binding textBlockBind = new Binding("DisplayValue");//DataValue  DisplayValue
+            textBlockBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            textBlockBind.Mode = BindingMode.TwoWay;
+            txtBlockFactoryElem.SetBinding(TextBlock.TextProperty, textBlockBind);
+
+            textBlockBind = new Binding("DataSource");
+            textBlockBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            textBlockBind.Mode = BindingMode.TwoWay;
+            txtBlockFactoryElem.SetBinding(TextBlock.TagProperty, textBlockBind);
+
+            if (plmProperty.DataType == "image" || plmProperty.DataType == "revision") return;
+
+            textBlockBind = new Binding("DataType");
+            textBlockBind.Converter = new StyleGridConverter();
+            txtBlockFactoryElem.SetValue(TextBlock.StyleProperty, textBlockBind);
+
+            Style textBlockStyle = new Style();
+            textBlockStyle.TargetType = typeof(TextBlock);
+            textBlockStyle.Setters.Add(new Setter(Border.BorderBrushProperty, Brushes.Black));
+            textBlockStyle.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(4)));
+            textBlockStyle.Setters.Add(new Setter(Border.OpacityProperty, 1.0));
+
+            txtBlockFactoryElem.SetValue(TextBlock.StyleProperty, textBlockStyle);
+
+        }
 
 
 

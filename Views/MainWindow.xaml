@@ -180,6 +180,15 @@
             <Border.Effect>
                 <DropShadowEffect Color="#d24726" BlurRadius="3" ShadowDepth="0" Opacity="1" />
             </Border.Effect>
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=DisplayGrid,Path=IsPressed}" Value="true">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
         </Border>
 
 
@@ -351,7 +360,7 @@
                     <RowDefinition Height="15"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                <Grid Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="DisplayGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
@@ -403,7 +412,7 @@
                     </Frame.LayoutTransform>
                 </Frame>
 
-                
+
                 <ac:AdornedControl Name="LoadingAdorner" Grid.Row="0" Grid.RowSpan="2">
                     <ac:AdornedControl.AdornerContent>
                         <local:LoadingWait></local:LoadingWait>

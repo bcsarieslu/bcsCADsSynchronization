@@ -29,12 +29,18 @@
         <ViewModels:MainWindowViewModel/>
     </Page.DataContext>
 
-    <DataGrid x:Name="gridDetail" IsReadOnly="True" CanUserAddRows="False"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid x:Name="gridDetail" IsReadOnly="True" CanUserAddRows="False"
                 AutoGenerateColumns="False"
                 ItemsSource="{Binding ObsSearchItems}"
-                Grid.Row="3"
-		        Grid.Column="1"
-		        Margin="10"
+                SelectedItem="{Binding EditPropertiesSelectedSearchItem, Mode=TwoWay}"
+                Grid.Row="0"
+		        Margin="1,5,9.2,4.8"
 		        AlternationCount="2"
                 FontSize="16"
 		        MinRowHeight="26" 
@@ -42,73 +48,93 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 RowDetailsTemplate="{StaticResource RowDetailTemplate}">
 
-        <DataGrid.InputBindings>
-            <!-- LeftDoubleClick -->
-            <MouseBinding Gesture="LeftClick" 
+            <DataGrid.InputBindings>
+                <!-- LeftDoubleClick -->
+                <MouseBinding Gesture="LeftClick" 
                           Command="{Binding GridFieldClickedCommand}" 
                           CommandParameter="{Binding ElementName=gridDetail, Path=SelectedItem}" />
-        </DataGrid.InputBindings>
+            </DataGrid.InputBindings>
 
-        <DataGrid.RowHeaderTemplate>
-            <DataTemplate>
-                <ToggleButton x:Name="RowHeaderToggleButton" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Cursor="Hand">
-                    <ToggleButton.Template>
-                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Image Stretch="Uniform" Width="20" Source="/BCS.CADs.Synchronization;component/Images/ToggleButtonEditIcon.png"/>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="BorderBrush" Value="#007ACC"/>
-                                    <Setter Property="BorderThickness" Value="1"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </ToggleButton.Template>
-                </ToggleButton>
-                
-            </DataTemplate>
-        </DataGrid.RowHeaderTemplate>
-        <DataGrid.RowHeaderStyle>
-            <Style TargetType="{x:Type DataGridRowHeader}">
-                <Setter Property="Width" Value="35" />
-            </Style>
-        </DataGrid.RowHeaderStyle>
+            <DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <ToggleButton x:Name="RowHeaderToggleButton" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}}" Cursor="Hand">
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                <Image Stretch="Uniform" Width="20" Source="/BCS.CADs.Synchronization;component/Images/ToggleButtonEditIcon.png"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="BorderBrush" Value="#007ACC"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
 
-        <DataGrid.Columns>
-            <DataGridTemplateColumn Header="" Width="SizeToCells" IsReadOnly="True">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
-                            <!--<Image Width="24" Height="24" Source="{StaticResource Assembly}"/>-->
-                            <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassName,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
-                            <Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassThumbnail}"/>
-                            <Image Width="24" Height="24" x:Name="accessRights" Source="{Binding AccessRights,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
-                            <Image Width="24" Height="24" x:Name="restrictedStatus" Source="{Binding RestrictedStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
-                            <Image Width="24" Height="24" x:Name="versionStatus" Source="{Binding VersionStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
-                        </StackPanel>
-                        
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <!--<DataGridTextColumn Header="icon" Binding="{Binding Icon}"  Width="auto" x:Name="icon"/>-->
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>
+            <DataGrid.RowHeaderStyle>
+                <Style TargetType="{x:Type DataGridRowHeader}">
+                    <Setter Property="Width" Value="35" />
+                </Style>
+            </DataGrid.RowHeaderStyle>
 
-            <DataGridTemplateColumn Header=""  Width="24" IsReadOnly="True">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"></Image>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="" Width="SizeToCells" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                                <!--<Image Width="24" Height="24" Source="{StaticResource Assembly}"/>-->
+                                <!--<Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassName,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
+                                <Image Width="24" Height="24" x:Name="classImage" Source="{Binding ClassThumbnail}"/>
+                                <Image Width="24" Height="24" x:Name="accessRights" Source="{Binding AccessRights,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                                <Image Width="24" Height="24" x:Name="restrictedStatus" Source="{Binding RestrictedStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                                <Image Width="24" Height="24" x:Name="versionStatus" Source="{Binding VersionStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
+                            </StackPanel>
 
-            <DataGridTextColumn Binding="{Binding FileName}" Width="*" x:Name="filename" IsReadOnly="True" >
-                <DataGridTextColumn.Header>
-                    <TextBlock Text="{DynamicResource filename}" />
-                </DataGridTextColumn.Header>
-            </DataGridTextColumn>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn Header="icon" Binding="{Binding Icon}"  Width="auto" x:Name="icon"/>-->
 
-            <!--ElementStyle="{StaticResource TextBlockStyle}"-->
+                <DataGridTemplateColumn Header=""  Width="24" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"></Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-            <!--<DataGridTextColumn Header="State" Binding="{Binding State}" Width="auto" x:Name="state"/>-->
-        </DataGrid.Columns>
-        
-    </DataGrid>
+                <DataGridTextColumn Binding="{Binding FileName}" Width="*" x:Name="filename" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="{DynamicResource filename}" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!--ElementStyle="{StaticResource TextBlockStyle}"-->
+
+                <!--<DataGridTextColumn Header="State" Binding="{Binding State}" Width="auto" x:Name="state"/>-->
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Vertical" Grid.Row="1" Margin="5,0,0,0">
+            <ToggleButton x:Name="TogglePopupButton" Content="ˇ" Width="30" Height="30" HorizontalAlignment="Left"/>
+            <Border Background="White" BorderThickness="1" BorderBrush="Black" MaxHeight="100">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <Grid x:Name="formContent" ScrollViewer.CanContentScroll="True"/>
+                </ScrollViewer>
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=TogglePopupButton,Path=IsChecked}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=TogglePopupButton,Path=IsChecked}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </StackPanel>
+    </Grid>
 </Page>

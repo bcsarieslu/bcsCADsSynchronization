@@ -614,6 +614,34 @@ namespace BCS.CADs.Synchronization.Entities
             set { SetProperty(ref _selectedSearchItem, value, nameof(SelectedSearchItem)); }
         }
 
+        virtual protected internal Field GetFieldProperties(string keyed_name)
+        {
+            Aras.IOM.Item it_form = AsInnovator.getItemByKeyedName("Form", "CAD");
+            Aras.IOM.Item it_body = AsInnovator.newItem("Body", "get");
+            it_body.setProperty("source_id", it_form.getID());
+            it_body = it_body.apply();
+            Aras.IOM.Item it_field = AsInnovator.newItem("Field", "get");
+            it_field.setProperty("source_id", it_body.getID());
+            it_field.setProperty("keyed_name", keyed_name);
+            it_field = it_field.apply();
+
+            //var fieldProperties = xd.Descendants().Elements().Select(a =>
+            //    new Field
+            //    {
+            //        KeyedName = a.Element("keyed_name").Value,
+            //        X = System.Convert.ToDouble(a.Element("x").Value),
+            //        Y = System.Convert.ToDouble(a.Element("y").Value)
+            //    }
+            //);
+            var field = new Field
+            {
+                KeyedName = it_field.getProperty("keyed_name", ""),
+                X = System.Convert.ToDouble(it_field.getProperty("x", "0")),
+                Y = System.Convert.ToDouble(it_field.getProperty("y", "0"))
+            };
+            return field;
+        }
+
         /// <summary>
         /// 同步查詢item Type物件
         /// </summary>
@@ -1986,7 +2014,6 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
-
         /// <summary>
         /// 鎖定或解除鎖定
         /// </summary>
@@ -2141,7 +2168,6 @@ namespace BCS.CADs.Synchronization.Entities
                 throw ex;
             }
         }
-
 
         /// <summary>
         /// 檔案同步到PLM
@@ -2471,6 +2497,8 @@ namespace BCS.CADs.Synchronization.Entities
                 StackPanel sp = tempData.LoadContent() as StackPanel;
 
                 TextBox headerValue = sp.Children[1] as TextBox;
+                if (headerValue == null) continue;
+
                 PLMProperty dataContext = headerValue.DataContext as PLMProperty;
 
                 PLMProperty property = searchItemType.PlmProperties.Where(x => x.PropertyName == dataContext.PropertyName).FirstOrDefault();
@@ -2523,6 +2551,7 @@ namespace BCS.CADs.Synchronization.Entities
                 DataTemplate tempData = col.HeaderTemplate as DataTemplate;
                 StackPanel sp = tempData.LoadContent() as StackPanel;
                 TextBox textBox = sp.Children[1] as TextBox;
+                if (textBox == null) continue;
                 textBox.Text = "";
             }
         }
@@ -2991,6 +3020,7 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+        
 
         /// <summary>
         /// 依規則限制狀態
@@ -3002,71 +3032,65 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
-                
                 SyncRestrictedStatus syncRestrictedStatus = SyncRestrictedStatus.None;
                 foreach (string value in searchItem.RuleProperties.Where(x => x.Key == conditionalRule.PrepertyName).Select(x => x.Value))
                 {
                     List<string> list = conditionalRule.Value.Split(',').ToList();
 
                     double retNum;
-                    bool isRuleValueNum = Double.TryParse(conditionalRule.Value, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+                    bool isRuleValueNum = Double.TryParse(conditionalRule.Value, out retNum);
                     bool isValueNum = Double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
-                    bool checkValue = false;
-                    
+                    bool checkValue = false;            
 
                     //檢查file name : 例如範本新增,不允許相同檔名 @@@@@@@@@@@@@@@
-                    if (conditionalRule.Value == "CurrentFileName")
-                    {
-
-                        continue;
-                    }
-
-
+                    if (conditionalRule.Value == "CurrentFileName")continue;
                     //switch case
-                        switch (conditionalRule.Condition)
-                    {
-                        case "in":
-                            checkValue = (list.Where(x => x == value).ToList().Count > 0) ? true : false;
-                            break;
-                        case "not in":
-                            checkValue = (list.Where(x => x == value).ToList().Count > 0) ? false : true;
-                            break;
+                    //switch (conditionalRule.Condition)
+                    //{
+                    //    case "in":
+                    //        checkValue = (list.Where(x => x == value).ToList().Count > 0) ? true : false;
+                    //        break;
+                    //    case "not in":
+                    //        checkValue = (list.Where(x => x == value).ToList().Count > 0) ? false : true;
+                    //        break;
 
-                        case "like":
-                            checkValue = (list.Where(x => x.Contains(value)).ToList().Count > 0) ? true : false;
-                            break;
+                    //    case "like":
+                    //        checkValue = (list.Where(x => x.Contains(value)).ToList().Count > 0) ? true : false;
+                    //        break;
 
-                        case "eq":
-                            checkValue = (conditionalRule.Value == value) ? true : false;
-                            break;
+                    //    case "eq":
+                    //        checkValue = (conditionalRule.Value == value) ? true : false;
+                    //        break;
 
-                        case "ne":
-                            checkValue = (conditionalRule.Value != value) ? true : false;
-                            break;
+                    //    case "ne":
+                    //        checkValue = (conditionalRule.Value != value) ? true : false;
+                    //        break;
 
-                        case "gt":
-                            if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) > System.Convert.ToDecimal(value) ) ? true : false;
-                            break;
+                    //    case "gt":
+                    //        if (isRuleValueNum == false || isValueNum == false) continue;
+                    //        checkValue = (System.Convert.ToDecimal(conditionalRule.Value) > System.Convert.ToDecimal(value) ) ? true : false;
+                    //        break;
 
-                        case "ge":
-                            if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) >= System.Convert.ToDecimal(value)) ? true : false;
-                            break;
+                    //    case "ge":
+                    //        if (isRuleValueNum == false || isValueNum == false) continue;
+                    //        checkValue = (System.Convert.ToDecimal(conditionalRule.Value) >= System.Convert.ToDecimal(value)) ? true : false;
+                    //        break;
 
-                        case "lt":
-                            if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) < System.Convert.ToDecimal(value)) ? true : false;
-                            break;
+                    //    case "lt":
+                    //        if (isRuleValueNum == false || isValueNum == false) continue;
+                    //        checkValue = (System.Convert.ToDecimal(conditionalRule.Value) < System.Convert.ToDecimal(value)) ? true : false;
+                    //        break;
 
-                        case "le":
-                            if (isRuleValueNum == false || isValueNum == false) continue;
-                            checkValue = (System.Convert.ToDecimal(conditionalRule.Value) <= System.Convert.ToDecimal(value)) ? true : false;
-                            break;
-                        default:
-                            checkValue = true;
-                            break;
-                    }
+                    //    case "le":
+                    //        if (isRuleValueNum == false || isValueNum == false) continue;
+                    //        checkValue = (System.Convert.ToDecimal(conditionalRule.Value) <= System.Convert.ToDecimal(value)) ? true : false;
+                    //        break;
+                    //    default:
+                    //        checkValue = true;
+                    //        break;
+                    //}
+
+                    checkValue = ClsSynchronizer.OperatorCompare(conditionalRule.Condition, conditionalRule.Value, value);
 
                     if (checkValue==false)
                     {

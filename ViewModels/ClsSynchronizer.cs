@@ -130,6 +130,28 @@ namespace BCS.CADs.Synchronization.ViewModels
         public static Dictionary<string, ObservableCollection<SearchItem>> SyncCurrentObsSearchItems = new Dictionary<string, ObservableCollection<SearchItem>>();
 
         //public static Frame ViewPage { get; set; } = null;
+        public static bool OperatorCompare(string condition,string value1, string value2)
+        {
+            if (checkValueDictionary == null) GetOperatorCondition();
+            return checkValueDictionary[condition].Invoke(value1, value2);
+        }
+        static Dictionary<string, Func<string, string, bool>> checkValueDictionary = null;
+
+        private static void GetOperatorCondition()
+        {
+            decimal no1, no2;
+            checkValueDictionary = new Dictionary<string, Func<string, string, bool>>();
+            //a:conditionalRule.Value , b:value , return:比較結果
+            checkValueDictionary.Add("in", (a, b) => a.Split(',').Contains(b));
+            checkValueDictionary.Add("not in", (a, b) => a.Split(',').Contains(b));
+            checkValueDictionary.Add("like", (a, b) => a.Split(',').Any(x => x.Contains(b)));
+            checkValueDictionary.Add("eq", (a, b) => a == b);
+            checkValueDictionary.Add("ne", (a, b) => a != b);
+            checkValueDictionary.Add("gt", (a, b) => decimal.TryParse(a, out no1) && decimal.TryParse(b, out no2) && no1 > no2);
+            checkValueDictionary.Add("ge", (a, b) => decimal.TryParse(a, out no1) && decimal.TryParse(b, out no2) && no1 >= no2);
+            checkValueDictionary.Add("lt", (a, b) => decimal.TryParse(a, out no1) && decimal.TryParse(b, out no2) && no1 < no2);
+            checkValueDictionary.Add("le", (a, b) => decimal.TryParse(a, out no1) && decimal.TryParse(b, out no2) && no1 <= no2);
+        }
 
 
         //public static void DoEvents()

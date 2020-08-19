@@ -112,6 +112,7 @@
     <Compile Include="DependencyObjectProxy.cs" />
     <Compile Include="Entities\ConnInnovator.cs" />
     <Compile Include="Entities\ConnPLM.cs" />
+    <Compile Include="Entities\Field.cs" />
     <Compile Include="Entities\IClasses.cs" />
     <Compile Include="Entities\IConfigurations.cs" />
     <Compile Include="Entities\IProduct.cs" />

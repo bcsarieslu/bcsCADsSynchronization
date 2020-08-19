@@ -18,38 +18,14 @@
     </ControlTemplate>
 
     <Style x:Key="tbListRevStyle" TargetType="{x:Type TextBox}">
-        <Style.Triggers>
-            <!--<DataTrigger >
-                <Setter Property="Background" Value="{Binding SyncColorTypeValue, Mode=TwoWay,Converter={StaticResource RegPLMPropertiesConverter }}" />
-            </DataTrigger>-->
-            <!--<DataTrigger Binding="{Binding IsModify, Mode=TwoWay,Converter={StaticResource RegPLMPropertiesConverter }}" Value="True" >
-                <Setter Property="Background" Value="Red"/>
-            </DataTrigger>-->
-            <!--<DataTrigger >
-                <Setter Property="Background" Value="Red"/>
-            </DataTrigger>-->
-
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush>
-                            <LinearGradientBrush.GradientStops>
-                                <GradientStop Color="Aquamarine" Offset="0"/>
-                                <GradientStop Color="Beige" Offset="0.2"/>
-                                <GradientStop Color="Firebrick" Offset="0.5"/>
-                                <GradientStop Color="DarkMagenta" Offset="0.9"/>
-                            </LinearGradientBrush.GradientStops>
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-        </Style.Triggers>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <Grid>
-                        <Border BorderThickness="1" BorderBrush="DarkGray">
-                            <ScrollViewer x:Name="PART_ContentHost" />
+                        <Border BorderThickness="0,1,0,0" CornerRadius="1.8" BorderBrush="#B4B4B4">
+                            <Border BorderThickness="0.8,0,0.8,0" CornerRadius="1.8" BorderBrush="#DDDDDD">
+                                <ScrollViewer x:Name="PART_ContentHost" Background="{TemplateBinding Background}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
+                            </Border>
                         </Border>
                         <ToggleButton Template="{StaticResource IconButton}"
                               MaxHeight="21" 
