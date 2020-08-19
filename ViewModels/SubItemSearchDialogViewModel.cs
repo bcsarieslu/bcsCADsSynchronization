@@ -27,7 +27,6 @@ namespace BCS.CADs.Synchronization.ViewModels
     {
         #region "                   宣告區
         private ItemSearch _ItemSearchView = null;
-        private dynamic _view;// SubItemSearchDialog _view;
         #endregion
 
 
@@ -44,9 +43,8 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             set
             {
-                ClsSynchronizer.SyncSubDialogView = (dynamic)value;
-                _view = ClsSynchronizer.SyncSubDialogView;
-
+                int index = ClsSynchronizer.SyncSubDialogView.Count() - 1;
+                ClsSynchronizer.SyncSubDialogView[index.ToString()] = (dynamic)value;
             }
         }
 
@@ -57,7 +55,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public SearchItem SelectedSearchItem
         {
             get { return _selectedSearchItem; }
-            //set { SetProperty(ref _selectedListItem, value); }
             set { SetProperty(ref _selectedSearchItem, value, nameof(SelectedSearchItem)); }
         }
 
@@ -113,9 +110,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue)) { MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return; }
                     ClsSynchronizer.SubDialogReturnKeyedName = txtSelectedItemId.Tag.ToString();
 
-                    win = (Window)ClsSynchronizer.SyncSubDialogView;
-
-
+                    int index = ClsSynchronizer.SyncSubDialogView.Count() - 1;
+                    win = (Window)ClsSynchronizer.SyncSubDialogView[index.ToString()];
                     win.Close();
 
                 });
@@ -135,7 +131,9 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     ClsSynchronizer.SubDialogReturnValue = "";
                     ClsSynchronizer.SubDialogReturnKeyedName = "";
-                    win = (Window)ClsSynchronizer.SyncSubDialogView;
+
+                    int index = ClsSynchronizer.SyncSubDialogView.Count() - 1;
+                    win = (Window)ClsSynchronizer.SyncSubDialogView[index.ToString()];
                     win.Close();
 
                 });
@@ -143,31 +141,50 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
+        public ICommand ClearSearchConditions
+        {
+            get
+            {
+                _syncItemSearch = new RelayCommand((x) =>
+                {
+                    int index = (ClsSynchronizer.NewSubSearchItem == null) ? -1 : ClsSynchronizer.NewSubSearchItem.Count() - 1;
+                    SearchItem searchItemType = ClsSynchronizer.NewSubSearchItem[index.ToString()] ;
+                    _ItemSearchView = (ItemSearch)ClsSynchronizer.SyncSubListView[index.ToString()];
+
+                    if (searchItemType == null || _ItemSearchView == null) return;
+                    DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
+                    if (gridSelectedItems == null) return;
+                    ClsSynchronizer.VmSyncCADs.ClearSearchConditions(gridSelectedItems, searchItemType);
+                });
+                return _syncItemSearch;
+            }
+        }
 
 
+        
         #endregion " 
 
         #region "                   方法區
+
         public void ShowSearchDialog(string itemType)
         {
             ClsSynchronizer.SubDialogReturnValue = "";
             ClsSynchronizer.SubDialogReturnKeyedName = "";
-            LoadFromPLMView((Window)_view, itemType,true);
+            int index = ClsSynchronizer.SyncSubDialogView.Count() - 1;
+            LoadFromPLMView((Window)ClsSynchronizer.SyncSubDialogView[index.ToString()], itemType);
         }
 
-        public void LoadFromPLMView(Window win,string itemType, bool isSub)
+
+        #endregion "
+
+        #region "                   方法區(內部)
+
+
+        private void LoadFromPLMView(Window win, string itemType)
         {
             if (String.IsNullOrWhiteSpace(itemType)) itemType = ItemTypeName.CAD.ToString();
 
-            //string displayName = isCopyToAdd ? "CopyToAddView" : "LoadFromPLMView";
-            //string displayKey = isCopyToAdd ? "copyToAdd" : "loadFromPLM";
-            //OperationStart(displayName);
-
-
             ItemType itemTypeItem = ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.Search);
-
-            //if ((isDialog) == false) ClsSynchronizer.SearchItemTypeItem = itemTypeItem;
-
             ObsSearchItems = new ObservableCollection<SearchItem>();
 
 
@@ -175,11 +192,12 @@ namespace BCS.CADs.Synchronization.ViewModels
             if (_ItemSearchView == null)
             {
                 _ItemSearchView = new ItemSearch();
+                _ItemSearchView.DataContext = new SubItemSearchDialogViewModel();
                 isNew = true;
             }
 
-
-            ClsSynchronizer.SyncSubListView = _ItemSearchView;
+            int index = ClsSynchronizer.SyncSubListView.Count() - 1;
+            if (index > -1) ClsSynchronizer.SyncSubListView[index.ToString()] = _ItemSearchView;
 
             ((TextBox)_ItemSearchView.FindName("CADdirectory")).Visibility = Visibility.Hidden;
             ((Button)_ItemSearchView.FindName("selectedDirectory")).Visibility = Visibility.Hidden;
@@ -208,36 +226,17 @@ namespace BCS.CADs.Synchronization.ViewModels
             SelectedSearchItem.PlmProperties = newProperties;
             ObsSearchItems.Add(SelectedSearchItem);
 
-            if (ClsSynchronizer.IsActiveSubDialogView)
-                ClsSynchronizer.NewSubSearchItem = SelectedSearchItem;
-            else
-                ClsSynchronizer.NewSearchItem = SelectedSearchItem;
-
+            index = (ClsSynchronizer.NewSubSearchItem == null) ? -1 : ClsSynchronizer.NewSubSearchItem.Count() - 1;
+            ClsSynchronizer.NewSubSearchItem[index.ToString()] = SelectedSearchItem;
 
             ClsSynchronizer.RowStyle = gridSelectedItems.RowStyle;
             gridSelectedItems.RowStyle = RowStyleHeightzero();
 
-
-
-
-            //if (isDialog == false)
-            //{
-            //    Button btn = (Button)MyMainWindow.FindName(displayKey);
-            //    SetMenuButtonColor(displayKey);
-            //    Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
-            //    rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName(String.Format("{0}_SP", displayKey))));
-            //}
-
-            //DefaultSystemItemsDisplay();
-
-            //ClsSynchronizer.ActiveWindow = (isDialog == true) ? win : MyMainWindow;
-            var viewPage = (Frame)win.FindName("viewPage") ;
+            var viewPage = (Frame)win.FindName("viewPage");
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_ItemSearchView);
-
-
-            //ClsSynchronizer.VmMessages.Status = "End";
         }
+
 
         private void AddDataGridHeaderColumn(ItemType itemTypeItem, DataGrid gridSelectedItems)
         {
@@ -265,8 +264,10 @@ namespace BCS.CADs.Synchronization.ViewModels
         private void SyncItemTypeSearch()
         {
 
-            SearchItem searchItemType = (ClsSynchronizer.IsActiveSubDialogView == true) ? ClsSynchronizer.NewSubSearchItem : ClsSynchronizer.NewSearchItem;
-            UpdateSearchItemType(searchItemType);//Modify by kenny 2020/08/03
+            int index = (ClsSynchronizer.NewSubSearchItem == null) ? -1 : ClsSynchronizer.NewSubSearchItem.Count() - 1;
+            SearchItem searchItemType = ClsSynchronizer.NewSubSearchItem[index.ToString()];
+
+            UpdateSearchItemType(searchItemType);
             bool ret = false;
             var task = Task.Factory.StartNew(() => ret = SyncItemTypeSearch(searchItemType));
             task.ContinueWith((y) =>
@@ -275,7 +276,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 if (ObsSearchItems == null) ObsSearchItems = new ObservableCollection<SearchItem>();
                 ClsSynchronizer.SearchItemsCollection = ObsSearchItems;
 
-                _ItemSearchView = (ItemSearch)ClsSynchronizer.SyncSubListView;
+                _ItemSearchView = (ItemSearch)ClsSynchronizer.SyncSubListView[index.ToString()];
                 if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
                 DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
 
@@ -283,7 +284,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 if (ObsSearchItems.Count == 0)
                 {
-                    LoadFromPLMView((Window)_view, ClsSynchronizer.ShowDialogItemType, true);
+                    LoadFromPLMView((Window)ClsSynchronizer.SyncSubDialogView[index.ToString()], ClsSynchronizer.ShowDialogItemType);
                     return;
                 }
                 else
@@ -292,7 +293,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                 gridSelectedItems.ItemsSource = ObsSearchItems;
                 gridSelectedItems.RowStyle = ClsSynchronizer.RowStyle;
 
-                Window win = (Window)ClsSynchronizer.SyncSubDialogView;
+                index = ClsSynchronizer.SyncSubDialogView.Count() - 1;
+                Window win = (Window)ClsSynchronizer.SyncSubDialogView[index.ToString()];
 
                 Frame viewPage = (Frame)win.FindName("viewPage");
                 viewPage.Visibility = Visibility.Visible;
@@ -312,7 +314,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         private void UpdateSearchItemType(SearchItem searchItemType)
         {
-            _ItemSearchView = (ItemSearch)ClsSynchronizer.SyncSubListView;
+            int index = (ClsSynchronizer.SyncSubListView == null) ? -1 : ClsSynchronizer.SyncSubListView.Count() - 1;
+            _ItemSearchView = (ItemSearch)ClsSynchronizer.SyncSubListView[index.ToString()];
             if (_ItemSearchView == null) _ItemSearchView = new ItemSearch();
 
             DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
@@ -323,11 +326,14 @@ namespace BCS.CADs.Synchronization.ViewModels
         private void StartStopWait(bool isStart)
         {
             if (isStart) ClsSynchronizer.VmSyncCADs.IsActiveCAD();
-            AdornedControl.AdornedControl loadingAdorner = (AdornedControl.AdornedControl)MyCache.CacheInstance["SubItemSearchLoadingAdorner"];
+            int index = ClsSynchronizer.SyncSubDialogLoadingAdorner.Count() - 1;
+            AdornedControl.AdornedControl loadingAdorner = ClsSynchronizer.SyncSubDialogLoadingAdorner[index.ToString()];
             loadingAdorner.IsAdornerVisible = isStart;
             loadingAdorner.Visibility = (loadingAdorner.IsAdornerVisible) ? Visibility.Visible : Visibility.Collapsed;
 
         }
-        #endregion "
+
+        #endregion
+
     }
 }

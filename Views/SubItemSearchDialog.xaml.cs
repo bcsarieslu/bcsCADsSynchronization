@@ -33,23 +33,23 @@ namespace BCS.CADs.Synchronization.Views
         public SubItemSearchDialog(string itemType)
         {
             InitializeComponent();
+            
+
             ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
+            int index = ClsSynchronizer.SyncSubDialogLoadingAdorner.Count() - 1;
+            ClsSynchronizer.SyncSubDialogLoadingAdorner[index.ToString()] = LoadingAdorner;
 
-            var cache = MyCache.CacheInstance;
-            CacheItemPolicy policy = new CacheItemPolicy();
-            policy.AbsoluteExpiration = DateTime.Now.AddMinutes(30d);
-            var loadingAdorner = new CacheItem("SubItemSearchLoadingAdorner", LoadingAdorner);
-            cache.Add(loadingAdorner, null);
-
-            //System.Diagnostics.Debugger.Break();            
+            /*
             DataContext = new MainWindowViewModel(this, itemType,true );
             //DataContext = new SubItemSearchDialogViewModel(this, itemType);
-            
-            /*
+            */
+
+            //System.Diagnostics.Debugger.Break();
             SubItemSearchDialogViewModel DataContext = new SubItemSearchDialogViewModel();
             DataContext.SetView = this;
             DataContext.ShowSearchDialog(itemType);
-            */
+            
+            
         }
         private void Thumb_OnDragDelta(object sender, DragDeltaEventArgs e)
         {

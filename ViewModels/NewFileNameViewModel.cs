@@ -73,7 +73,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
 
                     Window win = (Window)_view;
-                    ClsSynchronizer.DialogReturnValue = PLM.NewFileName;
+                    //ClsSynchronizer.DialogReturnValue = PLM.NewFileName;
+                    ClsSynchronizer.SubDialogReturnValue = PLM.NewFileName;
                     win.Close();
 
                 });

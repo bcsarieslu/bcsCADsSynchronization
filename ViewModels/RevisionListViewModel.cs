@@ -25,8 +25,6 @@ namespace BCS.CADs.Synchronization.ViewModels
     public class RevisionListViewModel: NotifyPropertyBase
     {
         #region "                   宣告區
-        //private dynamic _view;
-
         private ICommand _showCommand;
         #endregion
 
@@ -39,12 +37,10 @@ namespace BCS.CADs.Synchronization.ViewModels
         #endregion
 
         #region "                   屬性區
-
         public dynamic SetView {
             set
             {
-                ClsSynchronizer.SyncSubDialogView = (dynamic)value;
-
+                ClsSynchronizer.SyncRevisionListDialogView = (dynamic)value;
             }
         }
 
@@ -66,7 +62,6 @@ namespace BCS.CADs.Synchronization.ViewModels
         public SearchItem SelectedSearchItem
         {
             get { return _selectedSearchItem; }
-            //set { SetProperty(ref _selectedListItem, value); }
             set { SetProperty(ref _selectedSearchItem, value, nameof(SelectedSearchItem)); }
         }
 
@@ -80,7 +75,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _closeDialogWindow = new RelayCommand((x) =>
                 {
-                    Window win = (Window)ClsSynchronizer.SyncSubDialogView;
+                    Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
                     win.Close();
 
                 });
@@ -97,9 +92,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _done = new RelayCommand((x) =>
                 {
 
-                    Window win = (Window)ClsSynchronizer.SyncSubDialogView;
+                    Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
+
                     TextBox txtSelectedItemId = (TextBox)win.FindName("selectedItemId");
-                    //MessageBox.Show(txtSelectedItemId.Text);
                     if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text)) {
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected"));return; }
 
@@ -119,8 +114,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 _showCommand = _showCommand ?? new RelayCommand((x) =>
                 {
-                    Window win = (Window)ClsSynchronizer.SyncSubDialogView;
-                    //System.Diagnostics.Debugger.Break();
+
+                    Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
                     SearchItem searchItem = x as SearchItem;
                     if (searchItem != null)
                     {
@@ -191,20 +186,6 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         #region "                   方法區
 
-        private Boolean ShowRevisionList(string itemType, string itemId)
-        {
-            RevisionList revisionDialog = new RevisionList(itemType, itemId);
-            revisionDialog.Width = 800;
-            revisionDialog.Height = 600;
-            revisionDialog.Topmost = true;
-            revisionDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            revisionDialog.ShowDialog();
-            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
-            return false;
-        }
-
-
-
         public void ShowAllRevisions(string itemType, string itemId)
         {
 
@@ -214,7 +195,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             ObsSearchItems = new ObservableCollection<SearchItem>();
 
-            DataGrid gridSelectedItems = (DataGrid)ClsSynchronizer.SyncSubDialogView.FindName("gridSelectedItems");
+            Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
+            DataGrid gridSelectedItems = (DataGrid)win.FindName("gridSelectedItems");
 
             int j = 0;
             foreach (PLMProperty plmProperty in searchItemType.PlmProperties)
@@ -268,6 +250,18 @@ namespace BCS.CADs.Synchronization.ViewModels
         #endregion
 
         #region "                   方法區(內部)
+        private Boolean ShowRevisionList(string itemType, string itemId)
+        {
+            RevisionList revisionDialog = new RevisionList(itemType, itemId);
+            revisionDialog.Width = 800;
+            revisionDialog.Height = 600;
+            revisionDialog.Topmost = true;
+            revisionDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            revisionDialog.ShowDialog();
+            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
+            return false;
+        }
+
 
 
 

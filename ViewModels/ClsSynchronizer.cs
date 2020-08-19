@@ -61,15 +61,19 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static SearchItem NewSearchItem { get; set; }
 
-        public static SearchItem NewSubSearchItem { get; set; }
+        public static Dictionary<string, SearchItem> NewSubSearchItem { get; set; } = new Dictionary<string, SearchItem>();
 
         public static dynamic SyncListView { get; set; }
 
-        public static dynamic SyncSubListView { get; set; }
+        public static Dictionary<string, dynamic> SyncSubListView { get; set; } = new Dictionary<string, dynamic>();
 
         public static dynamic SyncDialogView { get; set; }
 
-        public static dynamic SyncSubDialogView { get; set; }
+        public static Dictionary<string, dynamic> SyncSubDialogView { get; set; } = new Dictionary<string, dynamic>();
+
+        public static Dictionary<string, dynamic> SyncSubDialogLoadingAdorner { get; set; } = new Dictionary<string, dynamic>();
+
+        public static dynamic SyncRevisionListDialogView { get; set; }
 
         public static bool IsActiveSubDialogView { get; set; } = false;
 
@@ -122,6 +126,9 @@ namespace BCS.CADs.Synchronization.ViewModels
             {"QueryListItems", "ExecuteSearchDrawingImage"}, {"EditorProperties", "ReplicationTxnLogDrawingImage"},{"CADStructure", "BlockExternalDrawingImage"}, {"AddTemplates", "ReplicationTxnLogDrawingImage"},{"AddOnItems", "ExecuteSearchDrawingImage"},{"LoadListItems", "ExecuteSearchDrawingImage"}, {"File","File" },
             {"Executing", "Executing"},{"End", "End"},{"Error", "Error"},{"Finish", "Finish"}
         };
+
+        public static Dictionary<string, ObservableCollection<SearchItem>> SyncCurrentObsSearchItems = new Dictionary<string, ObservableCollection<SearchItem>>();
+
         //public static Frame ViewPage { get; set; } = null;
 
 

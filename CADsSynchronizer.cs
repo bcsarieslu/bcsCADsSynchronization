@@ -90,7 +90,7 @@ namespace BCS.CADs.Synchronization
         /// <param name="strDBName"></param>
         /// <param name="strLogin"></param>
         /// <param name="strPassword"></param>
-        protected internal void Login(string strUrl, string strDBName, string strLogin, string strPassword)
+        protected internal bool Login(string strUrl, string strDBName, string strLogin, string strPassword, ref Exception exception)
         {
             try
             {
@@ -108,10 +108,13 @@ namespace BCS.CADs.Synchronization
                 
                 IsActiveLogin = _Plm.IsActiveLogin;
                 if (IsActiveLogin == true) _syncCADEvents.ClassItems = _Plm.GetClassItems();
+                return IsActiveLogin;
             }
             catch (Exception ex)
             {
-                throw ex;
+                //throw ex;
+                exception = ex;
+                return false;
             }
         }
 
