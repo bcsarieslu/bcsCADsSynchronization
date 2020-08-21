@@ -29,8 +29,7 @@ using AdornedControl;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Threading;
-
-
+using System.Windows.Controls.Primitives;
 
 namespace BCS.CADs.Synchronization.ViewModels
 {
@@ -108,19 +107,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     SearchItem searchItem = x as SearchItem;
                     if (searchItem != null)
                     {
-
-                        ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem, ClsSynchronizer.VmFunction);
-
-                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath))
-                        {
-                            if (searchItem.IsVersion==false)
-                            {
-                                PLMProperty thumbnail = searchItem.PlmProperties.Where(y => y.Name == ClsSynchronizer.VmSyncCADs.ThumbnailProperty).FirstOrDefault();
-                                if (thumbnail != null) ClsSynchronizer.ViewFilePath = ClsSynchronizer.VmSyncCADs.GetImageFullName(thumbnail.DataValue);
-                            }
-                        }
-
-                        if (String.IsNullOrWhiteSpace(ClsSynchronizer.ViewFilePath)) ClsSynchronizer.ViewFilePath = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/White.bmp";
+                        ThumbnailImage thumbnailImage = new ThumbnailImage();
+                        thumbnailImage.GetThumbnailImagePath(searchItem);
 
                         Canvas canvas = (Canvas)MyMainWindow.FindName("CanvasViewFile");
                         TextBlock positionUse = (TextBlock)MyMainWindow.FindName("positionUse");
@@ -178,54 +166,101 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        private decimal _resetScale = 1;
-        public decimal ResetScale
+        private decimal _setScale = 1;
+        public decimal SetScale
         {
-            get { return _resetScale; }
+            get { return _setScale; }
             set
             {
-                SetProperty(ref _resetScale, value, "ResetScale");
+                SetProperty(ref _setScale, value, "SetScale");
             }
         }
 
-        private ICommand _setScale;
-        public ICommand SetScale
+        private string _scaleValue = "100";
+        public string ScaleValue
+        {
+            get { return _scaleValue; }
+            set
+            {
+                SetProperty(ref _scaleValue, value, "ScaleValue");
+            }
+        }
+
+        private ICommand _subScale;
+        public ICommand SubScale
         {
             get
             {
-                _setScale = new RelayCommand(
+                _subScale = new RelayCommand(
                     x =>
                     {
-                        var btn = x as Button;
-                        var s = VisualTreeHelper.GetParent(btn);
-                        while (!(s is MainWindow))
-                        {
-                            s = VisualTreeHelper.GetParent(s);
-                        }
-                        Label lb = (Label)MyMainWindow.FindName("scaleLabel");
-                        decimal size = decimal.Parse(lb.Content.ToString());
+                        decimal size = decimal.Parse(ScaleValue);
 
-                        if (btn.Name == "btn_Add" && size < 200)
-                        {
-                            size = size + 10;
-                            lb.Content = size;
-                            size /= 100;
-                            ResetScale = size;
-                        }
-                        else if (btn.Name == "btn_Sub" && size > 50)
-                        {
-                            size = size - 10;
-                            lb.Content = size;
-                            size /= 100;
-                            ResetScale = size;
-                        }
-                        else if (btn.Name == "resetsize")
-                        {
-                            ResetScale = 1;
-                            lb.Content = 100;
-                        }
+                        size = size - 10;
+                        ScaleValue = size.ToString();
+                        size /= 100;
+                        SetScale = size;
                     });
-                return _setScale;
+                return _subScale;
+            }
+        }
+
+        private ICommand _addScale;
+        public ICommand AddScale
+        {
+            get
+            {
+                _addScale = new RelayCommand(
+                    x =>
+                    {
+                        decimal size = decimal.Parse(ScaleValue);
+
+                        size = size + 10;
+                        ScaleValue = size.ToString();
+                        size /= 100;
+                        SetScale = size;
+                    });
+                return _addScale;
+            }
+        }
+
+        private ICommand _resetScale;
+        public ICommand ResetScale
+        {
+            get
+            {
+                _resetScale = new RelayCommand(
+                    x =>
+                    {
+                        SetScale = 1;
+                        ScaleValue = "100";
+                    });
+                return _resetScale;
+            }
+        }
+        
+        private ICommand _refushUserInformation;
+        public ICommand RefushUserInformation
+        {
+            get
+            {
+                _refushUserInformation = new RelayCommand(
+                    x =>
+                    {
+                        if(ClsSynchronizer.UserImageSource!=null)
+                            UserToggleButtonSource = ClsSynchronizer.UserImageSource;
+                    });
+                return _refushUserInformation;
+            }
+        }
+
+        private string _userToggleButtonSource = "pack://application:,,,/BCS.CADs.Synchronization;component/images/DefaultAvatar.png";
+        public string UserToggleButtonSource
+        {
+            get { return _userToggleButtonSource; }
+            set
+            {
+                SetProperty(ref _userToggleButtonSource, value, "UserToggleButtonSource");
             }
         }
 
@@ -474,7 +509,14 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        public static Login LoginWindow { get; set; }
+        public Login LoginWindow
+        {
+            get
+            {
+                var cache = MyCache.CacheInstance;
+                return (Login)cache["Login"];
+            }
+        }
         public bool IsLogin { get; set; }
 
         public string _userLoginName;
@@ -489,41 +531,33 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        private ICommand _checkLogin { get; set; }
-        public ICommand CheckLogin
+        private ICommand _userInformationLogin { get; set; }
+        public ICommand UserInformationLogin
         {
             get
             {
-                _checkLogin = new RelayCommand((x) =>
+                _userInformationLogin = new RelayCommand((x) =>
                 {
-
-
-                    Button button = ((Button)x);
-                    var parent = VisualTreeHelper.GetParent(button);
-                    while (true)
-                    {
-                        parent = VisualTreeHelper.GetParent(parent);
-                        if (parent is Login)
-                        {
-                            LoginWindow = (Login)parent;
-                            break;
-                        }
-                    }
-                    if (button.Name == "login")
-                    {
-                        PasswordBox passwordBox = (PasswordBox)LoginWindow.FindName("PasswordBox");
-                        PLM.Password = passwordBox.Password;
-                        UserLogin();
-
-                        //ResetFunctionButtons();
-
-                    }
-                    else if(button.Name == "logout" || button.Name == "userInfoLogout")
-                    {
-                        UserLogout();
-                    }
+                    var cache = MyCache.CacheInstance;
+                    PasswordBox passwordBox = (PasswordBox)LoginWindow.FindName("PasswordBox");
+                    PLM.Password = passwordBox.Password;
+                    UserLogin();
                 });
-                return _checkLogin;
+                return _userInformationLogin;
+            }
+        }
+
+        private ICommand _userInformationLogout { get; set; }
+        public ICommand UserInformationLogout
+        {
+            get
+            {
+                _userInformationLogout = new RelayCommand((x) =>
+                {
+                    UserLogout();
+                    UserToggleButtonSource = "pack://application:,,,/BCS.CADs.Synchronization;component/images/DefaultAvatar.png";
+                });
+                return _userInformationLogout;
             }
         }
 
@@ -1316,6 +1350,10 @@ namespace BCS.CADs.Synchronization.ViewModels
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_CADFileDoesNotExistPLM"));
                         return false;
                     }
+
+                    //檢查是否為表示為共用件及標準件(需為最新版本,自己鎖定的圖檔,才能下載到本地端,進行修改) ****@@@@@@@***
+
+                    verSearchItem.IsRoot = true;
                     searchItems.Add(verSearchItem);
 
                     break;
@@ -1592,7 +1630,27 @@ namespace BCS.CADs.Synchronization.ViewModels
             var viewPage = (Frame)MyMainWindow.FindName("viewPage");
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_addItemsMessageView);
+            //ShowPartsLibrarySearchDialog();
+        }
 
+        private void ShowPartsLibrarySearchDialog()
+        {
+
+
+            PartsLibrarySearchDialog itemSearchDialog = new PartsLibrarySearchDialog();
+            ClsSynchronizer.IsShowDialog = true;
+            itemSearchDialog.Width = 800;
+            itemSearchDialog.Height = 600;
+            itemSearchDialog.Topmost = true;
+            itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            //ItemSearchViewControl(Visibility.Visible);
+            itemSearchDialog.ShowDialog();
+
+            //ClsSynchronizer.ShowDialogItemType = itemDialogType;
+            //if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue) == false)
+            //{
+            //    txtProperty.Text = (isSubItemSearchDialog) ? ClsSynchronizer.SubDialogReturnKeyedName : ClsSynchronizer.DialogReturnKeyedName;
+            //}
         }
 
         /// <summary>
@@ -1923,8 +1981,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     ClsSynchronizer.EditPropertiesView = _editPropertiesDataGrid;
                 }
 
-                Grid formGrid = (Grid)_editPropertiesDataGrid.FindName("formContent");
-                SetFormContent(formGrid, false);
+                ClsSynchronizer.FormGrid = (Grid)_editPropertiesDataGrid.FindName("formContent");
+                SetFormContent(ClsSynchronizer.FormGrid);
 
                 DataGrid gridSelectedItems = (DataGrid)_editPropertiesDataGrid.FindName("gridDetail");
                 gridSelectedItems.ItemsSource = ObsSearchItems;
@@ -1939,14 +1997,23 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        private void SetFormContent(Grid formGrid, bool isSelected)
+        /// <summary>
+        /// 產生Form表單資料
+        /// </summary>
+        /// <param name="formGrid">要寫入表單的Grid空間</param>
+        /// <param name="plmProp">畫面所選資料</param>
+        private void SetFormContent(Grid formGrid, ObservableCollection<PLMProperty> plmProp = null)
         {
             double left = 10, top = 10, right = 0, bottom = 10;
-            foreach (var item in ObsSearchItems.FirstOrDefault(a => a.PlmProperties != null).PlmProperties)
+
+            formGrid.Children.Clear();
+            var plmProperties = (plmProp != null) ? plmProp : ObsSearchItems.FirstOrDefault(a => a.PlmProperties != null).PlmProperties;
+            foreach (var item in plmProperties)
             {
                 StackPanel stackPanel = new StackPanel();
                 stackPanel.Orientation = Orientation.Vertical;
                 stackPanel.HorizontalAlignment = HorizontalAlignment.Left;
+                stackPanel.VerticalAlignment = VerticalAlignment.Stretch;
                 stackPanel.Margin = new Thickness(left, top, right, bottom);
 
                 TextBlock textBlock = new TextBlock();
@@ -1955,8 +2022,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 TextBox textBox = new TextBox();
                 textBox.Height = 25d;
-                textBox.Width = 160d;
-                if (isSelected)
+                textBox.Width = 220d;
+                if (plmProp != null)
                 {
                     textBox.DataContext = item;
                     Binding binding = new Binding("DisplayValue");
@@ -1964,6 +2031,22 @@ namespace BCS.CADs.Synchronization.ViewModels
                     binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                     textBox.SetBinding(TextBox.TextProperty, binding);
                     textBox.SetBinding(TextBox.TagProperty, new Binding("DataSource"));
+
+                    binding = new Binding("IsModify");
+                    binding.Mode = BindingMode.TwoWay;
+                    binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                    binding.Converter = new PLMProperty();
+                    textBox.SetBinding(TextBox.ForegroundProperty, binding);
+
+                    binding = new Binding("SyncColorTypeValue");
+                    binding.Mode = BindingMode.TwoWay;
+                    binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                    binding.Converter = new PLMProperty();
+                    textBox.SetBinding(TextBox.BackgroundProperty, binding);
+
+                    binding = new Binding("DataType");
+                    binding.Converter = new StyleConverter();
+                    textBox.SetBinding(TextBox.StyleProperty, binding);
                 }
                 stackPanel.Children.Add(textBox);
 
@@ -1972,7 +2055,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 if (top >= 300)
                 {
                     top = 10;
-                    left = left + 200;
+                    left = left + 250;
                 }
             }
         }
@@ -2008,13 +2091,14 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                         IsLogin = true;
                         UserLoginName = ConnInnovator.UserName;
+                        ClsSynchronizer.VmPartsLibrary = ClsSynchronizer.VmSyncCADs.GetCommonPartsLibrary();
                         DefaultSystemButtonsTextBlocks(UserLoginName, strDBName, true);
                     }
                     //關閉Windows : 要改變UI的畫面是否允許操作功能 @@@@@@
 
                     ResetFunctionButtons();                   
-                    if (ret == false && exception!=null) throw new Exception(exception.Message);
-
+                    //if (ret == false && exception!=null) throw new Exception(exception.Message);
+                    if (ret == false && exception != null) MessageBox.Show(exception.Message);
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -2055,12 +2139,10 @@ namespace BCS.CADs.Synchronization.ViewModels
             TextBlock userName = (TextBlock)LoginWindow.FindName("userName");
             TextBlock userName2 = (TextBlock)MyMainWindow.FindName("userName2");
             TextBlock dataBaseName = (TextBlock)MyMainWindow.FindName("dataBaseName");
-            Button loginImage = (Button)MyMainWindow.FindName("LoginImage");
-            Button loginImage2 = (Button)MyMainWindow.FindName("LoginImage2");
+            ToggleButton loginImage = (ToggleButton)MyMainWindow.FindName("LoginImage");
             Button userInfoLogout = (Button)MyMainWindow.FindName("userInfoLogout");
 
             ChangeLoginImage(loginImage);
-            ChangeLoginImage(loginImage2);
 
             userName.Text = userLoginName;
             userName2.Text = userLoginName;
@@ -2097,22 +2179,24 @@ namespace BCS.CADs.Synchronization.ViewModels
         }
 
 
-        public void ChangeLoginImage(Button btn)
+        public void ChangeLoginImage(ToggleButton btn)
         {
-            Uri uriSource;
+            string uriSource;
             if (IsLogin == true)
             {
                 if (!string.IsNullOrEmpty(PLM.Image_ID))
-                    uriSource = new Uri(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + $@"/Broadway/CADImage/LoginImage/{PLM.Image_ID}/{ConnInnovator.Image_Filename}", UriKind.Relative);
+                    uriSource = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + $@"/Broadway/CADImage/LoginImage/{PLM.Image_ID}/{ConnInnovator.Image_Filename}";
                 else
-                    uriSource = new Uri(@"pack://application:,,,/BCS.CADs.Synchronization;component/Images/CreatedBy.png", UriKind.RelativeOrAbsolute);
+                    uriSource = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/CreatedBy.png";
             }
             else
-                uriSource = new Uri(@"pack://application:,,,/BCS.CADs.Synchronization;component/Images/DefaultAvatar.png", UriKind.RelativeOrAbsolute);
+                uriSource = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images/DefaultAvatar.png";
 
+            Uri uri= new Uri(uriSource,UriKind.RelativeOrAbsolute);
             ControlTemplate loginImage_CT = btn.Template;
             Ellipse LoginImageEllipse = (Ellipse)loginImage_CT.FindName("LoginImageEllipse", btn);
-            LoginImageEllipse.Fill = new ImageBrush(new BitmapImage(uriSource));
+            LoginImageEllipse.Fill = new ImageBrush(new BitmapImage(uri));
+            ClsSynchronizer.UserImageSource = uriSource;
         }
 
         private void ResetDBList()
@@ -2784,8 +2868,28 @@ namespace BCS.CADs.Synchronization.ViewModels
             //set { SetProperty(ref _selectedListItem, value); }
             set {
                 SetProperty(ref _editPropertiesSelectedSearchItem, value, nameof(EditPropertiesSelectedSearchItem));
-                Grid formGrid = (Grid)ClsSynchronizer.EditPropertiesView.FindName("formContent");
-                SetFormContent(formGrid, true);
+                if (EditPropertiesSelectedSearchItem != null)
+                {
+                    ThumbnailImage thumbnailImage = new ThumbnailImage();
+                    thumbnailImage.GetThumbnailImagePath(_editPropertiesSelectedSearchItem);
+                    if (ClsSynchronizer.ViewFilePath != null)
+                    {
+                        ThumbnailImagePath = ClsSynchronizer.ViewFilePath;
+                    }
+                    SetFormContent(ClsSynchronizer.FormGrid, EditPropertiesSelectedSearchItem.PlmProperties);
+                }
+
+            }
+        }
+
+        private string _thumbnailImagePath;
+        public string ThumbnailImagePath
+        {
+            get { return _thumbnailImagePath; }
+            //set { SetProperty(ref _selectedListItem, value); }
+            set
+            {
+                SetProperty(ref _thumbnailImagePath, value, nameof(ThumbnailImagePath));
             }
         }
 

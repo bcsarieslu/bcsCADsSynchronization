@@ -40,7 +40,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         public dynamic SetView {
             set
             {
-                ClsSynchronizer.SyncRevisionListDialogView = (dynamic)value;
+                ClsSynchronizer.SyncCommonDialogView = (dynamic)value;
             }
         }
 
@@ -75,7 +75,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 _closeDialogWindow = new RelayCommand((x) =>
                 {
-                    Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
+                    Window win = (Window)ClsSynchronizer.SyncCommonDialogView;
                     win.Close();
 
                 });
@@ -92,7 +92,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _done = new RelayCommand((x) =>
                 {
 
-                    Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
+                    Window win = (Window)ClsSynchronizer.SyncCommonDialogView;
 
                     TextBox txtSelectedItemId = (TextBox)win.FindName("selectedItemId");
                     if (String.IsNullOrWhiteSpace(txtSelectedItemId.Text)) {
@@ -115,7 +115,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _showCommand = _showCommand ?? new RelayCommand((x) =>
                 {
 
-                    Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
+                    Window win = (Window)ClsSynchronizer.SyncCommonDialogView;
                     SearchItem searchItem = x as SearchItem;
                     if (searchItem != null)
                     {
@@ -195,7 +195,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             ObsSearchItems = new ObservableCollection<SearchItem>();
 
-            Window win = (Window)ClsSynchronizer.SyncRevisionListDialogView;
+            Window win = (Window)ClsSynchronizer.SyncCommonDialogView;
             DataGrid gridSelectedItems = (DataGrid)win.FindName("gridSelectedItems");
 
             int j = 0;

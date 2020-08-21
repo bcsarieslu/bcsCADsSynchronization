@@ -42,6 +42,9 @@ namespace BCS.CADs.Synchronization.Classes
         [XmlSettingAttributeName("name")]
         public string Name { get; set; } = "";
 
+        public CommonPartsLibrary PartsLibrary { get; set; } = new CommonPartsLibrary();
+
+
         #endregion
 
         #region "                   事件"
@@ -202,6 +205,13 @@ namespace BCS.CADs.Synchronization.Classes
                             break;
 
                         case "BCS CAD PA"://CAD產品授權
+                            break;
+
+                        case "BCS CAD Referenced Documents"://參考文件:共用零件庫路徑
+                            string name = xmlRelItem.Elements("name").Single()?.Value;
+                            string path = xmlRelItem.Elements("bcs_common_parts_library_path").Single()?.Value;
+                            //if (String.IsNullOrWhiteSpace(name) ==false && String.IsNullOrWhiteSpace(path) == false) PartsLibrary.Paths.Add(name,path);
+                            if (String.IsNullOrWhiteSpace(name) == false && String.IsNullOrWhiteSpace(path) == false) PartsLibrary.Paths.Add(new LibraryPath(name, path));
                             break;
                         default:
                             break;

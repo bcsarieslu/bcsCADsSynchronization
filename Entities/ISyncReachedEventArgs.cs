@@ -86,6 +86,9 @@ namespace BCS.CADs.Synchronization.Entities
 
         ResourceDictionary LanguageResources { get; set; }
 
+
+        CommonPartsLibrary PartsLibrary { get; set; }
+
         //List<IntegrationEvents> integrationEvent { get; set; }
         //BCS.CADs.Synchronization.Classes.IntegrationEvents
 

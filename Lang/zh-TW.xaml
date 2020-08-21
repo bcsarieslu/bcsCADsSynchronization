@@ -62,7 +62,10 @@
     <sys:String x:Key="description">描述</sys:String>
     <sys:String x:Key="MainWindow_status">狀態 :</sys:String>
     <sys:String x:Key="newFileName">新圖檔名稱 :</sys:String>
-
+    <sys:String x:Key="flaggedByOthers">被其他人標記</sys:String>
+    
+    
+    
     <sys:String x:Key="msg_NoFilesSelected">尚未選取圖檔</sys:String>
     <sys:String x:Key="msg_PleasePickASavedFilePath">請選擇儲存路徑</sys:String>
     <sys:String x:Key="msg_TheSelectedCADItemHasNoDrawingFile">所選的CAD物件沒有圖檔</sys:String>
@@ -70,7 +73,7 @@
     <sys:String x:Key="msg_CADFileDoesNotExistPLM">CAD圖檔不存在PLM系統</sys:String>
     <!--<sys:String x:Key="msg_added_extension_inconsistent_with_system_file">新增的副檔名與系統圖檔不一致</sys:String>-->
     <sys:String x:Key="msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile">插入的圖檔與父階圖檔相同</sys:String>
-    <sys:String x:Key="msg_NotAllowedToExecute">{0},不允許執行</sys:String>
+    <sys:String x:Key="msg_NotAllowedToExecute">依同步規則,不允許執行</sys:String>
     <sys:String x:Key="msg_GetLanguageFailed">取得語系失敗</sys:String>
     <sys:String x:Key="msg_FailedToCloneObject">複製{0}物件失敗</sys:String>
     <sys:String x:Key="msg_FailedToEditObject">編輯{0}物件失敗</sys:String>
@@ -82,13 +85,15 @@
     <!--<sys:String x:Key="msg_AddTemplate">新增範本</sys:String>-->
     <!--<sys:String x:Key="msg_add_new_item">新增項目</sys:String>-->
     <sys:String x:Key="msg_ConfigIdIsNull">{0} config_id為空值</sys:String>
-
+    <sys:String x:Key="msg_modificationIsForbidden">禁止修改</sys:String>
+    <sys:String x:Key="msg_CommonOrStandardDrawingFilesNeedToBeFlagged">共用或標準圖檔,需要標記</sys:String>
+    
     <sys:String x:Key="menu_InsertSubPart">插入分件</sys:String>
     <sys:String x:Key="menu_InsertSaveasSubPart">插入另存分件</sys:String>
     <sys:String x:Key="menu_ReplaceAPart">替換分件(單筆)</sys:String>
     <sys:String x:Key="menu_ReplaceAllParts">替換分件(全部)</sys:String>
     <sys:String x:Key="menu_CopyToAdd">另存為新物件</sys:String>
-
+ 
     <sys:String x:Key="label_CopyFileName">新檔名</sys:String>
     <sys:String x:Key="label_NewFileName">新檔名</sys:String>
 

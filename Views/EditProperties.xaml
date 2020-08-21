@@ -19,6 +19,7 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/CADsSynchronizer.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ScrallBarStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
@@ -32,21 +33,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
 
+        </Grid.RowDefinitions>
         <DataGrid x:Name="gridDetail" IsReadOnly="True" CanUserAddRows="False"
                 AutoGenerateColumns="False"
                 ItemsSource="{Binding ObsSearchItems}"
                 SelectedItem="{Binding EditPropertiesSelectedSearchItem, Mode=TwoWay}"
                 Grid.Row="0"
-		        Margin="1,5,9.2,4.8"
+		        Margin="1,5,10,0"
 		        AlternationCount="2"
                 FontSize="16"
 		        MinRowHeight="26" 
+                VerticalAlignment="Stretch"
                 HorizontalScrollBarVisibility="Visible"
-                ScrollViewer.VerticalScrollBarVisibility="Auto"
-                RowDetailsTemplate="{StaticResource RowDetailTemplate}">
+                ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <!--RowDetailsTemplate="{StaticResource RowDetailTemplate}"-->
 
             <DataGrid.InputBindings>
                 <!-- LeftDoubleClick -->
@@ -116,25 +118,59 @@
                 <!--<DataGridTextColumn Header="State" Binding="{Binding State}" Width="auto" x:Name="state"/>-->
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Vertical" Grid.Row="1" Margin="5,0,0,0">
-            <ToggleButton x:Name="TogglePopupButton" Content="ˇ" Width="30" Height="30" HorizontalAlignment="Left"/>
-            <Border Background="White" BorderThickness="1" BorderBrush="Black" MaxHeight="100">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                    <Grid x:Name="formContent" ScrollViewer.CanContentScroll="True"/>
-                </ScrollViewer>
-                <Border.Style>
-                    <Style TargetType="{x:Type Border}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=TogglePopupButton,Path=IsChecked}" Value="False">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding ElementName=TogglePopupButton,Path=IsChecked}" Value="True">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-            </Border>
-        </StackPanel>
+        <GridSplitter Grid.Row="0" Height="5"  HorizontalAlignment="Stretch" VerticalAlignment="Bottom" DragDelta="Thumb_OnDragDelta" ResizeBehavior="CurrentAndNext"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+            <StackPanel x:Name="FormStackPanel" Orientation="Vertical" Grid.Row="1" Margin="5,0,10,0" Background="#C5EBF1" VerticalAlignment="Stretch">
+                <ToggleButton x:Name="TogglePopupButton" Width="30" Height="30" HorizontalAlignment="Left">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border>
+                                <Image Style="{StaticResource OpenFormToggleButtonStyle}"/>
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Background" Value="Blue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                <Border Background="White" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Stretch">
+                    <Grid VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <Image Source="{Binding ThumbnailImagePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                               Stretch="Uniform" 
+                               Width="170"
+                               VerticalAlignment="Top" 
+                               Margin="0,20,0,0"/>
+                        </StackPanel>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Column="1">
+                            <Grid x:Name="formContent" Margin="10,0,0,0" ScrollViewer.CanContentScroll="True" VerticalAlignment="Stretch"/>
+                        </ScrollViewer>
+                    </Grid>
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="Margin" Value="10,0,20,0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=TogglePopupButton,Path=IsChecked}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=TogglePopupButton,Path=IsChecked}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

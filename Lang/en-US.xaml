@@ -63,6 +63,7 @@
     <sys:String x:Key="description">Description</sys:String>
     <sys:String x:Key="MainWindow_status">Status :</sys:String>
     <sys:String x:Key="newFileName">New File Name :</sys:String>
+    <sys:String x:Key="flaggedByOthers">Flagged By Others</sys:String>
 
     <sys:String x:Key="msg_NoFilesSelected">No files selected.</sys:String>
     <sys:String x:Key="msg_PleasePickASavedFilePath">Please pick a saved file path.</sys:String>
@@ -71,7 +72,7 @@
     <sys:String x:Key="msg_CADFileDoesNotExistPLM">CAD file does not exist in PLM.</sys:String>
     <!--<sys:String x:Key="msg_added_extension_inconsistent_with_system_file">The selected drawing file is the same as the parent drawing file.</sys:String>-->
     <sys:String x:Key="msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile">The selected drawing file is the same as the parent drawing file.</sys:String>
-    <sys:String x:Key="msg_NotAllowedToExecute">{0},Not allowed to execute.</sys:String>
+    <sys:String x:Key="msg_NotAllowedToExecute">Synchronization for according to the rule,Not allowed to execute.</sys:String>
     <sys:String x:Key="msg_GetLanguageFailed">Get Language failed.</sys:String>
     <sys:String x:Key="msg_FailedToCloneObject">Failed to clone {0} object.</sys:String>
     <sys:String x:Key="msg_FailedToEditObject">Failed to edit {0} object.</sys:String>
@@ -83,6 +84,8 @@
     <!--<sys:String x:Key="msg_AddTemplate">Add Template</sys:String>-->
     <!--<sys:String x:Key="msg_add_new_item">End</sys:String>-->
     <sys:String x:Key="msg_ConfigIdIsNull">{0} config_id is null</sys:String>
+    <sys:String x:Key="msg_modificationIsForbidden">Modification is forbidden</sys:String>
+    <sys:String x:Key="msg_CommonOrStandardDrawingFilesNeedToBeFlagged">Common or Standard drawing files, need to be Flagged</sys:String>
 
     <sys:String x:Key="menu_InsertSubPart">Insert sub-part</sys:String>
     <sys:String x:Key="menu_InsertSaveasSubPart">Insert Save As sub-part</sys:String>

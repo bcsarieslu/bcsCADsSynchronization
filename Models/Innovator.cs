@@ -69,6 +69,15 @@ namespace BCS.CADs.Synchronization.Models
             }
 
         }
+        CommonPartsLibrary _partsLibrary = new CommonPartsLibrary();
+        internal CommonPartsLibrary PartsLibrary {
+            set{
+                _partsLibrary = value;
+                _syncCADEvents.PartsLibrary = _partsLibrary;
+            }
+        }
+
+
 
         private ResourceDictionary _languageResources;
         protected internal ResourceDictionary LanguageResources
@@ -863,7 +872,9 @@ namespace BCS.CADs.Synchronization.Models
                     item.setProperty(keyProperty.Name, keyProperty.Value);
                 }
 
-                
+                //Modify by kenny 2020/08/20 : bcs_library_path
+                UpdateLibraryPath(item,searchItem);
+
                 GetExecSyncEvents(syncEvent.ToString(), ref syncEventBefore, ref syncEventAfter, ref syncName);
 
                 //Events
@@ -913,7 +924,9 @@ namespace BCS.CADs.Synchronization.Models
                 //foreach (PLMPropertyFile itempropertyFile in searchItem.PropertyFile.Where(x => x.FileName !=""|| x.FilePath != ""))
                 foreach (PLMPropertyFile itempropertyFile in searchItem.PropertyFile.Where(x => String.IsNullOrWhiteSpace(x.FileName) ==false|| String.IsNullOrWhiteSpace(x.FilePath) ==false))
                 {
-                    if (File.Exists(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName))){
+                    if (IsCanNewFile(searchItem, itempropertyFile)){ 
+                    //if (File.Exists(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName))){
+
                         Aras.IOM.Item newFileItem = NewFileItem(itempropertyFile.FilePath, itempropertyFile.FileName);
                         string value = (itempropertyFile.DataType == "image") ? @"vault:///?fileId=" + newFileItem.getID() : newFileItem.getID();
                         item.setProperty(itempropertyFile.Name, value);
@@ -933,8 +946,7 @@ namespace BCS.CADs.Synchronization.Models
             }
         }
 
-
-
+       
         /// <summary>
         /// 同步到PLM :更新PLM圖檔結構
         /// </summary>
@@ -1303,9 +1315,15 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
+                //當為根圖及解鎖時,才能下載共用圖檔
+                searchItem.FilePath = filePath;
+                if (UpdateLibraryPath(searchItem)) return true;
+                filePath = searchItem.FilePath;//path有可能變為共用路徑
+
                 Aras.IOM.Item fileItem = AsInnovator.getItemById(ItemTypeName.File.ToString(), fileId);
                 if (fileItem == null) return false;
                 if (fileItem.isError()) return false;
+                
                 return DownloadFile(searchItem, integrationEvents, syncEvent, item, fileItem, filePath, fileName);
             }
             catch (Exception ex)
@@ -1313,6 +1331,8 @@ namespace BCS.CADs.Synchronization.Models
                 throw ex;
             }
         }
+
+
 
         /// <summary>
         /// 下載檔案
@@ -1350,6 +1370,119 @@ namespace BCS.CADs.Synchronization.Models
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// 是否是共用件及標準件的路徑及圖檔
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        private bool UpdateLibraryPath(SearchItem searchItem)
+        {
+            try
+            {
+                if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) &&  _partsLibrary.Paths.Count() > 0) == false) return false;
+                //當為根圖及解鎖時,才能下載共用圖檔
+                if (searchItem.IsRoot == true && searchItem.IsCurrent && searchItem.AccessRights == SyncAccessRights.FlaggedByMe.ToString()) return false;
+
+                if (String.IsNullOrWhiteSpace(searchItem.LibraryPath))
+                {
+                    //檢查圖檔是否在共用區位置
+                    return FileInPartsLibrary(searchItem);
+                }else
+                    //表示為共用件及標準件,同時searchItem.LibraryPath為空值               
+                    if (Directory.Exists(searchItem.LibraryPath) == false) return false; //表示沒有權限,下載本機
+
+                searchItem.FilePath = searchItem.LibraryPath;
+                return File.Exists(Path.Combine(searchItem.LibraryPath, searchItem.FileName));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 符合共用件及標準件的路徑,更新bcs_library_path屬性值
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="searchItem"></param>
+        private void UpdateLibraryPath(Aras.IOM.Item item, SearchItem searchItem)
+        {
+            try
+            {
+                if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) && _partsLibrary.Paths.Count() > 0) == false) return ;
+
+                string path = Path.GetDirectoryName(Path.Combine(searchItem.FilePath, searchItem.FileName));
+                // string libPath = _partsLibrary.Paths.Where(x => x.Value == path).Select(x=>x.Value).FirstOrDefault();
+                string libPath = _partsLibrary.Paths.Where(x => x.Path == path).Select(x=>x.Path).FirstOrDefault();
+                if (String.IsNullOrWhiteSpace(libPath)==false)
+                    item.setProperty("bcs_library_path", libPath);
+                
+                if (FileInPartsLibrary(searchItem))
+                    item.setProperty("bcs_library_path", searchItem.LibraryPath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 檢查圖檔是否在共用區位置
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        private bool FileInPartsLibrary(SearchItem searchItem)
+        {
+            try
+            {
+                // foreach (string path in _partsLibrary.Paths.Select(x => x.Value))
+                foreach (string path in _partsLibrary.Paths.Select(x => x.Path ))
+                {
+                    if (File.Exists(Path.Combine(path, searchItem.FileName)))
+                    {
+                        searchItem.LibraryPath = path;
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
+        /// 是否允許新增File
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <param name="itempropertyFile"></param>
+        /// <returns></returns>
+        private bool IsCanNewFile(SearchItem searchItem, PLMPropertyFile itempropertyFile)
+        {
+            try
+            {
+                if (File.Exists(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName)) == false) return false;
+                if (itempropertyFile.FunctionName != "native_property") return true;
+                if (searchItem.IsRoot) return true;
+                if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) && _partsLibrary.Paths.Count() > 0) == false) return true;
+                string path = Path.GetDirectoryName(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName));
+                //string libPath = _partsLibrary.Paths.Where(x => x.Value == path).Select(x => x.Value).FirstOrDefault();
+                string libPath = _partsLibrary.Paths.Where(x => x.Path == path).Select(x => x.Path).FirstOrDefault();
+                return String.IsNullOrWhiteSpace(libPath)? true:false;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+      
+
 
         /// <summary>
         /// 取得正在運行Process相關的Id
@@ -1452,6 +1585,10 @@ namespace BCS.CADs.Synchronization.Models
                 //------------------------------------
                 select.Add("generation");
 
+                //Modify by kenny 2020/08/20 bcs_library_path
+                AddCADSelectDefaultProperties(searchItemType.PlmProperties, select);
+
+
                 if (nativeProperty != "")
                 {
                     select.Add(nativeProperty);
@@ -1494,6 +1631,52 @@ namespace BCS.CADs.Synchronization.Models
             }
         }
 
+        protected internal void AddCADSelectDefaultProperties(IEnumerable<PLMProperty> PlmProperties, List<string> select)
+        {
+
+            try
+            {
+
+                List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
+                foreach (string name in properties)
+                {
+
+                    if (PlmProperties.Where(x => x.Name == name).FirstOrDefault() == null)
+                        select.Add(name);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 新增預設查詢屬性(select條件)
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="select"></param>
+        protected internal void AddCADSelectDefaultProperties(IEnumerable<ConditionalRule> rule, List<string> select)
+        {
+
+            try
+            {
+
+                List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
+                foreach (string name in properties)
+                {
+
+                    if (rule.Where(x => x.PrepertyName == name).FirstOrDefault() == null)
+                        select.Add(name);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+     
         /// <summary>
         /// 取得物件所有版本
         /// </summary>
@@ -2282,9 +2465,17 @@ namespace BCS.CADs.Synchronization.Models
                 stringBuilder.Append("<Item type = 'BCS CAD Operation Options' action = 'get' select = 'sort_order,bcs_operation,bcs_name,bcs_is_checked,bcs_is_visible,bcs_is_enabled,bcs_method(name)' ></Item>");
                 //CAD產品授權
                 //aml += "<Item type = 'BCS CAD PA' action = 'get' select = 'bcs_product' ></Item>";
+
+                //參考文件:共用零件庫路徑
+                stringBuilder.Append("<Item type = 'BCS CAD Referenced Documents' action = 'get' select = 'sort_order,name,bcs_common_parts_library_path' ></Item>");
+
                 stringBuilder.Append("</Relationships>");
                 stringBuilder.Append("</Item>");
+
+
                 stringBuilder.Append("</AML>");
+
+
                 return stringBuilder.ToString();
 
             }

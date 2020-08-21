@@ -93,26 +93,29 @@
             <Image Margin="5" HorizontalAlignment="Left" Source="/BCS.CADs.Synchronization;component/Images/OpenPLM.png" Stretch="Uniform" Width="Auto"/>
             <WrapPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="50">
-                    <Button Command="{Binding UserInfoBtn}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" x:Name="LoginImage" Width="26" Height="24">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource LoginImageStyle}">
+                    <ToggleButton x:Name="LoginImage" Width="26" Height="24" Command="{Binding RefushUserInformation}">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton" BasedOn="{StaticResource LoginImageStyle}">
                                 <Style.Triggers>
-                                    <EventTrigger RoutedEvent="Button.MouseEnter">
+                                    <EventTrigger RoutedEvent="ToggleButton.MouseEnter">
                                         <EventTrigger.Actions>
                                             <BeginStoryboard Storyboard="{StaticResource ToBig}">
                                             </BeginStoryboard>
                                         </EventTrigger.Actions>
                                     </EventTrigger>
-                                    <EventTrigger RoutedEvent="Button.MouseLeave">
+                                    <EventTrigger RoutedEvent="ToggleButton.MouseLeave">
                                         <EventTrigger.Actions>
                                             <BeginStoryboard Storyboard="{StaticResource ToSmall}">
                                             </BeginStoryboard>
                                         </EventTrigger.Actions>
                                     </EventTrigger>
+                                    <DataTrigger Binding="{Binding ElementName=UserPopup, Path=IsOpen}" Value="True">
+                                        <Setter Property="IsHitTestVisible" Value="False"/>
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Button.Style>
-                    </Button>
+                        </ToggleButton.Style>
+                    </ToggleButton>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0">
                     <Button Margin="0,0,8,0" ToolTip="{DynamicResource maximize}" Width="22" Height="22" Style="{StaticResource WindowActionButton}" Click="btnActionMinimize_OnClick">
@@ -128,68 +131,81 @@
             </WrapPanel>
         </Grid>
 
-        <Border x:Name="userInfo"
-                Visibility="Hidden" Grid.Row="2" Margin="0,0,5,0"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
-                Grid.Column="1" Grid.RowSpan="3" Panel.ZIndex="1"
-                CornerRadius="5" Background="White" Width="300" Height="Auto">
-            <WrapPanel Orientation="Vertical" Margin="15,5,15,5">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
-                    <Button x:Name="LoginImage2" Width="45" Height="45" Style="{StaticResource LoginImageStyle}"/>
-                    <StackPanel>
-                        <TextBlock Margin="15,5,0,0" x:Name="userName2" Text="{Binding UserLoginName}" Foreground="Black" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock.Style>
-                                <Style>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=dataBaseName,Path=Text}" Value="">
-                                            <Setter Property="TextBlock.Text" Value="{DynamicResource notLogin}"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <StackPanel Orientation="Horizontal" Margin="10,5,0,0">
-                            <Image Margin="2" HorizontalAlignment="Left" Height="21" Source="{StaticResource DataBaseDrawingImage}">
-                                <Image.Style>
+        <Popup x:Name="UserPopup" 
+               StaysOpen="False" 
+               IsOpen="{Binding IsChecked, ElementName=LoginImage, Mode=TwoWay}"
+               PlacementTarget="{Binding ElementName=LoginImage}" 
+               PopupAnimation="Fade"
+               AllowsTransparency="True"
+               Placement="Bottom" VerticalOffset="3" HorizontalOffset="-180">
+
+            <Border x:Name="userInfo" BorderBrush="Black" BorderThickness="1"
+                            Visibility="Visible" Margin="0,0,5,0" Panel.ZIndex="1"
+                            CornerRadius="5" Background="White" >
+                <WrapPanel Orientation="Vertical" Margin="15,5,15,5">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
+                        <Image Width="45" Height="45" Source="{Binding UserToggleButtonSource,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                        <StackPanel>
+                            <TextBlock Margin="15,5,0,0" x:Name="userName2" Text="{Binding UserLoginName}" Foreground="Black" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock.Style>
                                     <Style>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ElementName=dataBaseName,Path=Text}" Value="">
-                                                <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                                <Setter Property="TextBlock.Text" Value="{DynamicResource notLogin}"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </Image.Style>
-                            </Image>
-                            <TextBlock Text="" x:Name="dataBaseName" FontWeight="Bold" Foreground="Black" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <StackPanel Orientation="Horizontal" Margin="10,5,0,0">
+                                <Image Margin="2" HorizontalAlignment="Left" Height="21" Source="{StaticResource DataBaseDrawingImage}">
+                                    <Image.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=dataBaseName,Path=Text}" Value="">
+                                                    <Setter Property="Image.Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Text="" x:Name="dataBaseName" FontWeight="Bold" Foreground="Black" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                </StackPanel>
-                <Rectangle Width="300" Fill="#949494" Margin="-15,10,-15,10" Height="1"/>
-                <StackPanel Orientation="Horizontal">
-                    <Label Margin="5" FontSize="18" VerticalAlignment="Center" Content="{DynamicResource scale}"/>
-                    <Button x:Name="btn_Sub" Margin="40,0,0,0" Content="－" Height="30" Width="30" Command="{Binding SetScale}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" Style="{StaticResource btn_Sub}"/>
-                    <Label FontSize="16" VerticalAlignment="Center" x:Name="scaleLabel" Content="100"/>
-                    <Label FontSize="16" VerticalAlignment="Center" Content="%"/>
-                    <Button x:Name="btn_Add" Content="+" Height="30" Width="30" Command="{Binding SetScale}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" Style="{StaticResource btn_Add}"/>
-                    <Button x:Name="resetsize" Height="30" Width="30" Command="{Binding SetScale}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" Style="{StaticResource resetsize}"/>
-                </StackPanel>
-                <Rectangle Width="300" Fill="#949494" Margin="-15,10,-15,10" Height="1"/>
-                <Button Style="{StaticResource UserInfoBtn}" Content="{DynamicResource computerInfo}" x:Name="systemInformationBtn" Click="btnActionSystemInformation_OnClick"/>
-                <Button Style="{StaticResource UserInfoBtn}" Content="{DynamicResource logout}" x:Name="userInfoLogout" Visibility="Collapsed" Command="{Binding CheckLogin}" CommandParameter="{Binding RelativeSource={RelativeSource self}}"/>
-            </WrapPanel>
-            <Border.Effect>
-                <DropShadowEffect Color="#d24726" BlurRadius="3" ShadowDepth="0" Opacity="1" />
-            </Border.Effect>
-            <Border.Style>
-                <Style TargetType="{x:Type Border}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=DisplayGrid,Path=IsPressed}" Value="true">
-                            <Setter Property="Visibility" Value="Hidden"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-        </Border>
+                    <Rectangle Width="300" Fill="#949494" Margin="-15,10,-15,10" Height="1"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Margin="5" FontSize="18" VerticalAlignment="Center" Content="{DynamicResource scale}"/>
+                        <Button x:Name="btn_Sub" Margin="40,0,0,0" Content="－" Height="30" Width="30" Command="{Binding SubScale}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" Style="{StaticResource btn_Sub}"/>
+                        <Label FontSize="16" VerticalAlignment="Center" x:Name="scaleLabel" Content="{Binding ScaleValue,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                        <Label FontSize="16" VerticalAlignment="Center" Content="%"/>
+                        <Button x:Name="btn_Add" Content="+" Height="30" Width="30" Command="{Binding AddScale}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" Style="{StaticResource btn_Add}"/>
+                        <Button x:Name="resetsize" Height="30" Width="30" Command="{Binding ResetScale}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" Style="{StaticResource resetsize}"/>
+                    </StackPanel>
+                    <Rectangle Width="300" Fill="#949494" Margin="-15,10,-15,10" Height="1"/>
+                    <Button Style="{StaticResource UserInfoBtn}" Content="{DynamicResource computerInfo}" x:Name="systemInformationBtn" Click="btnActionSystemInformation_OnClick"/>
+                    <Button Style="{StaticResource UserInfoBtn}" Content="{DynamicResource logout}" x:Name="userInfoLogout" Visibility="Collapsed" Command="{Binding UserInformationLogout}" CommandParameter="{Binding RelativeSource={RelativeSource self}}"/>
+                </WrapPanel>
+                <Border.Effect>
+                    <DropShadowEffect Color="#d24726" BlurRadius="3" ShadowDepth="0" Opacity="1" />
+                </Border.Effect>
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=DisplayGrid,Path=IsPressed}" Value="true">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=LoginImage,Path=IsHitTestVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=LoginImage,Path=IsHitTestVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </Popup>
 
 
         <!--設定Window的內容-->
@@ -342,7 +358,7 @@
                 </Button>
             </WrapPanel>
             <Grid.LayoutTransform>
-                <ScaleTransform ScaleX="{Binding ResetScale}" ScaleY="{Binding ResetScale}"/>
+                <ScaleTransform ScaleX="{Binding SetScale}" ScaleY="{Binding SetScale}"/>
             </Grid.LayoutTransform>
         </Grid>
 
@@ -399,7 +415,7 @@
                     <Grid Grid.Row="1">
                         <Frame Margin="10" NavigationUIVisibility="Hidden" x:Name="viewPage" Grid.RowSpan="2">
                             <Frame.LayoutTransform>
-                                <ScaleTransform ScaleX="{Binding ResetScale}" ScaleY="{Binding ResetScale}"/>
+                                <ScaleTransform ScaleX="{Binding SetScale}" ScaleY="{Binding SetScale}"/>
                             </Frame.LayoutTransform>
                         </Frame>
                     </Grid>
@@ -408,7 +424,7 @@
                 <Frame x:Name="LoginView" Margin="0,-0.7,0,0" Grid.Row="0" NavigationUIVisibility="Hidden" Background="#F5ECC3" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
                 <Frame x:Name="SystemView" Grid.Row="0" NavigationUIVisibility="Hidden" Grid.RowSpan="2" Background="AliceBlue" Visibility="Collapsed" Grid.ColumnSpan="2" Margin="0,0,0.4,0">
                     <Frame.LayoutTransform>
-                        <ScaleTransform ScaleX="{Binding ResetScale}" ScaleY="{Binding ResetScale}"/>
+                        <ScaleTransform ScaleX="{Binding SetScale}" ScaleY="{Binding SetScale}"/>
                     </Frame.LayoutTransform>
                 </Frame>
 
@@ -953,7 +969,7 @@
                         </StackPanel.Style>
                     </StackPanel>
                     <Grid.LayoutTransform>
-                        <ScaleTransform ScaleX="{Binding ResetScale}" ScaleY="{Binding ResetScale}"/>
+                        <ScaleTransform ScaleX="{Binding SetScale}" ScaleY="{Binding SetScale}"/>
                     </Grid.LayoutTransform>
                 </Grid>
             </ScrollViewer>

@@ -73,11 +73,13 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static Dictionary<string, dynamic> SyncSubDialogLoadingAdorner { get; set; } = new Dictionary<string, dynamic>();
 
-        public static dynamic SyncRevisionListDialogView { get; set; }
+        public static dynamic SyncCommonDialogView { get; set; }
 
         public static bool IsActiveSubDialogView { get; set; } = false;
 
         public static dynamic EditPropertiesView { get; set; }
+
+        public static Grid FormGrid { get; set; }
 
         public static dynamic ItemFilterSearchView { get; set; }
 
@@ -118,6 +120,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static Style RowStyle { get; set; }
 
+        public static string UserImageSource { get; set; }
+
         public static ItemType SearchItemTypeItem { get; set; }
 
         //public enum SyncImages'
@@ -143,7 +147,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             checkValueDictionary = new Dictionary<string, Func<string, string, bool>>();
             //a:conditionalRule.Value , b:value , return:比較結果
             checkValueDictionary.Add("in", (a, b) => a.Split(',').Contains(b));
-            checkValueDictionary.Add("not in", (a, b) => a.Split(',').Contains(b));
+            checkValueDictionary.Add("not in", (a, b) => a.Split(',').Contains(b) ? false : true);
             checkValueDictionary.Add("like", (a, b) => a.Split(',').Any(x => x.Contains(b)));
             checkValueDictionary.Add("eq", (a, b) => a == b);
             checkValueDictionary.Add("ne", (a, b) => a != b);
@@ -172,6 +176,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     }), frame);
             Dispatcher.PushFrame(frame);
         }
+
+
+        public static CommonPartsLibrary VmPartsLibrary;
 
         #endregion
 

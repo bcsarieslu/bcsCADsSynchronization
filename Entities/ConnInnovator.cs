@@ -73,10 +73,14 @@ namespace BCS.CADs.Synchronization.Entities
 
         protected internal bool IsResolveAllSuppres { get; set; } = true;
 
+
+        protected internal CommonPartsLibrary PartsLibrary { get; set; }
+
         /// <summary>
         /// 資料庫名稱下拉選項
         /// </summary>
         private ObservableCollection<PLMListItem> _listItems = new ObservableCollection<PLMListItem>();
+		//private ObservableCollection<PLMListItem> _listItems = new ObservableCollection<PLMListItem>() { new PLMListItem {Value="test001" } };
         public ObservableCollection<PLMListItem> ListItems
         {
             get { return _listItems; }
@@ -137,6 +141,7 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         //public string LoginName { get; set; }
         private string _LoginName = "";
+		//private string _LoginName = "admin";
         public string LoginName
         {
             get { return _LoginName; }
@@ -164,6 +169,7 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         //public string Url { get; set; }
         private string _Url = "";
+		//private string _Url = "http://2017caddev01/115";
         public string Url
         {
             get { return _Url; }
@@ -1034,14 +1040,18 @@ namespace BCS.CADs.Synchronization.Entities
                 string strRules = "";
                 rules?.ForEach(property => { strRules += ",b." + property.PrepertyName; });
 
-                
+                List<string> select = new List<string>();
+                _asInnovator.AddCADSelectDefaultProperties(rules, select);
+                string selectValue = (select.Count()>0)? ",b." + String.Join(",b.", select):"";
+
+
                 //foreach (ClassItem classItem in _product.PdClassItem?.Where(c => c.Name != ""))
                 foreach (ClassItem classItem in _product.PdClassItem?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false))
                 {
 
-
+                    //Modify by kenny 2020/08/20 bcs_library_path
                     string strConditions = AddClassItemKeysConditions(classItem.Name, "b.",ref strRules);
-                    string strSql = " b." + ThumbnailProperty + ",b.modified_on,b.locked_by_id,b.config_id,b.keyed_name,b.id,b.is_current,b.bcs_added_filename,c.filename,c.id as native_file{0} from[innovator].[CAD] as b left join[innovator].[FILE] as c on b." + NativeProperty + " =c.id and b.is_current=1";
+                    string strSql = $" b.{ThumbnailProperty}{selectValue},b.modified_on,b.locked_by_id,b.config_id,b.keyed_name,b.id,b.is_current,b.bcs_added_filename,c.filename,c.id as native_file{"{0}"} from[innovator].[CAD] as b left join[innovator].[FILE] as c on b.{NativeProperty} =c.id and b.is_current=1";
                     strSql += " where ((c.filename in ({1}) and not c.filename is null) or b.BCS_ADDED_FILENAME in ({1})) and b.is_current=1 {2} order by modified_on desc";
 
                     Aras.IOM.Item qureyResult = _asInnovator.GetPLMSearchItems(strSql, strRules, "N'" + String.Join("',N'", itemFileNames) + "'", strConditions);
@@ -1064,6 +1074,12 @@ namespace BCS.CADs.Synchronization.Entities
                         searchItem.KeyedName = qureyResult.getItemByIndex(i).getProperty("keyed_name", "");
                         searchItem.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
                         searchItem.FileId = qureyResult.getItemByIndex(i).getProperty("native_file", "");
+
+                        //Modify by kenny 2020/08/20
+                        searchItem.LibraryPath = qureyResult.getItemByIndex(i).getProperty("bcs_library_path", "");
+                        searchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_common_part", "0")));
+                        searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_standard_part", "0")));
+
                         searchItem.AccessRights = (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == "") ? SyncAccessRights.None.ToString() : (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == AsInnovator.getUserID()) ? SyncAccessRights.FlaggedByMe.ToString() : SyncAccessRights.FlaggedByOthers.ToString();
                         searchItem.RuleProperties = GetRuleProperties(rules, qureyResult.getItemByIndex(i));
                         if (searchItem.PropertyFile.Count() < 1)
@@ -1374,7 +1390,7 @@ namespace BCS.CADs.Synchronization.Entities
                     ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(fileName, "Download", "", "Start");
                     if (_asInnovator.DownloadFile(searchItem, IntegrationEvents, SyncEvents.OnLoadFromPLMDownloadBefore, item, searchItem.FileId, directory, fileName) == true)
                     {
-                        searchItem.FilePath = directory;
+                        //searchItem.FilePath = directory;
                         //fileMessage.Status = "Finish";
                     }
                     fileMessage.Status = "Finish";
@@ -1430,6 +1446,10 @@ namespace BCS.CADs.Synchronization.Entities
                 string strRules = "";
                 rules?.ForEach(property => { strRules += ",b." + property.PrepertyName; });
 
+                List<string> select = new List<string>();
+                _asInnovator.AddCADSelectDefaultProperties(rules, select);
+                string selectValue = (select.Count() > 0) ? ",b." + String.Join(",b.", select) : "";
+
                 string strConditions = "";
                 GetRuleKeys(ref strRules,ref strConditions);
 
@@ -1469,6 +1489,11 @@ namespace BCS.CADs.Synchronization.Entities
                             activeSearchItem.VersionStatus = GetVersionStatus(activeSearchItem).ToString();
                             activeSearchItem.Thumbnail = item.getProperty(ThumbnailProperty, "");
 
+                            //Modify by kenny 2020/08/20 bcs_library_path
+                            activeSearchItem.LibraryPath = item.getProperty("bcs_library_path", "");
+                            activeSearchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_common_part", "0")));
+                            activeSearchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
+
                             //2d圖檔,取得關連
                             if (activeSearchItem.ClassName == "Drawing")
                             {
@@ -1487,7 +1512,9 @@ namespace BCS.CADs.Synchronization.Entities
                 SearchItem searchItem ;
 
                 do {
-                    string strSql = " a.source_id,a.related_id,a.bcs_instance_id,b." + ThumbnailProperty + ",b.locked_by_id,b.config_id,b.id,b.is_current,b.bcs_added_filename,c.filename,c.id as native_file,a.sort_order{0} from[innovator].[" + SyncLinkItemTypes.CAD_Structure.ToString().ToUpper() + "] as a left join[innovator].[CAD] as b on a.related_id=b.id left join[innovator].[FILE] as c on b." + NativeProperty + " =c.id ";
+
+                    //Modify by kenny 2020/08/20 bcs_library_path
+                    string strSql = $" a.source_id,a.related_id,a.bcs_instance_id{selectValue},b.{ThumbnailProperty},b.locked_by_id,b.config_id,b.id,b.is_current,b.bcs_added_filename,c.filename,c.id as native_file,a.sort_order{"{0}"} from[innovator].[{SyncLinkItemTypes.CAD_Structure.ToString().ToUpper()}] as a left join[innovator].[CAD] as b on a.related_id=b.id left join[innovator].[FILE] as c on b.{NativeProperty} =c.id ";
                     strSql += "where a.source_id in ({1}) and not b.id is null {2} order by a.source_id,a.related_id,a.sort_order asc";
                     Aras.IOM.Item qureyResult = _asInnovator.GetPLMSearchItems(strSql, strRules, "N'" + String.Join("',N'", compare) + "'", strConditions);
 
@@ -1607,7 +1634,7 @@ namespace BCS.CADs.Synchronization.Entities
 
                     if (_asInnovator.DownloadFile(searchItem, IntegrationEvents, SyncEvents.OnLoadFromPLMDownloadBefore, item, searchItem.FileId, directory, searchItem.FileName)==true)
                     {
-                        searchItem.FilePath = directory;
+                        //searchItem.FilePath = directory;
                         fileMessage.Status = "Finish";
                     }
                 }
@@ -2429,7 +2456,12 @@ namespace BCS.CADs.Synchronization.Entities
                     //case SyncOperation.LoadListItems:
                     //    break;
                     case SyncOperation.QueryListItems:
-                        if (type != SyncType.LockOrUnlock) return true;
+                        if (type != SyncType.SyncToPLM) return true;
+                        if (type == SyncType.SyncToPLM)
+                            return ret = IsCheckRules(searchItems, true);
+                        else
+                            if (type != SyncType.LockOrUnlock) return true;
+
                         //檢查(1)是否被其他人鎖定,(2)狀態及是否是共用圖檔
                         return IsCheckRules(searchItems, false);
                         //break;
@@ -2777,11 +2809,14 @@ namespace BCS.CADs.Synchronization.Entities
                     if (IsCheckRules(searchItem, isUserRules)) continue;
                     if (itemMessage==null) itemMessage = ClsSynchronizer.VmMessages.AddItemMessage(GetLanguageByKeyName("msg_NotAllowedToExecute"), "", "", "Error");
 
-                    string message = (searchItem.AccessRights != SyncAccessRights.FlaggedByOthers.ToString()) ? "" : searchItem.AccessRights;
-     
+                    string message = (searchItem.AccessRights != SyncAccessRights.FlaggedByOthers.ToString()) ? "" : GetLanguageByKeyName("flaggedByOthers");
+
+                    if (message == "" && (searchItem.IsCommonPart || searchItem.IsStandardPart) && searchItem.AccessRights != SyncAccessRights.FlaggedByMe.ToString())
+                        message = GetLanguageByKeyName("msg_CommonOrStandardDrawingFilesNeedToBeFlagged");
+
                     //if (message != "") message += ";";
                     if (String.IsNullOrWhiteSpace(message) ==false) message += ";";
-                    message += (searchItem.RestrictedStatus == SyncRestrictedStatus.None.ToString()) ? "" : searchItem.RestrictedStatus;
+                    message += (searchItem.RestrictedStatus == SyncRestrictedStatus.None.ToString()) ? "" : GetLanguageByKeyName("msg_modificationIsForbidden");
                     ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(searchItem.FileName, message, "", "Start");
 
                 }
@@ -2806,6 +2841,7 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
                 //SyncVersionStatus
+                if (searchItem.AccessRights == SyncAccessRights.FlaggedByMe.ToString()) return true; //自己鎖定,是可以不判斷規則條件
                 if (searchItem.AccessRights != SyncAccessRights.FlaggedByOthers.ToString() && searchItem.RestrictedStatus == SyncRestrictedStatus.None.ToString()) return true;
                 if (searchItem.AccessRights != SyncAccessRights.FlaggedByOthers.ToString() && isUserRules == false && searchItem.RestrictedStatus == SyncRestrictedStatus.Prohibited.ToString()) return true ;
 
@@ -3407,6 +3443,11 @@ namespace BCS.CADs.Synchronization.Entities
                     _asInnovator.ClassItems= _product.PdClassItem;
                 }
 
+                this.PartsLibrary = _product.PartsLibrary;
+                _asInnovator.PartsLibrary = this.PartsLibrary;
+                //_syncCADEvents = new SyncCADEvents();
+
+
                 ResetPropertiesListItem();
 
             }
@@ -3530,6 +3571,12 @@ namespace BCS.CADs.Synchronization.Entities
                 searchItem.FileId = fileId;
                 searchItem.RuleProperties = GetRuleProperties(rules, item);
                 searchItem.Thumbnail = item.getProperty(ThumbnailProperty, "");
+
+                //Modify by kenny 2020/08/20 bcs_library_path
+                searchItem.LibraryPath = item.getProperty("bcs_library_path", "");
+                searchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_common_part", "0")));
+                searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
+
                 return searchItem;
 
             }

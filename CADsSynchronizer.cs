@@ -93,6 +93,7 @@ namespace BCS.CADs.Synchronization
         /// <param name="strDBName"></param>
         /// <param name="strLogin"></param>
         /// <param name="strPassword"></param>
+        
         protected internal bool Login(string strUrl, string strDBName, string strLogin, string strPassword, ref Exception exception)
         {
             try
@@ -108,7 +109,8 @@ namespace BCS.CADs.Synchronization
                 _syncCADEvents.LanguageResources = GetLanguageResources();
                 _syncCADEvents.IsResolveAllLightweightSuppres = _Plm.IsResolveAllLightweightSuppres;
                 _syncCADEvents.IsResolveAllSuppres = _Plm.IsResolveAllSuppres;
-                
+                _syncCADEvents.PartsLibrary = _Plm.PartsLibrary;
+
                 IsActiveLogin = _Plm.IsActiveLogin;
                 if (IsActiveLogin == true) _syncCADEvents.ClassItems = _Plm.GetClassItems();
                 return IsActiveLogin;
@@ -120,6 +122,7 @@ namespace BCS.CADs.Synchronization
                 return false;
             }
         }
+        
 
         /// <summary>
         /// 登出
@@ -150,6 +153,18 @@ namespace BCS.CADs.Synchronization
                 List<SearchItem> searchItems = _Plm.GetPLMSearchItems(search);
 
                 return searchItems;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected internal CommonPartsLibrary GetCommonPartsLibrary()
+        {
+            try
+            {
+                return _Plm.PartsLibrary;
             }
             catch (Exception ex)
             {

@@ -459,10 +459,10 @@
                     Value="Center"></Setter>
     </Style>
 
-    <Style x:Key="LoginImageStyle" TargetType="Button">
+    <Style x:Key="LoginImageStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Grid x:Name="Grid">
                         <Ellipse x:Name="LoginImageEllipse">
                             <Ellipse.Fill>

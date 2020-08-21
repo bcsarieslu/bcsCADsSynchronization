@@ -834,6 +834,62 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="FindPreviousDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
+                <GeometryDrawing Brush="#FF1976D2" Geometry="F1 M48,48z M0,0z M24,12L44.25,32.25 40.5,36 24,19.5 7.5,36 3.75,32.25z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="FindNextDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
+                <GeometryDrawing Brush="#FF1976D2" Geometry="F1 M48,48z M0,0z M3.75,15.75L7.5,12 24,28.5 40.5,12 44.25,15.75 24,36z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="FindPreviousDrawingImageTriggerUse">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
+                <GeometryDrawing Brush="{StaticResource ImageTriggerColor}" Geometry="F1 M48,48z M0,0z M24,12L44.25,32.25 40.5,36 24,19.5 7.5,36 3.75,32.25z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    
+    <DrawingImage x:Key="FindNextDrawingImageTriggerUse">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
+                <GeometryDrawing Brush="{StaticResource ImageTriggerColor}" Geometry="F1 M48,48z M0,0z M3.75,15.75L7.5,12 24,28.5 40.5,12 44.25,15.75 24,36z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <Style TargetType="Image" x:Key="OpenFormToggleButtonStyle">
+        <Setter Property="Image.Source" Value="{StaticResource ResourceKey=FindNextDrawingImage}"/>
+        <Setter Property="Image.Margin" Value="5"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsChecked, ElementName=TogglePopupButton}" Value="False">
+                <Setter Property="Image.Source" Value="{StaticResource ResourceKey=FindPreviousDrawingImage}" />
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding ElementName=TogglePopupButton, Path=IsChecked}" Value="True" />
+                    <Condition Binding="{Binding ElementName=TogglePopupButton, Path=IsMouseOver}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Image.Source" Value="{StaticResource ResourceKey=FindNextDrawingImageTriggerUse}" />
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding ElementName=TogglePopupButton, Path=IsChecked}" Value="False" />
+                    <Condition Binding="{Binding ElementName=TogglePopupButton, Path=IsMouseOver}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Image.Source" Value="{StaticResource ResourceKey=FindPreviousDrawingImageTriggerUse}" />
+            </MultiDataTrigger>
+            
+        </Style.Triggers>
+    </Style>
 
     <!-- Format 1 : 
     

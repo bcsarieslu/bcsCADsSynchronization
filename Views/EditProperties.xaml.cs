@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WinResizer;
 
 namespace BCS.CADs.Synchronization.Views
 {
@@ -24,6 +26,7 @@ namespace BCS.CADs.Synchronization.Views
         {
             InitializeComponent();
             ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
+            
         }
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
@@ -40,6 +43,14 @@ namespace BCS.CADs.Synchronization.Views
                     (obj as DataGridRow).IsSelected = true;
                 }
             }
+        }
+
+        private void Thumb_OnDragDelta(object sender, DragDeltaEventArgs e)
+        {
+            gridDetail.Height += e.VerticalChange;
+            formContent.Height += e.VerticalChange;
+            if(formContent.Height>=0)
+                formContent.Height += e.VerticalChange;
         }
     }
 

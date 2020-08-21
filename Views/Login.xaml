@@ -161,7 +161,7 @@
                         VerticalAlignment="Top">
                             <StackPanel Orientation="Horizontal">
                                 <Image Margin="2" Width="21" HorizontalAlignment="Left" Height="21" Source="{StaticResource LoginPasswordDrawingImage}"/>
-                                <PasswordBox x:Name="PasswordBox" Width="220">
+                                <PasswordBox x:Name="PasswordBox" Password="" Width="220">
                                     <PasswordBox.Style>
                                         <Style TargetType="PasswordBox">
                                             <Setter Property="Height" Value="30"/>
@@ -225,8 +225,8 @@
                     </StackPanel>-->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock x:Name="userName" Width="150" Height="25" Text="" Margin="30,20,0,10" Foreground="White" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Button Name="login" Margin="0,20,25,10" Content="{DynamicResource login}" Height="23" VerticalAlignment="Top" Width="75" Command="{Binding CheckLogin}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-                    <Button Name="logout" Margin="0,20,25,10" Content="{DynamicResource logout}" Height="23" VerticalAlignment="Top" Width="75" Command="{Binding CheckLogin}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Visibility="Collapsed"/>
+                    <Button Name="login" Margin="0,20,25,10" Content="{DynamicResource login}" Height="23" VerticalAlignment="Top" Width="75" Command="{Binding UserInformationLogin}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                    <Button Name="logout" Margin="0,20,25,10" Content="{DynamicResource logout}" Height="23" VerticalAlignment="Top" Width="75" Command="{Binding UserInformationLogout}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Visibility="Collapsed"/>
                 </StackPanel>
             </WrapPanel>
         </Grid>

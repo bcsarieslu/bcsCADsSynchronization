@@ -43,6 +43,12 @@ namespace BCS.CADs.Synchronization.Search
         /// 檔案路徑
         /// </summary>
         string FilePath { get; set; }
+
+        /// <summary>
+        /// 零件庫路徑
+        /// </summary>
+        string LibraryPath { get; set; }
+
         /// <summary>
         /// CADId
         /// </summary>
@@ -131,6 +137,11 @@ namespace BCS.CADs.Synchronization.Search
         /// 是否產生新版本
         /// </summary>
         bool IsNewVersion { get; set; }
+
+        /// <summary>
+        /// 是否是最上層
+        /// </summary>
+        bool IsRoot { get; set; }
 
         /// <summary>
         /// 是否是最新版本

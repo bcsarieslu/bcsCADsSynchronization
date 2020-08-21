@@ -97,6 +97,9 @@ namespace BCS.CADs.Synchronization.Entities
         public SyncMessages SyncMessages { get; set; }
 
 
+        public CommonPartsLibrary PartsLibrary { get; set; }
+
+
         /// <summary>
         /// 取得目前語系資源
         /// </summary>

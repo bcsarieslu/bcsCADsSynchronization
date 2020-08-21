@@ -91,6 +91,7 @@
     <Compile Include="Classes\ClassComposition.cs" />
     <Compile Include="Classes\ClassItem.cs" />
     <Compile Include="Classes\ClassTemplateFile.cs" />
+    <Compile Include="Classes\CommonPartsLibrary.cs" />
     <Compile Include="Classes\ConditionalRule.cs" />
     <Compile Include="Classes\IClassPlugin.cs" />
     <Compile Include="Classes\IClassRelationship.cs" />
@@ -98,7 +99,9 @@
     <Compile Include="Classes\IConditionalRule.cs" />
     <Compile Include="Classes\IntegrationEvents.cs" />
     <Compile Include="Classes\ItemType.cs" />
+    <Compile Include="Classes\ObservableCollection.cs" />
     <Compile Include="Classes\OperationOption.cs" />
+    <Compile Include="Classes\LibraryPath.cs" />
     <Compile Include="Classes\Product.cs" />
     <Compile Include="CommandModel\GetAllLang.cs" />
     <Compile Include="ConfigProperties\IDefaultElements.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="ViewModels\LanguageList.cs" />
     <Compile Include="ViewModels\NewFileNameViewModel.cs" />
     <Compile Include="ViewModels\NotifyPropertyBase.cs" />
+    <Compile Include="ViewModels\PartsLibrarySearchDialogViewModel.cs" />
     <Compile Include="ViewModels\PLMProperties.cs" />
     <Compile Include="ViewModels\PositioningCommand.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
@@ -173,6 +177,7 @@
     <Compile Include="ViewModels\ShowCommand.cs" />
     <Compile Include="ViewModels\SubItemSearchDialogViewModel.cs" />
     <Compile Include="ViewModels\SyncCommands.cs" />
+    <Compile Include="ViewModels\ThumbnailImage.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\VMCommon.cs" />
     <Compile Include="Views\AddFromTemplate.xaml.cs">
@@ -211,6 +216,9 @@
     </Compile>
     <Compile Include="Views\NewFileName.xaml.cs">
       <DependentUpon>NewFileName.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PartsLibrarySearchDialog.xaml.cs">
+      <DependentUpon>PartsLibrarySearchDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlugInFuncs.xaml.cs">
       <DependentUpon>PlugInFuncs.xaml</DependentUpon>
@@ -330,6 +338,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NewFileName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PartsLibrarySearchDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

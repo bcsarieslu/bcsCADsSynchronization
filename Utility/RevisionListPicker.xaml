@@ -23,7 +23,7 @@
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <Grid>
                         <Border BorderThickness="0,1,0,0" CornerRadius="1.8" BorderBrush="#B4B4B4">
-                            <Border BorderThickness="0.8,0,0.8,0" CornerRadius="1.8" BorderBrush="#DDDDDD">
+                            <Border BorderThickness="0.8,0,0.8,0.8" CornerRadius="1.8" BorderBrush="#DDDDDD">
                                 <ScrollViewer x:Name="PART_ContentHost" Background="{TemplateBinding Background}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
                             </Border>
                         </Border>
