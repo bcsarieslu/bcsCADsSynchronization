@@ -129,6 +129,9 @@ namespace BCS.CADs.Synchronization.Models
         /// </summary>
         internal string NativeProperty { get; set; } = "native_file";
 
+        internal string ThumbnailProperty { get; set; } = "thumbnail";
+        
+
         /// <summary>
         /// Get Aras.IOM.Innovator
         /// </summary>
@@ -666,6 +669,9 @@ namespace BCS.CADs.Synchronization.Models
                 {
                     SetProperty(item, itemProperty);
                 }
+                //Modify by kenny 2020/08/20 : bcs_library_path
+                UpdateLibraryPath(item, searchItem);
+
 
                 SyncEvents syncEventBefore = SyncEvents.None;
                 SyncEvents syncEventAfter = SyncEvents.None;
@@ -693,6 +699,29 @@ namespace BCS.CADs.Synchronization.Models
             }
         }
 
+        protected internal bool SynToPLMItemUpdateLibraryPath(SearchItem searchItem)
+        {
+            try
+            {
+                if (((searchItem.IsCommonPart == false && searchItem.IsStandardPart == false) || searchItem.LibraryPath != "" || _partsLibrary.Paths.Count() == 0)) return true;
+                Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
+                item.setAction("edit");
+                item.setAttribute("version", "0");
+                item.setAttribute("serverEvents", "0");
+
+                UpdateLibraryPath(item, searchItem);
+
+                Aras.IOM.Item editItem = item.apply();
+
+                if (editItem == null) return false;
+                if (editItem.isError()) new Exception(editItem.getErrorString());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         protected internal void CopyToAddItems(IEnumerable<SearchItem> searchItems, List<BCS.CADs.Synchronization.Classes.IntegrationEvents> integrationEvents)
         {
@@ -1410,7 +1439,8 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) && _partsLibrary.Paths.Count() > 0) == false) return ;
+                //if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) && _partsLibrary.Paths.Count() > 0) == false) return ;
+                if (((searchItem.IsCommonPart == false && searchItem.IsStandardPart == false) || _partsLibrary.Paths.Count() == 0)) return ;
 
                 string path = Path.GetDirectoryName(Path.Combine(searchItem.FilePath, searchItem.FileName));
                 // string libPath = _partsLibrary.Paths.Where(x => x.Value == path).Select(x=>x.Value).FirstOrDefault();
@@ -1446,6 +1476,32 @@ namespace BCS.CADs.Synchronization.Models
                     }
                 }
                 return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //LibraryPath
+        protected internal void UpdateLibraryPathFiles(LibraryPath libraryPath)
+        {
+            try
+            {
+                if (libraryPath.FileItems.Count() == 0) return;
+                string path = $@"{libraryPath.Path}";
+                string sqlCommand = $" a.id,a.{ThumbnailProperty},b.filename,b.id as fileId{"{0}"} from [innovator].[CAD] as a left join [innovator].[FILE] as b{"{1}"} on a.{NativeProperty}=b.id where a.is_current=1 and a.bcs_library_path=N'{path}' and not a.{ThumbnailProperty}='' and b.filename in {"{2}"} ";
+                
+                string files = "(N'" + String.Join("',N'", libraryPath.FileItems.Select(x => x.Name).ToArray()) + "')";
+                Aras.IOM.Item qureyResult = GetPLMSearchItems(sqlCommand, "", "", files);
+                for (var i = 0; i < qureyResult.getItemCount(); i++)
+                {
+                    string fileName = qureyResult.getItemByIndex(i).getProperty("filename", "");
+                    LibraryFileInfo fileInfo= libraryPath.FileItems.Where(x => x.Name == fileName).FirstOrDefault();
+                    if (fileInfo == null) continue;
+                    fileInfo.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
+                    fileInfo.Thumbnail = qureyResult.getItemByIndex(i).getProperty(ThumbnailProperty, "");
+                }
             }
             catch (Exception ex)
             {
@@ -1586,7 +1642,8 @@ namespace BCS.CADs.Synchronization.Models
                 select.Add("generation");
 
                 //Modify by kenny 2020/08/20 bcs_library_path
-                AddCADSelectDefaultProperties(searchItemType.PlmProperties, select);
+                if (searchItemType.ItemType == ItemTypeName.CAD.ToString())//Modify by kenny 2020/08/26
+                    AddCADSelectDefaultProperties(searchItemType.PlmProperties, select);
 
 
                 if (nativeProperty != "")
@@ -1637,7 +1694,8 @@ namespace BCS.CADs.Synchronization.Models
             try
             {
 
-                List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
+                //List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
+                List<string> properties = new List<string> { "bcs_library_path", "is_standard", "bcs_is_common_part" };
                 foreach (string name in properties)
                 {
 
@@ -1662,7 +1720,8 @@ namespace BCS.CADs.Synchronization.Models
             try
             {
 
-                List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
+                //List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
+                List<string> properties = new List<string> { "bcs_library_path", "is_standard", "bcs_is_common_part" };
                 foreach (string name in properties)
                 {
 

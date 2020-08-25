@@ -23,7 +23,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
 
 {
-    public class SubItemSearchDialogViewModel : NotifyPropertyBase
+    public class SubItemSearchViewModel : NotifyPropertyBase
     {
         #region "                   宣告區
         private ItemSearch _ItemSearchView = null;
@@ -31,7 +31,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
 
         #region "                   進入區
-        public SubItemSearchDialogViewModel()
+        public SubItemSearchViewModel()
         {
 
         }
@@ -192,7 +192,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             if (_ItemSearchView == null)
             {
                 _ItemSearchView = new ItemSearch();
-                _ItemSearchView.DataContext = new SubItemSearchDialogViewModel();
+                _ItemSearchView.DataContext = new SubItemSearchViewModel();
                 isNew = true;
             }
 

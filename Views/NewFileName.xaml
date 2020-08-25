@@ -40,6 +40,7 @@
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
 
                 <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding Done}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image Source="{StaticResource CheckmarkDrawingImage}"/>
@@ -48,6 +49,9 @@
                 <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="closeDialogWindow" ToolTip="{DynamicResource close}" Command="{Binding CloseDialogWindow}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image Source="{StaticResource CloseDrawingImage}"/>
                 </Button>
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
+
+
             </Grid>
 
             <Grid Grid.Row="1">

@@ -223,8 +223,17 @@ namespace BCS.CADs.Synchronization.Entities
         /// <summary>
         /// 縮圖屬性
         /// </summary>
-        internal string ThumbnailProperty { get; set; } = "thumbnail";
-
+        //internal string ThumbnailProperty { get; set; } = "thumbnail";
+        private string _thumbnailProperty = "thumbnail";
+        internal string ThumbnailProperty
+        {
+            get { return _thumbnailProperty; }
+            set
+            {
+                _thumbnailProperty = value;
+                _asInnovator.ThumbnailProperty = _thumbnailProperty;
+            }
+        }
 
 
 
@@ -348,6 +357,7 @@ namespace BCS.CADs.Synchronization.Entities
 
         }
 
+        
 
         protected internal static string UserName { get; set; }
         protected internal static string Image_Filename { get; set; }
@@ -1046,7 +1056,7 @@ namespace BCS.CADs.Synchronization.Entities
 
 
                 //foreach (ClassItem classItem in _product.PdClassItem?.Where(c => c.Name != ""))
-                foreach (ClassItem classItem in _product.PdClassItem?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false))
+                foreach (ClassItem classItem in _product.PdClassItems?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false))
                 {
 
                     //Modify by kenny 2020/08/20 bcs_library_path
@@ -1069,7 +1079,7 @@ namespace BCS.CADs.Synchronization.Entities
                         //if (searchItem.ItemId != "") continue;
                         if (String.IsNullOrWhiteSpace(searchItem.ItemId) ==false) continue;
 
-                        searchItem.IsCurrent = (qureyResult.getItemByIndex(i).getProperty("is_current", "0") == "1") ? true : false; ;
+                        searchItem.IsCurrent = (qureyResult.getItemByIndex(i).getProperty("is_current", "0") == "1") ? true : false;
                         searchItem.ItemConfigId = qureyResult.getItemByIndex(i).getProperty("config_id", "");
                         searchItem.KeyedName = qureyResult.getItemByIndex(i).getProperty("keyed_name", "");
                         searchItem.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
@@ -1078,13 +1088,13 @@ namespace BCS.CADs.Synchronization.Entities
                         //Modify by kenny 2020/08/20
                         searchItem.LibraryPath = qureyResult.getItemByIndex(i).getProperty("bcs_library_path", "");
                         searchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_common_part", "0")));
-                        searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_standard_part", "0")));
-
+                        //searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_standard_part", "0")));
+                        searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("is_standard", "0")));
                         searchItem.AccessRights = (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == "") ? SyncAccessRights.None.ToString() : (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == AsInnovator.getUserID()) ? SyncAccessRights.FlaggedByMe.ToString() : SyncAccessRights.FlaggedByOthers.ToString();
                         searchItem.RuleProperties = GetRuleProperties(rules, qureyResult.getItemByIndex(i));
                         if (searchItem.PropertyFile.Count() < 1)
                         {
-                            List<PLMPropertyFile> propertyFile = _product.PdClassItem?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
+                            List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
                             _asInnovator.AddPLMPropertyFiles(searchItem, propertyFile);
                         }
                         searchItem.RestrictedStatus = GetRestrictedStatus(searchItem, rules, type).ToString();
@@ -1174,7 +1184,7 @@ namespace BCS.CADs.Synchronization.Entities
             {
                 if (_product == null) return null;
 
-                List<PLMProperty> properties = _product.PdClassItem?.Where(c => c.Name == className)?.First()?.CsProperties;
+                List<PLMProperty> properties = _product.PdClassItems?.Where(c => c.Name == className)?.First()?.CsProperties;
 
                 List<PLMProperty> newProperties = new List<PLMProperty>();
                 foreach (PLMProperty property in properties)
@@ -1207,8 +1217,8 @@ namespace BCS.CADs.Synchronization.Entities
             {
                 if (_product == null) return;// null;
 
-                List<PLMProperty> properties = _product.PdClassItem?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsProperties;
-                List<PLMPropertyFile> propertyFile = _product.PdClassItem?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
+                List<PLMProperty> properties = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsProperties;
+                List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
                 List<SearchItem> searchItems = new List<SearchItem>();
                 searchItems.Add(searchItem);
                 _asInnovator.GetCADProperties(searchItems, properties, propertyFile);
@@ -1231,11 +1241,11 @@ namespace BCS.CADs.Synchronization.Entities
             {
                 if (_product == null) return;
                 if (searchItems == null) return;
-                foreach (ClassItem classItem in _product.PdClassItem)
+                foreach (ClassItem classItem in _product.PdClassItems)
                 {
-                    List<PLMProperty> properties = _product.PdClassItem?.Where(c => c.Name == classItem.Name)?.First()?.CsProperties;
+                    List<PLMProperty> properties = _product.PdClassItems?.Where(c => c.Name == classItem.Name)?.First()?.CsProperties;
                     List<SearchItem> searchItemsFilter = searchItems.Where(c => c.ClassName == classItem.Name).ToList() as List<SearchItem>;
-                    List<PLMPropertyFile> propertyFile = _product.PdClassItem?.Where(c => c.Name == classItem.Name)?.First()?.CsPropertyFile;
+                    List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == classItem.Name)?.First()?.CsPropertyFile;
                     if (searchItemsFilter.Count < 1) continue;
 
                     if (isSelected==true) SetSearchItemsFilter(classItem, ref searchItemsFilter);
@@ -1492,8 +1502,8 @@ namespace BCS.CADs.Synchronization.Entities
                             //Modify by kenny 2020/08/20 bcs_library_path
                             activeSearchItem.LibraryPath = item.getProperty("bcs_library_path", "");
                             activeSearchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_common_part", "0")));
-                            activeSearchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
-
+                            //activeSearchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
+                            activeSearchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("is_standard", "0")));
                             //2d圖檔,取得關連
                             if (activeSearchItem.ClassName == "Drawing")
                             {
@@ -1736,7 +1746,7 @@ namespace BCS.CADs.Synchronization.Entities
 
                         if (searchItem.PropertyFile.Count() < 1)
                         {
-                            List<PLMPropertyFile> propertyFile = _product.PdClassItem?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
+                            List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
                             PLMPropertyFile plmPropertyFile = propertyFile.Where(x => x.Name == NativeProperty).FirstOrDefault();
                             PLMPropertyFile newPropertyFile = plmPropertyFile.Clone() as PLMPropertyFile;
                             searchItem.PropertyFile.Add(newPropertyFile);
@@ -1975,10 +1985,10 @@ namespace BCS.CADs.Synchronization.Entities
                     IEnumerable<PLMProperty> plmProperties = null;
                     if (type== SyncType.SyncToPLM) {
                         plmProperties = searchItem.PlmProperties.Where(x => x.IsSyncPLM == true && (x.IsModify == true || x.SyncValue != x.DataValue));
-                        if (plmProperties.Count() > 0) _asInnovator.SynToPLMItemProperties(searchItem, plmProperties, IntegrationEvents, SyncEvents.OnSyncToPLMBefore);
+                        bool ret= (plmProperties.Count() > 0)? _asInnovator.SynToPLMItemProperties(searchItem, plmProperties, IntegrationEvents, SyncEvents.OnSyncToPLMBefore) : _asInnovator.SynToPLMItemUpdateLibraryPath(searchItem);
                     } else {
                         plmProperties =searchItem.PlmProperties.Where(x => x.IsSyncPLM == true && x.IsModify == true );
-                        if (plmProperties.Count() > 0) _asInnovator.SynToPLMItemProperties(searchItem, plmProperties, IntegrationEvents, SyncEvents.OnSyncFormPLMBefore);
+                        bool ret = (plmProperties.Count() > 0)? _asInnovator.SynToPLMItemProperties(searchItem, plmProperties, IntegrationEvents, SyncEvents.OnSyncFormPLMBefore) : _asInnovator.SynToPLMItemUpdateLibraryPath(searchItem);
                     }
                     fileMessage.Status = "Finish";
                 }
@@ -2097,7 +2107,7 @@ namespace BCS.CADs.Synchronization.Entities
                 if (_product == null) return null;
 
                 _classesTemplates = new Dictionary<string, List<ClassTemplateFile>>();
-                foreach (ClassItem classItem in _product.PdClassItem.Where(x => x.CsTemplateFile.Count > 0)) _classesTemplates.Add(classItem.Name, classItem.CsTemplateFile);
+                foreach (ClassItem classItem in _product.PdClassItems.Where(x => x.CsTemplateFile.Count > 0)) _classesTemplates.Add(classItem.Name, classItem.CsTemplateFile);
 
                 itemMessage.Status  = "End";
                 return _classesTemplates;
@@ -2111,15 +2121,15 @@ namespace BCS.CADs.Synchronization.Entities
         }
 
         /// <summary>
-        /// 取得範本
+        /// 取得類別(例如:範本)
         /// </summary>
         /// <returns></returns>
         virtual protected internal List<ClassItem> GetClassItems()
         {
             try
             {
-
-                return _product.PdClassItem;
+               
+                return _product.PdClassItems;
             }
             catch (Exception ex)
             {
@@ -2140,7 +2150,7 @@ namespace BCS.CADs.Synchronization.Entities
 
                 ObservableCollection<ClassPlugin> classPlugins = new ObservableCollection<Classes.ClassPlugin>();
 
-                ClassItem classItem = _product.PdClassItem.FirstOrDefault(x => x.Name == className);
+                ClassItem classItem = _product.PdClassItems.FirstOrDefault(x => x.Name == className);
                 if (classItem == null) return classPlugins;
                 foreach (ClassPlugin plugin in classItem.CsPlugin) classPlugins.Add(plugin);
 
@@ -2585,6 +2595,18 @@ namespace BCS.CADs.Synchronization.Entities
                 TextBox textBox = sp.Children[1] as TextBox;
                 if (textBox == null) continue;
                 textBox.Text = "";
+            }
+        }
+
+        virtual protected internal void UpdateLibraryPathFiles(LibraryPath libraryPath)
+        {
+            try
+            {
+                _asInnovator.UpdateLibraryPathFiles(libraryPath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -3131,7 +3153,8 @@ namespace BCS.CADs.Synchronization.Entities
                     if (checkValue==false)
                     {
                         if (conditionalRule.PrepertyName == "state") return SyncRestrictedStatus.NoModification;
-                        if (conditionalRule.PrepertyName == "bcs_is_standard_part") syncRestrictedStatus=SyncRestrictedStatus.SharedNoModification;
+                        //if (conditionalRule.PrepertyName == "bcs_is_standard_part") syncRestrictedStatus=SyncRestrictedStatus.SharedNoModification;
+                        if (conditionalRule.PrepertyName == "is_standard") syncRestrictedStatus = SyncRestrictedStatus.SharedNoModification;
                         if (syncRestrictedStatus != SyncRestrictedStatus.SharedNoModification) syncRestrictedStatus = SyncRestrictedStatus.Prohibited;
                     }
 
@@ -3406,10 +3429,10 @@ namespace BCS.CADs.Synchronization.Entities
                     string nativeProperty = "";
                     string thumbnailProperty = "";
 
-                    List<PLMPropertyFile> propertyFile = _product.PdClassItem?.Where(c => c.Name !="")?.First()?.CsPropertyFile;
+                    List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name !="")?.First()?.CsPropertyFile;
                     
                     //foreach (ClassItem classItem in _product.PdClassItem?.Where(c => c.Name != "")) {
-                    foreach (ClassItem classItem in _product.PdClassItem?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false)) {
+                    foreach (ClassItem classItem in _product.PdClassItems?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false)) {
                         if (nativeProperty=="") nativeProperty = classItem.CsPropertyFile.Where(x => x.FunctionName == "native_property").Select(x => x.Name).First();
                         if (thumbnailProperty == "") thumbnailProperty = classItem.CsPropertyFile.Where(x => x.FunctionName == "thumbnail_property").Select(x => x.Name).First();
                     }
@@ -3417,7 +3440,7 @@ namespace BCS.CADs.Synchronization.Entities
                     if (thumbnailProperty != "") ThumbnailProperty = thumbnailProperty;
 
 
-                   foreach (ClassItem classItem in _product.PdClassItem)
+                   foreach (ClassItem classItem in _product.PdClassItems)
                     {
                         //classItem.Thumbnail
                         
@@ -3439,8 +3462,8 @@ namespace BCS.CADs.Synchronization.Entities
 
                     
 
-                    _syncCADEvents.ClassItems = _product.PdClassItem;
-                    _asInnovator.ClassItems= _product.PdClassItem;
+                    _syncCADEvents.ClassItems = _product.PdClassItems;
+                    _asInnovator.ClassItems= _product.PdClassItems;
                 }
 
                 this.PartsLibrary = _product.PartsLibrary;
@@ -3484,7 +3507,7 @@ namespace BCS.CADs.Synchronization.Entities
                 if (_product == null) return;
                 
                 //foreach (ClassItem classItem in _product.PdClassItem?.Where(c => c.Name != ""))
-                foreach (ClassItem classItem in _product.PdClassItem?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false))
+                foreach (ClassItem classItem in _product.PdClassItems?.Where(c => String.IsNullOrWhiteSpace(c.Name) ==false))
                 {
                   foreach( PLMProperty plmProperty in classItem.CsProperties.Where(x=>x.DataSource!="" && (x.DataType=="list" || x.DataType == "filter list")))
                     {
@@ -3575,8 +3598,8 @@ namespace BCS.CADs.Synchronization.Entities
                 //Modify by kenny 2020/08/20 bcs_library_path
                 searchItem.LibraryPath = item.getProperty("bcs_library_path", "");
                 searchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_common_part", "0")));
-                searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
-
+                //searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
+                searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("is_standard", "0")));
                 return searchItem;
 
             }
@@ -3597,7 +3620,7 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
                 if (_product==null) return null;
-                List<PLMKeys> classKeys = _product.PdClassItem?.Where(c => c.Name == className)?.First()?.CsKeys;
+                List<PLMKeys> classKeys = _product.PdClassItems?.Where(c => c.Name == className)?.First()?.CsKeys;
                 return classKeys;
             }
             catch (Exception ex)
@@ -3624,7 +3647,7 @@ namespace BCS.CADs.Synchronization.Entities
                 _classesKeys = new Dictionary<string, Dictionary<string, string>>();
 
                 Dictionary<string, string> allKeys = new Dictionary<string, string>();
-                foreach (var classItem in _product.PdClassItem)
+                foreach (var classItem in _product.PdClassItems)
                 {
 
                     List<PLMKeys> plmKeys = classItem.CsKeys;
@@ -3658,7 +3681,7 @@ namespace BCS.CADs.Synchronization.Entities
                 if (_product == null) return null;
 
                 _allKeys = new Dictionary<string, List<string>>();
-                foreach (var classItem in _product.PdClassItem)
+                foreach (var classItem in _product.PdClassItems)
                 {
                     foreach (PLMKeys plmKey in classItem.CsKeys)
                     {
@@ -3696,7 +3719,7 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
-                foreach (var classItem in _product.PdClassItem)
+                foreach (var classItem in _product.PdClassItems)
                 {
                     if (CheckClassKeyValues(item, classItem)) return classItem.Name; 
                 }
@@ -3718,7 +3741,7 @@ namespace BCS.CADs.Synchronization.Entities
         {
             try
             {
-                foreach (var classItem in _product.PdClassItem.Where(x=>x.Name== className))
+                foreach (var classItem in _product.PdClassItems.Where(x=>x.Name== className))
                 {
                     return classItem.ThumbnailFullName;
                 }

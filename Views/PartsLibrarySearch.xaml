@@ -1,14 +1,15 @@
-﻿<Window x:Class="BCS.CADs.Synchronization.Views.PartsLibrarySearchDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:BCS.CADs.Synchronization.ViewModels"  
-        xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"        
-        mc:Ignorable="d"
-        Title="PartsLibrarySearchDialog" Height="300" Width="300">
-
-    <Window.Resources>
+﻿<Page x:Class="BCS.CADs.Synchronization.Views.PartsLibrarySearch"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      xmlns:vm="clr-namespace:BCS.CADs.Synchronization.ViewModels"  
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="PartsLibrarySearch">
+    
+      <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CommonStyle.xaml"/>
@@ -21,31 +22,26 @@
             <vm:AddFromTemplateStringImageToResource x:Key="StringToResource" />
             <vm:ThumbnailToPathConverter x:Key="ImageIdToPathConverter" ImagePath="DisplayImage" />
             <!-- PartsLibraryStringImageToResource  -->
-        </ResourceDictionary>
-        
-    </Window.Resources>
-
-    <!--PartsLibrarySearchDialogViewModel
-    PartsLibrarySearchDialogVM
-    -->
-    <Window.DataContext>
+        </ResourceDictionary>          
+          
+      </Page.Resources>
+    <Page.DataContext>
         <vm:PartsLibrarySearchViewModel />
-    </Window.DataContext>
-
+    </Page.DataContext>
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <Grid Grid.Row="0" Margin="10,5,0,0" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
+
             <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
 
             <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding Done}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
@@ -55,6 +51,7 @@
             <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="closeDialogWindow" ToolTip="{DynamicResource close}" Command="{Binding CloseDialogWindow}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                 <Image Source="{StaticResource CloseDrawingImage}"/>
             </Button>
+
             <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
 
 
@@ -65,7 +62,7 @@
                         Background="White"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
+                <!--<StackPanel Orientation="Horizontal">
                     <Image Margin="3,1,0,0">
                         <Image.Style>
                             <Style>
@@ -101,7 +98,7 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                </StackPanel>
+                </StackPanel>-->
             </Border>
             <TextBox x:Name="selectedPath" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedLibraryPath.Path, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
             <TextBox x:Name="selectedfile" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedFileItem.Name, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
@@ -155,7 +152,7 @@
                         FontSize="16"
 		                AlternationCount="2"
 		                MinRowHeight="26" >
-                
+
                 <DataGrid.InputBindings>
                     <MouseBinding Gesture="LeftClick" 
                         Command="{Binding GridFieldClickedCommand}" 
@@ -203,7 +200,4 @@
         </Grid>
 
     </Grid>
-
-
-
-</Window>
+</Page>

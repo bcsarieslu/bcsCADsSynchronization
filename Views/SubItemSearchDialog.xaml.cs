@@ -45,7 +45,7 @@ namespace BCS.CADs.Synchronization.Views
             */
 
             //System.Diagnostics.Debugger.Break();
-            SubItemSearchDialogViewModel DataContext = new SubItemSearchDialogViewModel();
+            SubItemSearchViewModel DataContext = new SubItemSearchViewModel();
             DataContext.SetView = this;
             DataContext.ShowSearchDialog(itemType);
             

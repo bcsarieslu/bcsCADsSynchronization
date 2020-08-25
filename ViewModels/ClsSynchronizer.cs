@@ -75,6 +75,10 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static dynamic SyncCommonDialogView { get; set; }
 
+        public static dynamic SyncCommonPageView { get; set; }
+
+        public static bool IsSyncCommonPageView { get; set; } = false;
+
         public static bool IsActiveSubDialogView { get; set; } = false;
 
         public static dynamic EditPropertiesView { get; set; }
@@ -178,8 +182,9 @@ namespace BCS.CADs.Synchronization.ViewModels
         }
 
 
-        public static CommonPartsLibrary VmPartsLibrary;
+        //public static CommonPartsLibrary VmPartsLibrary;
 
+        public static ObservableCollection<LibraryPath> VmLibraryPaths;
         #endregion
 
 

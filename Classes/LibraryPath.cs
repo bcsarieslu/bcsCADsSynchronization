@@ -23,13 +23,34 @@ namespace BCS.CADs.Synchronization.Classes
         public string Name { get; set; }
         public string Path { get; set; }
 
-        ObservableCollection<LibraryFileInfo> FileItem { get; set; } = new ObservableCollection<LibraryFileInfo>();
+        public ObservableCollection<LibraryFileInfo> FileItems { get; set; } = new ObservableCollection<LibraryFileInfo>();
 
     }
 
-    internal class LibraryFileInfo
+    public class LibraryFileInfo
     {
-        string Name { get; set; }
 
+        public LibraryFileInfo()
+        {
+
+        }
+
+        //public LibraryFileInfo(string name, string type, string extension)
+        public LibraryFileInfo(string name,string className,  string extension)
+        {
+            this.Name = name;
+            this.ClassName = className;
+            this.Extension = extension;
+        }
+
+        public string Name { get; set; }
+
+        public string ClassName { get; set; }
+
+        public string Extension { get; set; }
+
+        public string Thumbnail { get; set; } = "";
+
+        public string ItemId { get; set; } = "";
     }
 }

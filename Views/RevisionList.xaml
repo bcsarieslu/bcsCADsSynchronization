@@ -18,6 +18,7 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/AddTemplateStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/MainStyle.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--<ViewModels:MainWindowViewModel></ViewModels:MainWindowViewModel>-->
             <vm:NewFileNameViewModel x:Key="viewmodel"/>
@@ -42,6 +43,8 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
+
                 <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding Done}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image Source="{StaticResource CheckmarkDrawingImage}"/>
                 </Button>
@@ -51,6 +54,7 @@
                 </Button>
                 <TextBox x:Name="selectedItemId" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedSearchItem.ItemId, Mode=TwoWay }" Tag="{Binding Path=SelectedSearchItem.KeyedName, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
                 <TextBlock x:Name="positionUse" Width="0.1" Height="0.1"/>
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
             </Grid>
 
             <Grid Grid.Row="1">

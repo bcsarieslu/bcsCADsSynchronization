@@ -29,6 +29,17 @@ namespace BCS.CADs.Synchronization.Views
 
         }
 
+        public ItemSearch(string itemType)
+        {
+            InitializeComponent();
+            ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
+
+            //ItemSearchViewModel DataContext = new ItemSearchViewModel();
+            //DataContext.SetView = this;
+            //ClsSynchronizer.IsSyncCommonPageView = true;
+            //DataContext.ShowSearchDialog(itemType);
+        }
+
         private void SelectFolder_Click(object sender, RoutedEventArgs e)
         {
 

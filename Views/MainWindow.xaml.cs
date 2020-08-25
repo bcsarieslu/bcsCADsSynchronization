@@ -68,8 +68,9 @@ namespace BCS.CADs.Synchronization.Views
 
             var cache = MyCache.CacheInstance;
             CultureInfo culture1 = CultureInfo.CurrentCulture;
+            string languagePath = $"pack://application:,,,/BCS.CADs.Synchronization;Component/Lang/{culture1.Name}.xaml";
             ResourceDictionary resourceDictionary = new ResourceDictionary();
-            resourceDictionary.Source = new Uri($"pack://application:,,,/BCS.CADs.Synchronization;Component/Lang/{culture1.Name}.xaml");
+            resourceDictionary.Source = new Uri(languagePath);
 
             ClsSynchronizer.Language = culture1.Name;
 
@@ -93,9 +94,15 @@ namespace BCS.CADs.Synchronization.Views
             else
                 login = (Login)cache["Login"];
 
-            var LoginView = (Frame)win.FindName("LoginView");
-            Panel.SetZIndex(LoginView, 1);
+            Panel.SetZIndex(LoginView, 2);
             LoginView.Navigate(login);
+
+            var recentFileView = new RecentFileView();
+            recentFileView.DataContext = this.DataContext;
+            ((MainWindowViewModel)DataContext).RecentFileVM.ChangeLanguage = languagePath;
+            recentFileView.Resources.MergedDictionaries.Add(resourceDictionary);
+            RecentFileView.Navigate(recentFileView);
+            Panel.SetZIndex(RecentFileView, 1);
 
             //LoadingAdorner.IsAdornerVisible = true;
             //ClsSynchronizer.LoadingAdornerView = LoadingAdorner;

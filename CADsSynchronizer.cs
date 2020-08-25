@@ -835,6 +835,28 @@ namespace BCS.CADs.Synchronization
             }
         }
 
+        /// <summary>
+        /// 僅提供開啟檔案,不做作任何事
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileName"></param>
+        protected internal void OpenFile(string path,string fileName)
+        {
+            try
+            {
+                //Events
+                SearchItem searchItem = new SearchItem();
+                searchItem.FilePath = path;
+                searchItem.FileName = fileName;
+
+                _syncCADEvents.ExecCadEvent(_Plm.AsInnovator, SyncCadCommands.OpenFile.ToString(), ref searchItem, null, null, SyncEvents.OpenFile, SyncType.None);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
 
         /// <summary>
@@ -1253,6 +1275,19 @@ namespace BCS.CADs.Synchronization
         {
             return _Plm.GetLanguageByKeyName(key);
         }
+
+        protected internal void UpdateLibraryPathFiles(LibraryPath libraryPath)
+        {
+            try
+            {
+                _Plm.UpdateLibraryPathFiles(libraryPath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
         #endregion
 

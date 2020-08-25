@@ -74,6 +74,7 @@ namespace BCS.CADs.Synchronization.Models
         OnUnlockItemsAfter,
         OnUnlockItemBefore,
         OnUnlockItemAfter,
+        OpenFile,
         OpenFiles,
         CloseFiles,
         UserLogin,
@@ -83,12 +84,12 @@ namespace BCS.CADs.Synchronization.Models
     /// <summary>
     /// 程式觸發一些事件,對應Client CAD程式的方法
     /// </summary>
-    public enum SyncCadCommands { IsActiveCAD, ExportPropertyFile, AddTemplate, CopyToAdd, OpenFiles, MoveFiles, CloseFiles, GetActiveCADDocument, GetActiveCADStructure, UpdateCADKeys, UpdateCADsProperties, GetSelectedCADsProperties, GetCADsProperties, RunFunction, SystemSyncToPLMProperties, SystemSyncFromPLMProperties, SystemSyncToPLMStructure, SystemSyncFromPLMStructure, SystemAddFromTemplate, SystemItemLocked, SystemLogin, SystemLoadFromPLM, SystemCopyToAdd }
+    public enum SyncCadCommands { IsActiveCAD, ExportPropertyFile, AddTemplate, CopyToAdd, OpenFile, OpenFiles, MoveFiles, CloseFiles, GetActiveCADDocument, GetActiveCADStructure, UpdateCADKeys, UpdateCADsProperties, GetSelectedCADsProperties, GetCADsProperties, RunFunction, SystemSyncToPLMProperties, SystemSyncFromPLMProperties, SystemSyncToPLMStructure, SystemSyncFromPLMStructure, SystemAddFromTemplate, SystemItemLocked, SystemLogin, SystemLoadFromPLM, SystemCopyToAdd }
 
     /// <summary>
     /// 功能事件
     /// </summary>
-    public enum SyncType { Login, NewFormTemplateFile, SyncFromPLM, SyncToPLM, LoadFromPLM, CopyToAddSearch, CopyToAdd, LockOrUnlock, PluginModule, Structure, Properties, Locked, Add, Download, Unlocked, DownloadFile, Files }
+    public enum SyncType { Login, NewFormTemplateFile, SyncFromPLM, SyncToPLM, LoadFromPLM, CopyToAddSearch, CopyToAdd, LockOrUnlock, PluginModule, Structure, Properties, Locked, Add, Download, Unlocked, DownloadFile, Files,None }
 
     /// <summary>
     /// 物件類型定義,但要replace _為空白
@@ -146,4 +147,6 @@ namespace BCS.CADs.Synchronization.Models
     public enum SearchType { Search, CADRevisionSearch, CADAllRevisionsSearch }
 
     public enum ItemTypeName {CAD,File }
+
+    public enum ClassName { Assembly, Part, Drawing };
 }

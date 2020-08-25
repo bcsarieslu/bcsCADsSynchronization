@@ -58,6 +58,10 @@
     <sys:String x:Key="done">Done</sys:String>
     <sys:String x:Key="selectFolder">Select saved path</sys:String>
     <sys:String x:Key="time">Time</sys:String>
+    <sys:String x:Key="PLMSystem">PLM System</sys:String>
+    <sys:String x:Key="PartsLibrary">Parts Library</sys:String>
+    
+
     <!-- Item Name -->
     <sys:String x:Key="itemName">Name</sys:String>
     <sys:String x:Key="description">Description</sys:String>

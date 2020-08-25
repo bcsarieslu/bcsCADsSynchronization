@@ -20,7 +20,7 @@ namespace BCS.CADs.Synchronization.Entities
         #endregion
 
         #region "                   屬性"
-        List<ClassItem> PdClassItem { get; set; }
+        List<ClassItem> PdClassItems { get; set; }
         List<ClassComposition> PdComposition { get; set; }
         List<IntegrationEvents> PdEvents { get; set; }
         List<ConditionalRule> PdRules { get; set; }

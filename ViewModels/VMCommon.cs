@@ -47,11 +47,12 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             if (plmProperty.DataType == "image" || plmProperty.DataType == "revision")
             {
-                FrameworkElementFactory txtBlock = new FrameworkElementFactory(typeof(TextBlock));
-                AddDataGridTextBlockStyleBinding(txtBlock, plmProperty);
-                txtBlock.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度                                                               //txtBox.SetValue(TextBox.HeightProperty, 25d);
-                txtBlock.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
-                stackPanel.AppendChild(txtBlock);
+                FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
+                AddDataGridTextBlockStyleBinding(txtBox, plmProperty);
+                txtBox.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度
+                txtBox.SetValue(TextBox.IsEnabledProperty,false);
+                txtBox.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
+                stackPanel.AppendChild(txtBox);
             }
 
             else

@@ -57,6 +57,9 @@
     <sys:String x:Key="done">確認完成</sys:String>
     <sys:String x:Key="selectFolder">選擇存檔位置</sys:String>
     <sys:String x:Key="time">時間</sys:String>
+    <sys:String x:Key="PLMSystem">PLM系統</sys:String>
+    <sys:String x:Key="PartsLibrary">零件庫</sys:String>
+    
     <!-- 項目名稱 -->
     <sys:String x:Key="itemName">名稱</sys:String>
     <sys:String x:Key="description">描述</sys:String>

@@ -21,6 +21,7 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference winItemType}"/>
+            <ViewModels:NewFileNameViewModel x:Key="viewmodel"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -33,9 +34,32 @@
 
         <Grid >
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            
+            <!-- Visibility="Collapsed" -->
+            <Grid Name="GridShowButtons"  Grid.Row="0" Margin="0,15,0,0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
+
+                <Button  Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="PLMSystem" ToolTip="{DynamicResource PLMSystem}" Command="{Binding ShowItemSearch}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
+                    <Image Source="{StaticResource ServerImage}"/>
+                </Button>
+                <Button  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="PartsLibrary" ToolTip="{DynamicResource PartsLibrary}" Command="{Binding ShowPartsLibrary}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
+                    <Image Source="{StaticResource DataFilesImage}"/>
+                </Button>
+                <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
+
+            </Grid>
+
+
+            <Grid Grid.Row="1">
                 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="36*"/>

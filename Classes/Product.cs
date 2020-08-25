@@ -30,7 +30,7 @@ namespace BCS.CADs.Synchronization.Classes
 
         #region "                   屬性"
 
-        public List<ClassItem> PdClassItem { get; set; } = new List<ClassItem>();
+        public List<ClassItem> PdClassItems { get; set; } = new List<ClassItem>();
         public List<ClassComposition> PdComposition { get; set; } = new List<ClassComposition>();
         public List<IntegrationEvents> PdEvents { get; set; } = new List<IntegrationEvents>();
         public List<ConditionalRule> PdRules { get; set; } = new List<ConditionalRule>();
@@ -104,7 +104,7 @@ namespace BCS.CADs.Synchronization.Classes
 
                                 classItem.BuildClass();
 
-                                PdClassItem.Add(classItem);
+                                PdClassItems.Add(classItem);
 
                             }
                             break;

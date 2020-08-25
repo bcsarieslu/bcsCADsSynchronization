@@ -57,6 +57,9 @@
     <sys:String x:Key="done">确认完成</sys:String>
     <sys:String x:Key="selectFolder">选择保存的路径</sys:String>
     <sys:String x:Key="time">时间</sys:String>
+    <sys:String x:Key="PLMSystem">PLM系統</sys:String>
+    <sys:String x:Key="PartsLibrary">零件库</sys:String>
+    
     <!-- 项目名称 -->
     <sys:String x:Key="itemName">名称</sys:String>
     <sys:String x:Key="description">描述</sys:String>

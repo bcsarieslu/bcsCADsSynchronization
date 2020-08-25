@@ -25,7 +25,7 @@ namespace BCS.CADs.Synchronization.ViewModels
     public class RevisionListViewModel: NotifyPropertyBase
     {
         #region "                   宣告區
-        private ICommand _showCommand;
+        
         #endregion
 
         #region "                   進入區
@@ -63,6 +63,7 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             get { return _selectedSearchItem; }
             set { SetProperty(ref _selectedSearchItem, value, nameof(SelectedSearchItem)); }
+            
         }
 
 
@@ -106,7 +107,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-
+        private ICommand _showCommand;
         public ICommand GridFieldClickedCommand
         {
             get

@@ -57,6 +57,20 @@ namespace BCS.CADs.Synchronization.ViewModels
         private TreeStructure _treeStructure = null;
         private PlugInFuncs _plugInFuncsView = null;
         private ItemSearch _ItemSearchView = null;
+        private PartsLibrarySearch _partsLibrarySearch = null;
+
+        private RecentFileViewModel recentFileVM=null;
+        public RecentFileViewModel RecentFileVM
+        {
+            get
+            {
+                if (recentFileVM == null)
+                {
+                    return new RecentFileViewModel();
+                }
+                return recentFileVM;
+            }
+        }
 
         private MainWindow _myMainWindow;
         public MainWindow MyMainWindow { get { return (MainWindow)MyCache.CacheInstance["MainWindow"]; } set { _myMainWindow = value; } }
@@ -71,7 +85,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public MainWindowViewModel(Window view)
         {
-            _view = view; ;
+            _view = view;
         }
 
         public MainWindowViewModel(Window view,string itemType,bool isSub)
@@ -410,6 +424,15 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
                     var button = x as Button;
                     var parent = VisualTreeHelper.GetParent(button);
+
+                    RecentFile rf = new RecentFile();
+                    //rf.AddRecentFile("test001","");
+                    var s = rf.ReadRecentFile();
+
+                    //讀取最近前10筆的資料
+                    RecentFileVM.RecentFile = rf.ReadRecentFile();
+                    //資料來源修改時，重置資料
+                    OnPropertyChanged("RecentFileVM");
 
                     SelectedDirectoryGridVisibility = Visibility.Collapsed;
                     CheckBoxWPVisibility = Visibility.Collapsed;
@@ -1084,6 +1107,95 @@ namespace BCS.CADs.Synchronization.ViewModels
         }
 
 
+        private ICommand _showItemSearch { get; set; }
+        public ICommand ShowItemSearch
+        {
+            get
+            {
+                _showItemSearch = new RelayCommand((x) =>
+                {
+                    Window win = (Window)ClsSynchronizer.SyncDialogView;
+                    ShowSearchItems(win,"CAD");
+                    //_ItemSearchView = new ItemSearch();
+                    //var viewPage = (Frame)win.FindName("viewPage");
+                    //viewPage.Visibility = Visibility.Visible;
+                    //viewPage.Navigate(_ItemSearchView);
+
+                });
+                return _showItemSearch;
+            }
+        }
+
+        private ICommand _showPartsLibrary { get; set; }
+        public ICommand ShowPartsLibrary
+        {
+            get
+            {
+                _showPartsLibrary = new RelayCommand((x) =>
+                {
+
+                    _partsLibrarySearch = new PartsLibrarySearch();
+                    Window win = (Window)ClsSynchronizer.SyncDialogView;
+                    var viewPage = (Frame)win.FindName("viewPage");
+                    viewPage.Visibility = Visibility.Visible;
+                    viewPage.Navigate(_partsLibrarySearch);
+
+                });
+                return _showPartsLibrary;
+            }
+        }
+        private void ShowSearchItems(Window win, string itemType)
+        {
+            if (String.IsNullOrWhiteSpace(itemType)) itemType = ItemTypeName.CAD.ToString();
+            ItemType itemTypeItem = ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.Search);
+            ObsSearchItems = new ObservableCollection<SearchItem>();
+
+            _ItemSearchView = new ItemSearch();
+            _ItemSearchView.DataContext = new ItemSearchViewModel();
+
+            ClsSynchronizer.SyncListView = _ItemSearchView;
+            ((TextBox)_ItemSearchView.FindName("CADdirectory")).Visibility = Visibility.Hidden;
+            ((Button)_ItemSearchView.FindName("selectedDirectory")).Visibility = Visibility.Hidden;
+
+
+            DataGrid gridSelectedItems = (DataGrid)_ItemSearchView.FindName("gridSelectedItems");
+            AddDataGridHeaderColumn(itemTypeItem, gridSelectedItems);
+
+            SelectedSearchItem = new SearchItem();
+            SelectedSearchItem.ItemType = itemType;
+
+            ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
+            foreach (PLMProperty property in itemTypeItem.PlmProperties)
+            {
+                PLMProperty newProperty = property.Clone() as PLMProperty;
+                if (String.IsNullOrWhiteSpace(newProperty.Name) == false)
+                {
+                    newProperty.IsInitial = false;
+                    newProperty.IsExist = true;
+                }
+                newProperty.SoruceSearchItem = SelectedSearchItem;
+                newProperties.Add(newProperty);
+            }
+
+            SelectedSearchItem.PlmProperties = newProperties;
+            ObsSearchItems.Add(SelectedSearchItem);
+            ClsSynchronizer.NewSearchItem = SelectedSearchItem;
+            ClsSynchronizer.RowStyle = gridSelectedItems.RowStyle;
+            gridSelectedItems.RowStyle = RowStyleHeightzero();
+
+
+            DefaultSystemItemsDisplay();
+            //ClsSynchronizer.ActiveWindow = (isDialog == true) ? win : MyMainWindow;
+            var viewPage = (Frame)win.FindName("viewPage");
+            viewPage.Visibility = Visibility.Visible;
+            viewPage.Navigate(_ItemSearchView);
+
+
+            ClsSynchronizer.VmMessages.Status = "End";
+        }
+
+
+
         /// <summary>
         /// 顯示範本
         /// </summary>
@@ -1598,15 +1710,11 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             get
             {
-
                 _syncExecute = new RelayCommand((x) =>
                 {
-
                     try
                     {
-                        
                         ShowMessagesView();
-
                     }
                     catch (Exception ex)
                     {
@@ -1638,6 +1746,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
 
             PartsLibrarySearchDialog itemSearchDialog = new PartsLibrarySearchDialog();
+            ClsSynchronizer.DialogReturnValue = "";
             ClsSynchronizer.IsShowDialog = true;
             itemSearchDialog.Width = 800;
             itemSearchDialog.Height = 600;
@@ -1645,12 +1754,13 @@ namespace BCS.CADs.Synchronization.ViewModels
             itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             //ItemSearchViewControl(Visibility.Visible);
             itemSearchDialog.ShowDialog();
-
-            //ClsSynchronizer.ShowDialogItemType = itemDialogType;
-            //if (String.IsNullOrWhiteSpace(ClsSynchronizer.SubDialogReturnValue) == false)
-            //{
-            //    txtProperty.Text = (isSubItemSearchDialog) ? ClsSynchronizer.SubDialogReturnKeyedName : ClsSynchronizer.DialogReturnKeyedName;
-            //}
+            ClsSynchronizer.IsShowDialog = false;
+            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false)
+            {
+                MessageBox.Show(ClsSynchronizer.DialogReturnValue);
+                string full = ClsSynchronizer.DialogReturnValue.Split((char)44)[0];
+                ClsSynchronizer.VmSyncCADs.OpenFile(System.IO.Path.GetDirectoryName(full), System.IO.Path.GetFileName(full));
+            }
         }
 
         /// <summary>
@@ -2091,7 +2201,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                         IsLogin = true;
                         UserLoginName = ConnInnovator.UserName;
-                        ClsSynchronizer.VmPartsLibrary = ClsSynchronizer.VmSyncCADs.GetCommonPartsLibrary();
+                        //ClsSynchronizer.VmPartsLibrary = ClsSynchronizer.VmSyncCADs.GetCommonPartsLibrary();
+                        ClsSynchronizer.VmLibraryPaths = ClsSynchronizer.VmSyncCADs.GetCommonPartsLibrary().Paths;
                         DefaultSystemButtonsTextBlocks(UserLoginName, strDBName, true);
                     }
                     //關閉Windows : 要改變UI的畫面是否允許操作功能 @@@@@@
@@ -2670,6 +2781,11 @@ namespace BCS.CADs.Synchronization.ViewModels
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_ItemSearchView);
 
+            if (isDialog == true && ClsSynchronizer.VmLibraryPaths.Count()>0)
+            {
+                Grid grid = (Grid)win.FindName("GridShowButtons");
+                grid.Visibility = Visibility.Visible;
+            }
 
             ClsSynchronizer.VmMessages.Status = "End";
         }
@@ -3066,8 +3182,10 @@ namespace BCS.CADs.Synchronization.ViewModels
             itemSearchDialog.Height = 600;
             itemSearchDialog.Topmost = true;
             itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            ClsSynchronizer.DialogReturnValue = "";
             itemSearchDialog.ShowDialog();
             ClsSynchronizer.IsShowDialog = false ;
+            ClsSynchronizer.IsSyncCommonPageView = false;
             ClsSynchronizer.ShowDialogItemType = itemDialogType;
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false) return true;
             return false;
@@ -3082,6 +3200,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             newFileName.Height = 200;
             newFileName.Topmost = true;
             newFileName.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            ClsSynchronizer.DialogReturnValue = "";
             newFileName.ShowDialog();
             ClsSynchronizer.IsShowDialog =false ;
             ClsSynchronizer.ShowDialogItemType = itemDialogType;

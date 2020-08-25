@@ -421,13 +421,13 @@
                     </Grid>
                 </Grid>
 
+                <Frame x:Name="RecentFileView" Margin="0,-0.7,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
                 <Frame x:Name="LoginView" Margin="0,-0.7,0,0" Grid.Row="0" NavigationUIVisibility="Hidden" Background="#F5ECC3" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-                <Frame x:Name="SystemView" Grid.Row="0" NavigationUIVisibility="Hidden" Grid.RowSpan="2" Background="AliceBlue" Visibility="Collapsed" Grid.ColumnSpan="2" Margin="0,0,0.4,0">
+                <Frame x:Name="SystemView" Grid.Row="0" NavigationUIVisibility="Hidden" Grid.RowSpan="2" Background="AliceBlue" Visibility="Collapsed" Grid.ColumnSpan="2">
                     <Frame.LayoutTransform>
                         <ScaleTransform ScaleX="{Binding SetScale}" ScaleY="{Binding SetScale}"/>
                     </Frame.LayoutTransform>
                 </Frame>
-
 
                 <ac:AdornedControl Name="LoadingAdorner" Grid.Row="0" Grid.RowSpan="2">
                     <ac:AdornedControl.AdornerContent>
