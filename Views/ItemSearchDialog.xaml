@@ -39,7 +39,7 @@
             </Grid.RowDefinitions>
             
             <!-- Visibility="Collapsed" -->
-            <Grid Name="GridShowButtons"  Grid.Row="0" Margin="0,15,0,0" >
+            <Grid Name="GridShowButtons" Visibility="Collapsed" Grid.Row="0" Margin="0,15,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="40"/>
@@ -72,15 +72,15 @@
                 <TextBlock x:Name="positionUse" Width="0.1" Height="0.1"/>
                 <!--<Frame Margin="10" Source="ItemSearch.xaml" NavigationUIVisibility="Hidden" x:Name="viewPage" Grid.RowSpan="2" Grid.ColumnSpan="2" />-->
                 <Frame Margin="10" NavigationUIVisibility="Hidden" x:Name="viewPage" Grid.RowSpan="2" Grid.ColumnSpan="2" />
-                <ac:AdornedControl Name="LoadingAdorner" Grid.Row="0" Grid.RowSpan="2">
-                    <ac:AdornedControl.AdornerContent>
-                        <local:LoadingWait></local:LoadingWait>
-                    </ac:AdornedControl.AdornerContent>
-                </ac:AdornedControl>
                 <Canvas x:Name="DialogCanvasViewFile" Grid.Row="1"  Visibility="Visible" Grid.Column="0">
                     <local:ViewFile HorizontalContentAlignment="Left" VerticalContentAlignment="Top" x:Name="viewFile" Width="0" Height="0"/>
                 </Canvas>
             </Grid>
         </Grid>
+        <ac:AdornedControl Name="LoadingAdorner" >
+            <ac:AdornedControl.AdornerContent>
+                <local:LoadingWait></local:LoadingWait>
+            </ac:AdornedControl.AdornerContent>
+        </ac:AdornedControl>
     </Grid>
 </Window>

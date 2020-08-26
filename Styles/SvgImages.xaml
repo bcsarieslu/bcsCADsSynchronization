@@ -198,9 +198,18 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    
-    
-    
+
+    <DrawingImage x:Key="SearchDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V48 H48 V0 H0 Z">
+                <DrawingGroup Opacity="1">
+                    <GeometryDrawing Brush="#FF363E63" Geometry="F1 M48,48z M0,0z M21,6C12.7,6 6,12.7 6,21 6,29.3 12.7,36 21,36 29.3,36 36,29.3 36,21 36,12.7 29.3,6 21,6z M21,31C15.5,31 11,26.5 11,21 11,15.5 15.5,11 21,11 26.5,11 31,15.5 31,21 31,26.5 26.5,31 21,31z" />
+                    <GeometryDrawing Brush="#FF363E63" Geometry="F1 M48,48z M0,0z M28.5,33.5L33.5,28.5 42,37 37,42z" />
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <!-- UnlockItem.svg -->
     <DrawingImage x:Key="UnlockItemDrawingImage">
         <DrawingImage.Drawing>

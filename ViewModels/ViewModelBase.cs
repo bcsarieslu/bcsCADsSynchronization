@@ -1150,8 +1150,9 @@ namespace BCS.CADs.Synchronization.ViewModels
             ItemType itemTypeItem = ClsSynchronizer.VmSyncCADs.GetItemType(itemType, SearchType.Search);
             ObsSearchItems = new ObservableCollection<SearchItem>();
 
-            _ItemSearchView = new ItemSearch();
-            _ItemSearchView.DataContext = new ItemSearchViewModel();
+            //_ItemSearchView = new ItemSearch();
+            //_ItemSearchView.DataContext = new ItemSearchViewModel();
+            _ItemSearchView = ClsSynchronizer.SyncListView ;
 
             ClsSynchronizer.SyncListView = _ItemSearchView;
             ((TextBox)_ItemSearchView.FindName("CADdirectory")).Visibility = Visibility.Hidden;
@@ -1163,7 +1164,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             SelectedSearchItem = new SearchItem();
             SelectedSearchItem.ItemType = itemType;
-
+            
             ObservableCollection<PLMProperty> newProperties = new ObservableCollection<PLMProperty>();
             foreach (PLMProperty property in itemTypeItem.PlmProperties)
             {

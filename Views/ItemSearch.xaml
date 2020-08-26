@@ -69,7 +69,7 @@
                 <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
                 <!--<Button x:Name="btn_Search" Grid.Column="1" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding SyncItemSearch}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">-->
                 <Button x:Name="btn_Search" Grid.Column="1" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding SyncItemSearch}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}" >
-                    <Image Source="{StaticResource ExecuteSearchDrawingImage}"/>
+                    <Image Source="{StaticResource SearchDrawingImage}"/>
                 </Button>
                 <Button x:Name="btn_ClearSearch" Grid.Column="2" Style="{StaticResource GlassButton}" ToolTip="{DynamicResource search}"  Command="{Binding ClearSearchConditions}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}" >
                     <Image Source="{StaticResource ClearSearchCriteriaDrawingImage}"/>
