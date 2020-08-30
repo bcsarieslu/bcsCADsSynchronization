@@ -43,10 +43,10 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="40"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
+            <!--<Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>-->
 
             <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding Done}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                 <Image Source="{StaticResource CheckmarkDrawingImage}"/>
@@ -55,7 +55,7 @@
             <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource GlassButton}" Name="closeDialogWindow" ToolTip="{DynamicResource close}" Command="{Binding CloseDialogWindow}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                 <Image Source="{StaticResource CloseDrawingImage}"/>
             </Button>
-            <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
+            <!--<Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>-->
 
 
             <Border CornerRadius="3" BorderThickness="1" 
@@ -74,7 +74,7 @@
                             </Style>
                         </Image.Style>
                     </Image>
-                    <TextBox x:Name="searchTextBox" Width="270"
+                    <TextBox x:Name="searchTextBox" Width="300"
                              TextChanged="searchTextBox_TextChanged">
                         <TextBox.Resources>
                             <VisualBrush x:Key="HintText" TileMode="None" Stretch="None" AlignmentX="Left">
@@ -103,9 +103,9 @@
                     </TextBox>
                 </StackPanel>
             </Border>
-            <TextBox x:Name="selectedPath" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedLibraryPath.Path, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
-            <TextBox x:Name="selectedfile" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedFileItem.Name, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
-            <TextBox x:Name="selectedItemId" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedFileItem.ItemId, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
+            <TextBox x:Name="selectedPath" Visibility="Collapsed" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedLibraryPath.Path, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
+            <TextBox x:Name="selectedfile" Visibility="Collapsed" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedFileItem.Name, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
+            <TextBox x:Name="selectedItemId" Visibility="Collapsed" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedFileItem.ItemId, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
             <TextBlock x:Name="positionUse" Width="0.1" Height="0.1"/>
         </Grid>
 

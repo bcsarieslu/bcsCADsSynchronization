@@ -16,6 +16,15 @@ namespace BCS.CADs.Synchronization.Search
         /// </summary>
         public ChangeType Type { get; set; }
 
+        /// <summary>
+        /// 零件庫路圖檔名稱
+        /// </summary>
+        public string LibraryFileName { get; set; } = "";
+
+        /// <summary>
+        /// 零件庫路圖檔名稱
+        /// </summary>
+        public string LibraryPath { get; set; } = "";
 
         ///// <summary>
         ///// 父親的SearchItem
@@ -42,6 +51,7 @@ namespace BCS.CADs.Synchronization.Search
         /// </summary>
         public string SourceItemConfigId { get; set; } = "";
 
+
         /// <summary>
         /// 目標異動後的圖檔名稱
         /// </summary>
@@ -56,6 +66,17 @@ namespace BCS.CADs.Synchronization.Search
         /// 目標異動後的CAD ItemId
         /// </summary>
         public string TargetItemId { get; set; } = "";
+
+        /// <summary>
+        /// 標準或共用圖檔區
+        /// </summary>
+        //public string TargetFull { get; set; } = "";
+
+        /// <summary>
+        /// 是否為標準或共用圖檔區圖檔
+        /// </summary>
+        public bool IsCommonPart { get; set; } = false;
+
 
         /// <summary>
         /// 目標異動後的CAD Config Id

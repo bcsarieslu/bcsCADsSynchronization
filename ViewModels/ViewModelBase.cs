@@ -1334,7 +1334,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
 
             TreeSearchItems = new ObservableCollection<SearchItemsViewModel>();
-            foreach (SearchItem searchItem in _searchItems.Where(y => y.FileName == filename))
+            foreach (SearchItem searchItem in _searchItems.Where(y => y.FileName.ToLower() == filename.ToLower()))
             {
                 SearchItemsViewModel treeSearchItem = new SearchItemsViewModel();
                 treeSearchItem.Name = searchItem.FileName;
@@ -1355,7 +1355,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     if (treeSearchItem.ClassName != "Assembly")
                     {
-                        treeSearchItem.IsInsert = false;                 
+                        treeSearchItem.IsInsert = false;
+                        treeSearchItem.IsInsertSaveAs = false;
                     }
                     
                     PLMProperty property = searchItem.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) ==false).SingleOrDefault();
@@ -1368,6 +1369,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 else
                 {
                     treeSearchItem.IsInsert = false;
+                    treeSearchItem.IsInsertSaveAs = false;
                     treeSearchItem.IsReplacement = false;
                     treeSearchItem.IsCopyToAdd = false;
                 }
@@ -1411,8 +1413,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                         }
 
                         try
-                        {                        
-                            bool ret = (ClsSynchronizer.VmFunction == SyncType.CopyToAdd) ? IsExecuteCopyToAdd(viewPage) : IsExecuteOperation(viewPage);
+                        {
+                            //bool ret = (ClsSynchronizer.VmFunction == SyncType.CopyToAdd) ? IsExecuteCopyToAdd(viewPage) : IsExecuteOperation(viewPage);
+                            bool ret = IsExecuteOperation(viewPage);
                         }
                         catch (Exception ex)
                         {
@@ -1450,37 +1453,46 @@ namespace BCS.CADs.Synchronization.ViewModels
                     break;
 
 
+                case SyncOperation.CopyToAddSearch:
                 case SyncOperation.LoadListItems:
                     //win = ClsSynchronizer.ActiveWindow;
                     if (CheckItemSearchView() == false) return false;
 
                     if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmSelectedItemId) == true) return true;
 
-                    searchItem = ClsSynchronizer.SearchItemsCollection.Where(y => y.ItemId == ClsSynchronizer.VmSelectedItemId).FirstOrDefault();
-                    SearchItem verSearchItem = ClsSynchronizer.VmSyncCADs.GetVersionSearchItem(searchItem);
-                    if (verSearchItem.FileId == "")
+                    SearchItem currentSearchItem = ClsSynchronizer.SearchItemsCollection.Where(y => y.ItemId == ClsSynchronizer.VmSelectedItemId).FirstOrDefault();
+                    searchItem = ClsSynchronizer.VmSyncCADs.GetVersionSearchItem(currentSearchItem);
+                    if (searchItem.FileId == "")
                     {
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_CADFileDoesNotExistPLM"));
                         return false;
                     }
 
+                    searchItem.FileName = ClsSynchronizer.VmSyncCADs.GetFileNameByCADItemId(searchItem.ItemId);
+                    if (ClsSynchronizer.VmOperation ==SyncOperation.CopyToAddSearch)
+                    {
+                        if (ShowNewFileName(ChangeToNewFileName(searchItem.FileName))==false ) return false ;
+                        searchItem.FileName = ClsSynchronizer.DialogReturnValue;
+                    }
+
+
                     //檢查是否為表示為共用件及標準件(需為最新版本,自己鎖定的圖檔,才能下載到本地端,進行修改) ****@@@@@@@***
 
-                    verSearchItem.IsRoot = true;
-                    searchItems.Add(verSearchItem);
-
-                    break;
-                case SyncOperation.CopyToAddSearch:
-                    if (CheckItemSearchView() == false) return false;
-
-                    if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmSelectedItemId) == true) return true;
-
-                    ResetOperationButtons(Visibility.Visible, Visibility.Visible, Visibility.Visible, Visibility.Visible, true);
-                    searchItem = ClsSynchronizer.SearchItemsCollection.Where(y => y.ItemId == ClsSynchronizer.VmSelectedItemId).FirstOrDefault();
+                    searchItem.IsRoot = true;
                     searchItems.Add(searchItem);
-                    ClsSynchronizer.VmFunction = SyncType.CopyToAdd;
 
                     break;
+                //case SyncOperation.CopyToAddSearch:
+                //    if (CheckItemSearchView() == false) return false;
+
+                //    if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmSelectedItemId) == true) return true;
+
+                //    ResetOperationButtons(Visibility.Visible, Visibility.Visible, Visibility.Visible, Visibility.Visible, true);
+                //    searchItem = ClsSynchronizer.SearchItemsCollection.Where(y => y.ItemId == ClsSynchronizer.VmSelectedItemId).FirstOrDefault();
+                //    searchItems.Add(searchItem);
+                //    ClsSynchronizer.VmFunction = SyncType.CopyToAdd;
+
+                    //break;
 
                 case SyncOperation.QueryListItems:
 
@@ -1525,6 +1537,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                         break;
 
 
+                    case SyncOperation.CopyToAddSearch:
                     case SyncOperation.LoadListItems:
                         UpdateStatus(ClsSynchronizer.Status);
 
@@ -1533,25 +1546,25 @@ namespace BCS.CADs.Synchronization.ViewModels
                         break;
 
 
-                    case SyncOperation.CopyToAddSearch:
-                        _searchItems = searchItems;
-                        ClsSynchronizer.SearchItemsList = _searchItems;
+                    //case SyncOperation.CopyToAddSearch:
+                    //    _searchItems = searchItems;
+                    //    ClsSynchronizer.SearchItemsList = _searchItems;
 
-                        ObsSearchItems = new ObservableCollection<SearchItem>();
+                    //    ObsSearchItems = new ObservableCollection<SearchItem>();
 
-                        if (_searchItems != null) ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) == false));
+                    //    if (_searchItems != null) ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(y => String.IsNullOrWhiteSpace(y.FileName) == false));
 
-                        _syncCADsListDataGrid = new SyncCADsList();
-                        gridSelectedItems = (DataGrid)_syncCADsListDataGrid.FindName("gridSelectedItems");
-                        ClsSynchronizer.SyncListView = _syncCADsListDataGrid;
+                    //    _syncCADsListDataGrid = new SyncCADsList();
+                    //    gridSelectedItems = (DataGrid)_syncCADsListDataGrid.FindName("gridSelectedItems");
+                    //    ClsSynchronizer.SyncListView = _syncCADsListDataGrid;
 
-                        gridSelectedItems.ItemsSource = ObsSearchItems;
-                        viewPage.Visibility = Visibility.Visible;
-                        viewPage.Navigate(_syncCADsListDataGrid);
+                    //    gridSelectedItems.ItemsSource = ObsSearchItems;
+                    //    viewPage.Visibility = Visibility.Visible;
+                    //    viewPage.Navigate(_syncCADsListDataGrid);
 
-                        ClsSynchronizer.VmMessages.Status = "End";
+                    //    ClsSynchronizer.VmMessages.Status = "End";
 
-                        break;
+                    //    break;
 
                     case SyncOperation.QueryListItems:
 
@@ -1625,6 +1638,9 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 case SyncOperation.CopyToAddSearch:
                     searchItems = ClsSynchronizer.VmSyncCADs.CADItemStructure(searchItem, ClsSynchronizer.VmFunction);
+                    SearchItem activeSearchItem  =   ClsSynchronizer.VmSyncCADs.GetActiveSearchItem(searchItems);
+                    activeSearchItem.FileName = searchItem.FileName;
+                     status = (ClsSynchronizer.VmSyncCADs.CopyToAdd(searchItems, ClsSynchronizer.VmDirectory, ClsSynchronizer.VmFunction ,false )) ? "Operation Finish" : "Error";
                     break;
 
 
@@ -1641,16 +1657,31 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             return status;
         }
-        
 
+        /*
         private bool IsExecuteCopyToAdd(Frame viewPage)
         {
+            
+
+            List<SearchItem> searchItems = new List<SearchItem>();
+            SearchItem searchItem = null;
+
+            if (CheckItemSearchView() == false) return false;
+
+            if (String.IsNullOrWhiteSpace(ClsSynchronizer.VmSelectedItemId) == true) return true;
+
+            ResetOperationButtons(Visibility.Visible, Visibility.Visible, Visibility.Visible, Visibility.Visible, true);
+            searchItem = ClsSynchronizer.SearchItemsCollection.Where(y => y.ItemId == ClsSynchronizer.VmSelectedItemId).FirstOrDefault();
+            searchItems.Add(searchItem);
+            ClsSynchronizer.VmFunction = SyncType.CopyToAdd;
+
             StartStopWait(true);
 
-            ClsSynchronizer.VmSyncCADs.SearchItemsCopyFileNameProperty(_searchItems);
-            List<SearchItem> execSearchItems = _searchItems.Where(x => x.IsViewSelected == true).ToList() as List<SearchItem>;
+            ClsSynchronizer.VmSyncCADs.SearchItemsCopyFileNameProperty(searchItems);
+            //ClsSynchronizer.VmSyncCADs.SearchItemsCopyFileNameProperty(_searchItems);
+            //List<SearchItem> execSearchItems = _searchItems.Where(x => x.IsViewSelected == true).ToList() as List<SearchItem>;
             bool ret = false;
-            var task = Task.Factory.StartNew(() => ret = CopyToAdd());
+            var task = Task.Factory.StartNew(() => ret = CopyToAdd(searchItems));
             task.ContinueWith((x) =>
             {
                 ClsSynchronizer.Status = (ret) ? "Operation Finish" : "Error";
@@ -1674,12 +1705,13 @@ namespace BCS.CADs.Synchronization.ViewModels
             return true;
         }
 
-        private bool CopyToAdd()
+        private bool CopyToAdd(List<SearchItem> searchItems)
         {
 
-            bool ret = ClsSynchronizer.VmSyncCADs.CopyToAdd(_searchItems, ClsSynchronizer.VmDirectory, ClsSynchronizer.VmFunction);
+            bool ret = ClsSynchronizer.VmSyncCADs.CopyToAdd(searchItems, ClsSynchronizer.VmDirectory, ClsSynchronizer.VmFunction);
             return ret;
         }
+        */
 
 
         private bool CheckItemSearchView()
@@ -1758,7 +1790,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.IsShowDialog = false;
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false)
             {
-                MessageBox.Show(ClsSynchronizer.DialogReturnValue);
+                //MessageBox.Show(ClsSynchronizer.DialogReturnValue);
                 string full = ClsSynchronizer.DialogReturnValue.Split((char)44)[0];
                 ClsSynchronizer.VmSyncCADs.OpenFile(System.IO.Path.GetDirectoryName(full), System.IO.Path.GetFileName(full));
             }
@@ -2337,7 +2369,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 ObsSearchItems = new ObservableCollection<SearchItem>(_searchItems.Where(x => String.IsNullOrWhiteSpace(x.FileName) ==false));
                 TreeSearchItems = new ObservableCollection<SearchItemsViewModel>();
-                foreach (SearchItem searchItem in _searchItems.Where(x => x.FileName == filename))
+                foreach (SearchItem searchItem in _searchItems.Where(x => x.FileName.ToLower() == filename.ToLower()))
                 {
                     SearchItemsViewModel treeSearchItem = new SearchItemsViewModel();
                     treeSearchItem.Name = searchItem.FileName;
@@ -2668,7 +2700,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public void CopyToAddView(Window win, bool isDialog)
         {
-            ClsSynchronizer.VmFunction = SyncType.CopyToAddSearch;
+            //ClsSynchronizer.VmFunction = SyncType.CopyToAddSearch;
+            ClsSynchronizer.VmFunction = SyncType.CopyToAdd;
             ClsSynchronizer.VmOperation = SyncOperation.CopyToAddSearch;
 
             LoadFromPLMView(win, isDialog, "", false,true);
@@ -3114,8 +3147,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                 structuralChange.TargetItemId = "";
                 if (changeType == ChangeType.CopyToAdd)
                 {
-                    string newDisplay = fileName.Substring(0, (fileName.Length - System.IO.Path.GetExtension(fileName).Length)) + "(1)";
-                    structuralChange.TargetFileName = newDisplay + System.IO.Path.GetExtension(fileName);
+                    //string newDisplay = fileName.Substring(0, (fileName.Length - System.IO.Path.GetExtension(fileName).Length)) + "(1)";
+                    //structuralChange.TargetFileName = newDisplay + System.IO.Path.GetExtension(fileName);
+                    structuralChange.TargetFileName = ChangeToNewFileName(fileName);
                 }
 
                 structuralChange.Type = changeType;
@@ -3127,19 +3161,23 @@ namespace BCS.CADs.Synchronization.ViewModels
                 ClsSynchronizer.DialogReturnValue = "";
 
                 bool ret = (changeType == ChangeType.CopyToAdd) ? ShowNewFileName(structuralChange.TargetFileName) : ShowItemSearchDialog();
+                UpdateStructuralChangePartsLibrary(structuralChange, ClsSynchronizer.DialogReturnValue);
                 if (changeType == ChangeType.InsertSaveAs && ret)
                 {
                     //插入另存分件
-                    structuralChange.TargetItemId = ClsSynchronizer.DialogReturnValue;
-                    fileName = ClsSynchronizer.VmSyncCADs.GetFileNameByCADItemId(structuralChange.TargetItemId);
+                    //structuralChange.TargetItemId = ClsSynchronizer.DialogReturnValue;
+                    structuralChange.TargetItemId = ClsSynchronizer.DialogReturnValue.Split((char)44)[0];
+                    
+
+                    fileName =(structuralChange.TargetItemId=="")? structuralChange.TargetFileName : ClsSynchronizer.VmSyncCADs.GetFileNameByCADItemId(structuralChange.TargetItemId);
                     if (fileName == "")
                     {
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_TheSelectedCADItemHasNoDrawingFile"));
                         ret = false;
                     }else
                     {
-                        string newDisplay = fileName.Substring(0, (fileName.Length - System.IO.Path.GetExtension(fileName).Length)) + "(1)";
-                        structuralChange.TargetFileName = newDisplay + System.IO.Path.GetExtension(fileName);
+                        //string newDisplay = fileName.Substring(0, (fileName.Length - System.IO.Path.GetExtension(fileName).Length)) + "(1)";
+                        structuralChange.TargetFileName = ChangeToNewFileName(fileName);//  newDisplay + System.IO.Path.GetExtension(fileName);
                         ret = ShowNewFileName(structuralChange.TargetFileName);
                     }
                 }
@@ -3150,7 +3188,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     if (changeType == ChangeType.CopyToAdd|| changeType == ChangeType.InsertSaveAs)
                         structuralChange.TargetFileName = ClsSynchronizer.DialogReturnValue;
                     else
-                        structuralChange.TargetItemId = ClsSynchronizer.DialogReturnValue;
+                        structuralChange.TargetItemId = ClsSynchronizer.DialogReturnValue.Split((char)44)[0];
 
 
                     _treeStructure = (TreeStructure)ClsSynchronizer.TreeStructureView;
@@ -3173,6 +3211,24 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
 
         }
+
+        private string ChangeToNewFileName(string fileName)
+        {
+
+            return $"{fileName.Substring(0, (fileName.Length - System.IO.Path.GetExtension(fileName).Length))}{"(1)"}{System.IO.Path.GetExtension(fileName)}";
+        }
+
+        private void UpdateStructuralChangePartsLibrary(StructuralChange structuralChange,string value)
+        {
+            string[] arryValue =  value.Split((char)44);
+            if (arryValue.Count() < 2) return;
+            structuralChange.LibraryFileName = System.IO.Path.GetFileName(arryValue[1]);
+            structuralChange.TargetFileName = structuralChange.LibraryFileName;
+            structuralChange.LibraryPath = System.IO.Path.GetDirectoryName(arryValue[1]);
+            structuralChange.TargetFilePath = structuralChange.LibraryPath;
+            structuralChange.IsCommonPart = true;
+        }
+
 
         private bool ShowItemSearchDialog()
         {
@@ -3197,6 +3253,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             string itemDialogType = ClsSynchronizer.ShowDialogItemType;
             ClsSynchronizer.IsShowDialog = true;
             NewFileName newFileName = new NewFileName(fileName);
+            //NewFileName newFileName = new NewFileName();
             newFileName.Width = 400;
             newFileName.Height = 200;
             newFileName.Topmost = true;
@@ -3752,11 +3809,12 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                         sonSearchItem.IsReplacement = true;
                         sonSearchItem.IsCopyToAdd =true;
-                        if (sonSearchItem.ClassName != "Assembly") sonSearchItem.IsInsert = false;
-                    }
+                        if (sonSearchItem.ClassName != "Assembly") { sonSearchItem.IsInsert = false; sonSearchItem.IsInsertSaveAs = false; }
+                        }
                     else
                     {
                         sonSearchItem.IsInsert = false;
+                        sonSearchItem.IsInsertSaveAs = false;
                         sonSearchItem.IsReplacement = false;
                         sonSearchItem.IsCopyToAdd = false;
                     }

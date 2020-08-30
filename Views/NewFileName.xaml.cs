@@ -33,6 +33,7 @@ namespace BCS.CADs.Synchronization.Views
             InitializeComponent();
             ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
             DataContext = new NewFileNameViewModel(this, newFileName);
+
         }
     }
 }

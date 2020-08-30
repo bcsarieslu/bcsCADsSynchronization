@@ -33,20 +33,48 @@ namespace BCS.CADs.Synchronization.ViewModels
         public NewFileNameViewModel(dynamic view, string newFileName)
         {
             _view = view;
-            PLM = new ConnPLM();
-            PLM.NewFileName = newFileName;
+            this.NewFileName = newFileName;
+            //LinkPLM = new ConnPLM();
+            //LinkPLM.NewFileName = newFileName;
+
         }
+
+        //public dynamic SetView
+        //{
+        //    set
+        //    {
+        //        ClsSynchronizer.SyncCommonPageView = (dynamic)value;
+        //    }
+
+        //}
 
         #endregion
 
         #region "                   屬性區
-        private ConnPLM _Plm;
-        public ConnPLM PLM
+
+        /// <summary>
+        /// 新的圖檔名稱
+        /// </summary>
+        //public string Url { get; set; }
+        private string _newFileName = "";
+        public string NewFileName
         {
-            get { return _Plm; }
-            //set { SetProperty(ref _Plm, value); }
-            set { SetProperty(ref _Plm, value, nameof(PLM)); }
+            get { return _newFileName; }
+            set
+            {
+                SetProperty(ref _newFileName, value, nameof(NewFileName));
+            }
         }
+
+        /*
+        private ConnPLM _linkPLM;
+        public ConnPLM LinkPLM
+        {
+            get { return _linkPLM; }
+            //set { SetProperty(ref _Plm, value); }
+            set { SetProperty(ref _linkPLM, value, nameof(LinkPLM)); }
+        }
+        */
 
         private ICommand _closeDialogWindow { get; set; }
         public ICommand CloseDialogWindow
@@ -62,7 +90,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 return _closeDialogWindow;
             }
         }
-
+        
 
         private ICommand _done { get; set; }
         public ICommand Done
@@ -74,7 +102,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     Window win = (Window)_view;
                     //ClsSynchronizer.DialogReturnValue = PLM.NewFileName;
-                    ClsSynchronizer.SubDialogReturnValue = PLM.NewFileName;
+                    //ClsSynchronizer.SubDialogReturnValue = LinkPLM.NewFileName;
+                    ClsSynchronizer.DialogReturnValue = this.NewFileName;
                     win.Close();
 
                 });

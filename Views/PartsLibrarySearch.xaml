@@ -62,7 +62,7 @@
                         Background="White"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
-                <!--<StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
                     <Image Margin="3,1,0,0">
                         <Image.Style>
                             <Style>
@@ -98,7 +98,7 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                </StackPanel>-->
+                </StackPanel>
             </Border>
             <TextBox x:Name="selectedPath" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedLibraryPath.Path, Mode=TwoWay }"  HorizontalAlignment="Stretch" />
             <TextBox x:Name="selectedfile" Visibility="Hidden" IsEnabled="False"  Grid.Column="2" Text="{Binding Path=SelectedFileItem.Name, Mode=TwoWay }"  HorizontalAlignment="Stretch" />

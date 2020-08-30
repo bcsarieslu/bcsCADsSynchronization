@@ -289,19 +289,6 @@ namespace BCS.CADs.Synchronization.Entities
                 
          }
 
-        /// <summary>
-        /// 新的圖檔名稱
-        /// </summary>
-        //public string Url { get; set; }
-        private string _newFileName = "";
-        internal string NewFileName
-        {
-            get { return _newFileName; }
-            set
-            {
-                SetProperty(ref _newFileName, value, nameof(NewFileName));
-            }
-        }
 
 
 
@@ -546,7 +533,7 @@ namespace BCS.CADs.Synchronization.Entities
                     if (plmProperty.Value != plmProperty.DisplayValue)
                     {
                         List<string> list = plmProperty.DisplayValue.Split('.').ToList();
-                        Aras.IOM.Item item = _asInnovator.GetRevisionItem(searchItem.ClassName, searchItem.ItemConfigId, list[0], list[1]);
+                        Aras.IOM.Item item = _asInnovator.GetRevisionItem(searchItem.ItemType, searchItem.ItemConfigId, list[0], list[1]);
                         SearchItem versionSearchItem = GetActiveSearchItem(GetPLMSearchItem(item));
                         return versionSearchItem;
                     }
@@ -1090,16 +1077,20 @@ namespace BCS.CADs.Synchronization.Entities
                         searchItem.IsCommonPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_common_part", "0")));
                         //searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("bcs_is_standard_part", "0")));
                         searchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(qureyResult.getItemByIndex(i).getProperty("is_standard", "0")));
-                        searchItem.AccessRights = (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == "") ? SyncAccessRights.None.ToString() : (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == AsInnovator.getUserID()) ? SyncAccessRights.FlaggedByMe.ToString() : SyncAccessRights.FlaggedByOthers.ToString();
-                        searchItem.RuleProperties = GetRuleProperties(rules, qureyResult.getItemByIndex(i));
                         if (searchItem.PropertyFile.Count() < 1)
                         {
+                            if (searchItem.ClassName == "") searchItem.ClassName = GetClassName(Path.GetExtension(searchItem.FileName));
                             List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
                             _asInnovator.AddPLMPropertyFiles(searchItem, propertyFile);
                         }
+
+                        searchItem.AccessRights = (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == "") ? SyncAccessRights.None.ToString() : (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == AsInnovator.getUserID()) ? SyncAccessRights.FlaggedByMe.ToString() : SyncAccessRights.FlaggedByOthers.ToString();
+                        searchItem.RuleProperties = GetRuleProperties(rules, qureyResult.getItemByIndex(i));
                         searchItem.RestrictedStatus = GetRestrictedStatus(searchItem, rules, type).ToString();
+                        searchItem.VersionStatus = GetVersionStatus(searchItem).ToString();
+
                         searchItem.Thumbnail = qureyResult.getItemByIndex(i).getProperty(ThumbnailProperty, "");
-                        searchItem.VersionStatus = GetVersionStatus(searchItem).ToString();//Modify by kenny 2020/08/13
+                        
                     }
 
                 }
@@ -1174,6 +1165,32 @@ namespace BCS.CADs.Synchronization.Entities
         }
 
         /// <summary>
+        /// 共用圖檔的基本屬性
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        virtual protected internal SearchItem GetCommonPartSearchItem(string path, string fileName)
+        {
+            try
+            {
+
+                SearchItem searchItem = new SearchItem();
+                searchItem.ItemType = ItemTypeName.CAD.ToString();
+                searchItem.FileName = fileName;
+                searchItem.LibraryPath = path;
+                searchItem.FilePath = path;
+                searchItem.IsCommonPart = true;
+                return searchItem;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
         /// 取得PLM的CAD物件屬性定義
         /// </summary>
         /// <param name="className"></param>
@@ -1216,7 +1233,7 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
                 if (_product == null) return;// null;
-
+                if (searchItem.ClassName == "") searchItem.ClassName = GetClassName(Path.GetExtension(searchItem.FileName));
                 List<PLMProperty> properties = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsProperties;
                 List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
                 List<SearchItem> searchItems = new List<SearchItem>();
@@ -1375,12 +1392,14 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
-        virtual protected internal bool CopyToAdd(List<SearchItem> searchItems, string directory, SyncType type)
+        virtual protected internal bool CopyToAdd(List<SearchItem> searchItems, string directory, SyncType type,bool isLastVersion)
         {
             try
             {
                 //ItemMessage itemMessage = ClsSynchronizer.VmMessages.AddItemMessage("CopyToAdd", "", "", "Start");
-                
+
+                string newFileName ="";
+
                 //foreach (SearchItem searchItem in searchItems.Where(x => x.ItemId != "" && x.FileId != ""))
                 foreach (SearchItem searchItem in searchItems.Where(x => String.IsNullOrWhiteSpace(x.ItemId) ==false && String.IsNullOrWhiteSpace(x.FileId) ==false))
                 {
@@ -1392,10 +1411,13 @@ namespace BCS.CADs.Synchronization.Entities
                         //PLMProperties property = searchItem.PlmProperties.Where(x => x.Name == "bcs_added_filename" && x.DisplayValue != "").SingleOrDefault();
                         PLMProperty property = searchItem.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) ==false).SingleOrDefault();
                         fileName = (property!=null)? property.DisplayValue + Path.GetExtension(searchItem.FileName) : fileName;
+                        newFileName = fileName;
                     }
 
                     Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
-                    item = (item.getProperty("is_current", "0") == "0") ? _asInnovator.GetLastItem(item) : item;
+
+                    if (isLastVersion)
+                        item = (item.getProperty("is_current", "0") == "0") ? _asInnovator.GetLastItem(item) : item;
 
                     ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(fileName, "Download", "", "Start");
                     if (_asInnovator.DownloadFile(searchItem, IntegrationEvents, SyncEvents.OnLoadFromPLMDownloadBefore, item, searchItem.FileId, directory, fileName) == true)
@@ -1406,8 +1428,10 @@ namespace BCS.CADs.Synchronization.Entities
                     fileMessage.Status = "Finish";
                 }
 
-                //Events
-                _syncCADEvents.ExecCadEvents(AsInnovator, SyncCadCommands.SystemCopyToAdd.ToString(), searchItems, null, IntegrationEvents, SyncEvents.OnCopyToAddBefore, SyncType.CopyToAdd);
+                //Modify by kenny 2020/08/23
+                ////Events
+                //_syncCADEvents.ExecCadEvents(AsInnovator, SyncCadCommands.SystemCopyToAdd.ToString(), searchItems, null, IntegrationEvents, SyncEvents.OnCopyToAddBefore, SyncType.CopyToAdd);
+                
 
                 //Clinet CAD更新圖檔名稱
                 _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.CopyToAdd.ToString(), ref searchItems, null, null, SyncEvents.None, type);
@@ -1430,6 +1454,9 @@ namespace BCS.CADs.Synchronization.Entities
                 _syncCADEvents.ExecCadEvents(AsInnovator, SyncCadCommands.SystemCopyToAdd.ToString(), searchItems, null, IntegrationEvents, SyncEvents.OnCopyToAddBefore, SyncType.CopyToAdd);
                 //itemMessage.Status = "End";
 
+                OpenFile(directory, newFileName);
+
+
                 return true;
             }
             catch (Exception ex)
@@ -1439,6 +1466,29 @@ namespace BCS.CADs.Synchronization.Entities
 
         }
 
+
+        /// <summary>
+        /// 僅提供開啟檔案,不做作任何事
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileName"></param>
+        protected internal void OpenFile(string path, string fileName)
+        {
+            try
+            {
+                //Events
+                SearchItem searchItem = new SearchItem();
+                searchItem.FilePath = path;
+                searchItem.FileName = fileName;
+
+                _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.OpenFile.ToString(), ref searchItem, null, null, SyncEvents.OpenFile, SyncType.None);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
 
 
@@ -1565,7 +1615,10 @@ namespace BCS.CADs.Synchronization.Entities
                                 searchItem = (searchItemList.Count() > 0) ? searchItemList[0] : AddNewSearchItem(searchItems, qureyResult.getItemByIndex(i), rules, "", addedFilename, itemId, fileId);
                                 if (new List<string> { itemId }.Except(result).ToList().Count() > 0) result.Add(itemId);
                                 searchItem.AccessRights = (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == "") ? SyncAccessRights.None.ToString() : (qureyResult.getItemByIndex(i).getProperty("locked_by_id", "") == AsInnovator.getUserID()) ? SyncAccessRights.FlaggedByMe.ToString() : SyncAccessRights.FlaggedByOthers.ToString();
+                                searchItem.RuleProperties = GetRuleProperties(rules, qureyResult.getItemByIndex(i));
                                 searchItem.RestrictedStatus = GetRestrictedStatus(searchItem, rules, type).ToString();
+                                searchItem.VersionStatus = GetVersionStatus(searchItem).ToString();
+
 
                                 //子階id改為config_id
                                 string relatedConfigId = qureyResult.getItemByIndex(i).getProperty("config_id", "");
@@ -1641,7 +1694,7 @@ namespace BCS.CADs.Synchronization.Entities
 
                     IntegrationEvents integrationEvent1 = null;
                     _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.CloseFiles.ToString(), searchItem, null, integrationEvent1, SyncEvents.CloseFiles,SyncType.LoadFromPLM);
-
+                    if (searchItem.IsCommonPart == true && File.Exists(Path.Combine(searchItem.LibraryPath, searchItem.FileName))) { fileMessage.Status = "Finish"; continue; }
                     if (_asInnovator.DownloadFile(searchItem, IntegrationEvents, SyncEvents.OnLoadFromPLMDownloadBefore, item, searchItem.FileId, directory, searchItem.FileName)==true)
                     {
                         //searchItem.FilePath = directory;
@@ -1746,6 +1799,7 @@ namespace BCS.CADs.Synchronization.Entities
 
                         if (searchItem.PropertyFile.Count() < 1)
                         {
+                            if (searchItem.ClassName == "") searchItem.ClassName = GetClassName(Path.GetExtension(searchItem.FileName));
                             List<PLMPropertyFile> propertyFile = _product.PdClassItems?.Where(c => c.Name == searchItem.ClassName)?.First()?.CsPropertyFile;
                             PLMPropertyFile plmPropertyFile = propertyFile.Where(x => x.Name == NativeProperty).FirstOrDefault();
                             PLMPropertyFile newPropertyFile = plmPropertyFile.Clone() as PLMPropertyFile;
@@ -2288,15 +2342,23 @@ namespace BCS.CADs.Synchronization.Entities
                     structuralChange.SourceItemConfigId = sourceSearchItem.ItemConfigId;
                     structuralChange.SourceItemId = sourceSearchItem.ItemId;
                     structuralChange.SourceFilePath = sourceSearchItem.FilePath;
+                    SearchItem searchItem;
+                    if (structuralChange.TargetItemId != "")
+                    {
+                        Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById(ItemTypeName.CAD.ToString(), structuralChange.TargetItemId);
+                       searchItem = GetPLMSearchItem(item).FirstOrDefault();
 
-                    Aras.IOM.Item item = _asInnovator.AsInnovator.getItemById(ItemTypeName.CAD.ToString(), structuralChange.TargetItemId);
-                    SearchItem searchItem = GetPLMSearchItem(item).FirstOrDefault();
+                        if (structuralChange.Type != ChangeType.InsertSaveAs) structuralChange.TargetFileName = searchItem.FileName;
+                        if (structuralChange.IsCommonPart == false) structuralChange.TargetFilePath = searchItem.FilePath;
+                        structuralChange.TargetItemConfigId = searchItem.ItemConfigId;
 
-                    if (structuralChange.Type != ChangeType.InsertSaveAs)  structuralChange.TargetFileName = searchItem.FileName;
-                    structuralChange.TargetFilePath = searchItem.FilePath;
-                    structuralChange.TargetItemConfigId = searchItem.ItemConfigId;
+                    }else
+                    {
+                        //Parts Library 未放入系統
+                        searchItem = GetCommonPartSearchItem(structuralChange.TargetFilePath, structuralChange.TargetFileName);
+                    }
+
                     if (searchItem.FileName == structuralChange.SourceFileName) throw new Exception(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_TheSelectedDrawingFileIsTheSameAsTheParentFrawingFile"));//return false
-
                     structuralChange.IsExist = true;
                     targetSearchItem = searchItems.Where(x => x.FileName == searchItem.FileName).FirstOrDefault();
                     if (targetSearchItem == null)
@@ -2305,6 +2367,7 @@ namespace BCS.CADs.Synchronization.Entities
                         searchItems.Add(searchItem);
                     }
                     targetSearchItem = searchItems.Where(x => x.FileName == searchItem.FileName).FirstOrDefault();
+
                     if (structuralChange.Type == ChangeType.InsertSaveAs)  ClsSynchronizer.VmSyncCADs.AddNewFileNameProperty(targetSearchItem, targetSearchItem.PlmProperties, "Insert Save As", structuralChange.TargetFileName);
                 }
                 
@@ -3067,6 +3130,10 @@ namespace BCS.CADs.Synchronization.Entities
                     if (restrictedStatus == SyncRestrictedStatus.SharedNoModification) syncRestrictedStatus = restrictedStatus;
                     if (syncRestrictedStatus != SyncRestrictedStatus.SharedNoModification) syncRestrictedStatus = restrictedStatus;
                 }
+
+                //Modify by kenny 2020/08/26 ---
+                if (syncRestrictedStatus == SyncRestrictedStatus.None && (searchItem.IsCommonPart || searchItem.IsStandardPart)) syncRestrictedStatus = SyncRestrictedStatus.SharedNoModification;
+                //------------------------------
                 return syncRestrictedStatus;
 
             }
@@ -3154,11 +3221,12 @@ namespace BCS.CADs.Synchronization.Entities
                     {
                         if (conditionalRule.PrepertyName == "state") return SyncRestrictedStatus.NoModification;
                         //if (conditionalRule.PrepertyName == "bcs_is_standard_part") syncRestrictedStatus=SyncRestrictedStatus.SharedNoModification;
-                        if (conditionalRule.PrepertyName == "is_standard") syncRestrictedStatus = SyncRestrictedStatus.SharedNoModification;
+                        if (conditionalRule.PrepertyName == "is_standard" || conditionalRule.PrepertyName == "bcs_is_standard_part") syncRestrictedStatus = SyncRestrictedStatus.SharedNoModification;
                         if (syncRestrictedStatus != SyncRestrictedStatus.SharedNoModification) syncRestrictedStatus = SyncRestrictedStatus.Prohibited;
                     }
 
                 }
+
                 return syncRestrictedStatus;
 
                 }
@@ -3236,7 +3304,8 @@ namespace BCS.CADs.Synchronization.Entities
                     if (searchItem != null)
                     {
                         searchItem.FilePath = activeItem.FilePath;
-                        structuralChange.TargetFilePath = activeItem.FilePath;
+
+                        if (structuralChange.IsCommonPart==false ) structuralChange.TargetFilePath = activeItem.FilePath;
 
                         PLMProperty property = null;
                         if (structuralChange.Type ==ChangeType.InsertSaveAs)
@@ -3247,6 +3316,24 @@ namespace BCS.CADs.Synchronization.Entities
                         _syncCADEvents.ExecCadEvent(AsInnovator, SyncCadCommands.CloseFiles.ToString(), searchItem, null, integrationEvent, SyncEvents.CloseFiles, type);
 
                         ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(fileName, "Download", "", "Start");
+
+                        if (structuralChange.IsCommonPart==true)
+                        {
+                            searchItem.LibraryPath = structuralChange.TargetFilePath;
+                            searchItem.FilePath = searchItem.LibraryPath;
+                            searchItem.IsCommonPart = structuralChange.IsCommonPart;                         
+                        }
+
+                        if (structuralChange.Type == ChangeType.InsertSaveAs && structuralChange.LibraryFileName!="")
+                        {
+                            File.Copy(Path.Combine(structuralChange.LibraryPath, structuralChange.LibraryFileName), Path.Combine(activeItem.FilePath, structuralChange.TargetFileName));
+                            structuralChange.TargetFilePath = activeItem.FilePath;
+                            fileMessage.Status = "Finish"; continue;
+                        }
+                        else
+                        {
+                            if (searchItem.IsCommonPart == true && File.Exists(Path.Combine(searchItem.LibraryPath, searchItem.FileName))) { fileMessage.Status = "Finish"; continue; }
+                        }                      
                         _asInnovator.DownloadFile(searchItem.FileId, activeItem.FilePath, ref fileName);
                         fileMessage.Status = "Finish";
                         searchItem.IsNewVersion = true;
@@ -3260,7 +3347,7 @@ namespace BCS.CADs.Synchronization.Entities
                     {
                         PLMProperty property = searchItem.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) == false).SingleOrDefault();
                         string fileName = property.DisplayValue + Path.GetExtension(searchItem.FileName);
-                        structuralChange.TargetFilePath = activeItem.FilePath;
+                        if (structuralChange.IsCommonPart == false) structuralChange.TargetFilePath = activeItem.FilePath;
                         ItemMessage fileMessage = ClsSynchronizer.VmMessages.AddItemMessage(fileName, "Download", "", "Start");
                         _asInnovator.DownloadFile(searchItem.FileId, activeItem.FilePath, ref fileName);
                         fileMessage.Status = "Finish";
@@ -3322,7 +3409,7 @@ namespace BCS.CADs.Synchronization.Entities
             try
             {
                 if (structureChanges == null) return false;
-                StructuralChange structuralChange = structureChanges.Where(x => x.TargetFileName== fileName ||  x.SourceFileName == fileName).FirstOrDefault();
+                StructuralChange structuralChange = structureChanges.Where(x => x.TargetFileName.ToLower() == fileName.ToLower() ||  x.SourceFileName.ToLower() == fileName.ToLower()).FirstOrDefault();
                 if (structuralChange != null) return true;
 
                 //if (structuralChange != null)
@@ -3468,6 +3555,7 @@ namespace BCS.CADs.Synchronization.Entities
 
                 this.PartsLibrary = _product.PartsLibrary;
                 _asInnovator.PartsLibrary = this.PartsLibrary;
+                _syncCADEvents.PartsLibrary = this.PartsLibrary;
                 //_syncCADEvents = new SyncCADEvents();
 
 
@@ -3593,6 +3681,8 @@ namespace BCS.CADs.Synchronization.Entities
                 searchItem.ClassThumbnail = GetClassThumbnail(searchItem.ClassName);
                 searchItem.FileId = fileId;
                 searchItem.RuleProperties = GetRuleProperties(rules, item);
+
+
                 searchItem.Thumbnail = item.getProperty(ThumbnailProperty, "");
 
                 //Modify by kenny 2020/08/20 bcs_library_path
@@ -3631,9 +3721,32 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+        /// <summary>
+        /// 取得CAD類別
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        private string GetClassName(string extension)
+        {
+            try
+            {
+                if (_product == null) return null;
+                extension = (extension.Substring(0, 1)==".")? extension.Substring(1):extension;
+                if (extension == "") return "";
+                string className = _product.PdClassItems?.Where(c => c.Extension.ToLower() == extension.ToLower()).Select(x=>x.Name).FirstOrDefault();
+                return className;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                //string strError = ex.Message;
+            }
+        }
+
 
         /// <summary>
         /// 取得所有CAD類別特定屬性值 (<CAD類別, Dictionary<屬性, 屬性值>>)
+        /// 
         /// </summary>
         /// <returns></returns>
         private Dictionary<string, Dictionary<string, string>> GetClassesKeys()

@@ -154,8 +154,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                         MessageBox.Show(ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("msg_NoFilesSelected")); return;
                     }
 
-                    ClsSynchronizer.DialogReturnValue = $"{Path.Combine(txtSelectedPath.Text, txtSelectedfile.Text)},{txtSelectedItemId}";
-
+                    //ClsSynchronizer.DialogReturnValue = $"{Path.Combine(txtSelectedPath.Text, txtSelectedfile.Text)},{txtSelectedItemId.Text}";
+                    ClsSynchronizer.DialogReturnValue = $"{txtSelectedItemId.Text},{Path.Combine(txtSelectedPath.Text, txtSelectedfile.Text)}";
                     Window win = (ClsSynchronizer.IsSyncCommonPageView) ? (Window)ClsSynchronizer.SyncDialogView : (Window)ClsSynchronizer.SyncCommonPageView;
                     win.Close();
 

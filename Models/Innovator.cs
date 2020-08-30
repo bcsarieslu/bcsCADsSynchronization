@@ -392,8 +392,8 @@ namespace BCS.CADs.Synchronization.Models
                 string aml = GetConfigList(listName, itemtype, selects);
 
                 Aras.IOM.Item itemList = AsInnovator.applyAML(aml);
-                if (itemList.isError()) new Exception(GetLanguageByKeyName("msg_GetLanguageFailed") + $"({itemList.getErrorString()})");
-                if (itemList.getItemCount() < 1) new Exception(String.Format(GetLanguageByKeyName("msg_GetLanguageFailed")));
+                if (itemList.isError()) throw new Exception(GetLanguageByKeyName("msg_GetLanguageFailed") + $"({itemList.getErrorString()})");
+                if (itemList.getItemCount() < 1) throw new Exception(String.Format(GetLanguageByKeyName("msg_GetLanguageFailed")));
 
                 Lists list = new Lists();
                 list.Name = listName;
@@ -625,7 +625,7 @@ namespace BCS.CADs.Synchronization.Models
                 Aras.IOM.Item editItem =  item.apply();
 
                 if (editItem == null) return false;
-                if (editItem.isError()==true) new Exception(editItem.getErrorString());
+                if (editItem.isError()==true) throw new Exception(editItem.getErrorString());
 
 
                 //Events
@@ -684,7 +684,7 @@ namespace BCS.CADs.Synchronization.Models
                 Aras.IOM.Item editItem = item.apply();
 
                 if (editItem == null) return false;
-                if (editItem.isError()) new Exception(editItem.getErrorString());
+                if (editItem.isError()) throw new Exception(editItem.getErrorString());
 
                 fileMessage.Status = "Finish";
 
@@ -703,18 +703,19 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                if (((searchItem.IsCommonPart == false && searchItem.IsStandardPart == false) || searchItem.LibraryPath != "" || _partsLibrary.Paths.Count() == 0)) return true;
+                //if (((searchItem.IsCommonPart == false && searchItem.IsStandardPart == false) || searchItem.LibraryPath != "" || _partsLibrary.Paths.Count() == 0)) return true;
+                if (( searchItem.LibraryPath != "" || _partsLibrary.Paths.Count() == 0)) return true;
                 Aras.IOM.Item item = AsInnovator.getItemById(ItemTypeName.CAD.ToString(), searchItem.ItemId);
                 item.setAction("edit");
                 item.setAttribute("version", "0");
                 item.setAttribute("serverEvents", "0");
 
-                UpdateLibraryPath(item, searchItem);
+                if (UpdateLibraryPath(item, searchItem) == false) return true;
 
                 Aras.IOM.Item editItem = item.apply();
 
                 if (editItem == null) return false;
-                if (editItem.isError()) new Exception(editItem.getErrorString());
+                if (editItem.isError()) throw new Exception(editItem.getErrorString());
                 return true;
             }
             catch (Exception ex)
@@ -768,8 +769,8 @@ namespace BCS.CADs.Synchronization.Models
                     _syncCADEvents.ExecCadEvents(AsInnovator, syncName, searchItem, integrationEvents, syncEventBefore, SyncType.CopyToAdd, ref cloneItem);
 
                     cloneItem = cloneItem.apply();
-                    if (cloneItem == null) new Exception(string.Format (GetLanguageByKeyName("msg_FailedToCloneObject"), itemtype) );
-                    if (cloneItem.isError()) new Exception(cloneItem.getErrorString());
+                    if (cloneItem == null) throw new Exception(string.Format (GetLanguageByKeyName("msg_FailedToCloneObject"), itemtype) );
+                    if (cloneItem.isError()) throw new Exception(cloneItem.getErrorString());
 
                     fileMessage.Status = "Finish";
                     GetExecSyncEvents(SyncEvents.OnCopyToAddItemAfter.ToString(), ref syncEventBefore, ref syncEventAfter, ref syncName);
@@ -822,8 +823,8 @@ namespace BCS.CADs.Synchronization.Models
                     item.setProperty(NativeProperty, newFileItem.getID());
 
                     item = item.apply();
-                    if (item == null) new Exception(String.Format (GetLanguageByKeyName("msg_FailedToEditObject"), itemtype));
-                    if (item.isError()) new Exception(item.getErrorString());
+                    if (item == null) throw new Exception(String.Format (GetLanguageByKeyName("msg_FailedToEditObject"), itemtype));
+                    if (item.isError()) throw new Exception(item.getErrorString());
 
                     searchItem.FileId = newFileItem.getID();
                 }
@@ -910,8 +911,8 @@ namespace BCS.CADs.Synchronization.Models
                 if (syncEventBefore != SyncEvents.None) _syncCADEvents.ExecCadEvents(AsInnovator, syncName, searchItem, integrationEvents, syncEventBefore, SyncType.Add, ref item);
 
                 Aras.IOM.Item newItem = item.apply();
-                if (newItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemtype)); 
-                if (newItem.isError()) new Exception(newItem.getErrorString());
+                if (newItem == null) throw new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemtype)); 
+                if (newItem.isError()) throw new Exception(newItem.getErrorString());
 
                 fileMessage.Status = "Finish";
                 //if (isLock == 1 && newItem.getLockStatus() == 0) newItem.lockItem();
@@ -953,8 +954,8 @@ namespace BCS.CADs.Synchronization.Models
                 //foreach (PLMPropertyFile itempropertyFile in searchItem.PropertyFile.Where(x => x.FileName !=""|| x.FilePath != ""))
                 foreach (PLMPropertyFile itempropertyFile in searchItem.PropertyFile.Where(x => String.IsNullOrWhiteSpace(x.FileName) ==false|| String.IsNullOrWhiteSpace(x.FilePath) ==false))
                 {
-                    if (IsCanNewFile(searchItem, itempropertyFile)){ 
-                    //if (File.Exists(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName))){
+                    //if (IsCanNewFile(searchItem, itempropertyFile)){ 
+                    if (File.Exists(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName))){
 
                         Aras.IOM.Item newFileItem = NewFileItem(itempropertyFile.FilePath, itempropertyFile.FileName);
                         string value = (itempropertyFile.DataType == "image") ? @"vault:///?fileId=" + newFileItem.getID() : newFileItem.getID();
@@ -965,7 +966,7 @@ namespace BCS.CADs.Synchronization.Models
 
                 Aras.IOM.Item editItem = item.apply();
                 if (editItem == null) return false;
-                if (editItem.isError()) new Exception(editItem.getErrorString());
+                if (editItem.isError()) throw new Exception(editItem.getErrorString());
                 item = editItem;
                 return true;
             }
@@ -1063,7 +1064,7 @@ namespace BCS.CADs.Synchronization.Models
                     {
 
                         CADStructure cadStructure = searchItem.CadStructure.Where(x => x.ItemConfigId == qureyResult.getItemByIndex(i).getProperty("config_id", "")).FirstOrDefault();
-                        SearchItem sonSearchItem = searchItems.Where(x=>x.ItemConfigId == qureyResult.getItemByIndex(i).getProperty("config_id", "") || x.FileName== fileName).FirstOrDefault();
+                        SearchItem sonSearchItem = searchItems.Where(x=>x.ItemConfigId == qureyResult.getItemByIndex(i).getProperty("config_id", "") || x.FileName.ToLower() == fileName.ToLower()).FirstOrDefault();
                         if (cadStructure == null && sonSearchItem !=null)
                         {
 
@@ -1126,7 +1127,7 @@ namespace BCS.CADs.Synchronization.Models
                 Aras.IOM.Item lastItem = item.apply();
 
                 if (lastItem == null) return null;
-                if (lastItem.isError()) new Exception(lastItem.getErrorString());
+                if (lastItem.isError()) throw new Exception(lastItem.getErrorString());
                 return lastItem;
             }
             catch (Exception ex)
@@ -1435,21 +1436,39 @@ namespace BCS.CADs.Synchronization.Models
         /// </summary>
         /// <param name="item"></param>
         /// <param name="searchItem"></param>
-        private void UpdateLibraryPath(Aras.IOM.Item item, SearchItem searchItem)
+        private bool UpdateLibraryPath(Aras.IOM.Item item, SearchItem searchItem)
         {
             try
             {
                 //if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) && _partsLibrary.Paths.Count() > 0) == false) return ;
-                if (((searchItem.IsCommonPart == false && searchItem.IsStandardPart == false) || _partsLibrary.Paths.Count() == 0)) return ;
+                //if (((searchItem.IsCommonPart == false && searchItem.IsStandardPart == false) || _partsLibrary.Paths.Count() == 0)) return ;
+                bool isUpdate = false;
+                if (_partsLibrary.Paths.Count() == 0) return false;
 
+                //目前指定共用區設定
                 string path = Path.GetDirectoryName(Path.Combine(searchItem.FilePath, searchItem.FileName));
-                // string libPath = _partsLibrary.Paths.Where(x => x.Value == path).Select(x=>x.Value).FirstOrDefault();
-                string libPath = _partsLibrary.Paths.Where(x => x.Path == path).Select(x=>x.Path).FirstOrDefault();
-                if (String.IsNullOrWhiteSpace(libPath)==false)
-                    item.setProperty("bcs_library_path", libPath);
+                string libPath = _partsLibrary.Paths.Where(x => x.Path.ToLower() == path.ToLower()).Select(x => x.Path).FirstOrDefault();
+                if (String.IsNullOrWhiteSpace(libPath) == false)
+                {
+                    if (File.Exists(Path.Combine(libPath, searchItem.FileName)))
+                    { item.setProperty("bcs_library_path", libPath); isUpdate = true; }
+                }
                 
-                if (FileInPartsLibrary(searchItem))
-                    item.setProperty("bcs_library_path", searchItem.LibraryPath);
+                if (isUpdate == false) {
+                    //所有的共用區設定
+                    if (FileInPartsLibrary(searchItem))
+                    { item.setProperty("bcs_library_path", searchItem.LibraryPath); isUpdate = true; }
+                }
+
+                if (searchItem.IsCommonPart == false && searchItem.IsStandardPart == false && item.getProperty("bcs_library_path", "")!="")
+                {
+                    //符合設定的共用區
+                    searchItem.IsCommonPart = true;
+                    item.setProperty("bcs_is_common_part", "1");
+                    isUpdate = true;
+                }
+
+                return isUpdate;
             }
             catch (Exception ex)
             {
@@ -1497,7 +1516,7 @@ namespace BCS.CADs.Synchronization.Models
                 for (var i = 0; i < qureyResult.getItemCount(); i++)
                 {
                     string fileName = qureyResult.getItemByIndex(i).getProperty("filename", "");
-                    LibraryFileInfo fileInfo= libraryPath.FileItems.Where(x => x.Name == fileName).FirstOrDefault();
+                    LibraryFileInfo fileInfo= libraryPath.FileItems.Where(x => x.Name.ToLower() == fileName.ToLower()).FirstOrDefault();
                     if (fileInfo == null) continue;
                     fileInfo.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
                     fileInfo.Thumbnail = qureyResult.getItemByIndex(i).getProperty(ThumbnailProperty, "");
@@ -1526,7 +1545,7 @@ namespace BCS.CADs.Synchronization.Models
                 if (((searchItem.IsCommonPart == true || searchItem.IsStandardPart == true) && _partsLibrary.Paths.Count() > 0) == false) return true;
                 string path = Path.GetDirectoryName(Path.Combine(itempropertyFile.FilePath, itempropertyFile.FileName));
                 //string libPath = _partsLibrary.Paths.Where(x => x.Value == path).Select(x => x.Value).FirstOrDefault();
-                string libPath = _partsLibrary.Paths.Where(x => x.Path == path).Select(x => x.Path).FirstOrDefault();
+                string libPath = _partsLibrary.Paths.Where(x => x.Path.ToLower() == path.ToLower()).Select(x => x.Path).FirstOrDefault();
                 return String.IsNullOrWhiteSpace(libPath)? true:false;
 
             }
@@ -1694,7 +1713,6 @@ namespace BCS.CADs.Synchronization.Models
             try
             {
 
-                //List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
                 List<string> properties = new List<string> { "bcs_library_path", "is_standard", "bcs_is_common_part" };
                 foreach (string name in properties)
                 {
@@ -1720,7 +1738,6 @@ namespace BCS.CADs.Synchronization.Models
             try
             {
 
-                //List<string> properties = new List<string> { "bcs_library_path", "bcs_is_standard_part", "bcs_is_common_part" };
                 List<string> properties = new List<string> { "bcs_library_path", "is_standard", "bcs_is_common_part" };
                 foreach (string name in properties)
                 {
@@ -1953,8 +1970,8 @@ namespace BCS.CADs.Synchronization.Models
                     //newFile.setProperty("file_type", "");
                     newFile.attachPhysicalFile(Path.Combine(directory, fileName));
                     newFileItem = newFile.apply();
-                    if (newFileItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemtype));
-                    if (newFileItem.isError()) new Exception(newFileItem.getErrorString());
+                    if (newFileItem == null) throw new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemtype));
+                    if (newFileItem.isError()) throw new Exception(newFileItem.getErrorString());
                 }
 
                 return newFileItem;
@@ -2018,8 +2035,8 @@ namespace BCS.CADs.Synchronization.Models
                     newItem.setProperty("bcs_instance_id", structrue.InstanceId);
                     newItem.setProperty("bcs_is_suppressed", ((structrue.IsSuppressed == true) ? 1 : 0).ToString());//Modify by kenny 2020/08/13
                     Aras.IOM.Item linkItem = newItem.apply();
-                    if (linkItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType) );
-                    if (linkItem.isError()) new Exception(linkItem.getErrorString());
+                    if (linkItem == null) throw new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType) );
+                    if (linkItem.isError()) throw new Exception(linkItem.getErrorString());
                 }
                 return;
             }
@@ -2059,14 +2076,14 @@ namespace BCS.CADs.Synchronization.Models
                     linkItem.setProperty("related_id", item.getID());
                     Aras.IOM.Item editItem = linkItem.apply();
                     if (editItem == null) return;
-                    if (editItem.isError() == true) new Exception(editItem.getErrorString());
+                    if (editItem.isError() == true) throw new Exception(editItem.getErrorString());
                 }
 
                 if (qureyResult.getItemCount() > 0) return;
 
-                
-                //if (sourceSearchItem.ItemConfigId == "") new Exception(sourceSearchItem.FileName + " config_id is null");
-                if (String.IsNullOrWhiteSpace(sourceSearchItem.ItemConfigId)) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), sourceSearchItem.FileName)) ;
+
+                //if (sourceSearchItem.ItemConfigId == "") throw new Exception(sourceSearchItem.FileName + " config_id is null");
+                if (String.IsNullOrWhiteSpace(sourceSearchItem.ItemConfigId)) throw new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), sourceSearchItem.FileName)) ;
                 Aras.IOM.Item lastItem = GetLastItem(ItemTypeName.CAD.ToString(), sourceSearchItem.ItemConfigId);
 
                 //建立新連結
@@ -2074,8 +2091,8 @@ namespace BCS.CADs.Synchronization.Models
                 newItem.setProperty("source_id", lastItem.getID());
                 newItem.setProperty("related_id", item.getID());
                 linkItem = item.apply();
-                if (linkItem == null) new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType));
-                if (linkItem.isError()) new Exception(newItem.getErrorString());
+                if (linkItem == null) throw new Exception(String.Format(GetLanguageByKeyName("msg_FailedToAddObject"), itemType));
+                if (linkItem.isError()) throw new Exception(newItem.getErrorString());
 
                 return;
             }

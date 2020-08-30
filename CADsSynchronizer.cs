@@ -845,11 +845,7 @@ namespace BCS.CADs.Synchronization
             try
             {
                 //Events
-                SearchItem searchItem = new SearchItem();
-                searchItem.FilePath = path;
-                searchItem.FileName = fileName;
-
-                _syncCADEvents.ExecCadEvent(_Plm.AsInnovator, SyncCadCommands.OpenFile.ToString(), ref searchItem, null, null, SyncEvents.OpenFile, SyncType.None);
+                _Plm.OpenFile( path,  fileName);
 
             }
             catch (Exception ex)
@@ -960,12 +956,12 @@ namespace BCS.CADs.Synchronization
         /// <param name="searchItems"></param>
         /// <param name="directory"></param>
         /// <param name="type"></param>
-        protected internal bool CopyToAdd(List<SearchItem> searchItems, string directory, SyncType type)
+        protected internal bool CopyToAdd(List<SearchItem> searchItems, string directory, SyncType type ,bool isLastVersion)
         {
             try
             {
                 ItemMessage itemMessage = ClsSynchronizer.VmMessages.AddItemMessage(type.ToString(), "", "", "Start");
-                bool ret = _Plm.CopyToAdd(searchItems, directory, type);
+                bool ret = _Plm.CopyToAdd(searchItems, directory, type, isLastVersion);
                 if (ret) itemMessage.Status = "End";
                 return ret;
 
