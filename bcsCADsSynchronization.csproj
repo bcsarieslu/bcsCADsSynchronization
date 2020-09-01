@@ -182,6 +182,7 @@
     <Compile Include="ViewModels\RecentFileViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\RevisionListViewModel.cs" />
+    <Compile Include="ViewModels\SearchItemStructureViewModel.cs" />
     <Compile Include="ViewModels\ShowCommand.cs" />
     <Compile Include="ViewModels\SubItemSearchViewModel.cs" />
     <Compile Include="ViewModels\SyncCommands.cs" />
@@ -239,6 +240,9 @@
     </Compile>
     <Compile Include="Views\RevisionList.xaml.cs">
       <DependentUpon>RevisionList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchItemStructureDialog.xaml.cs">
+      <DependentUpon>SearchItemStructureDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SubItemSearchDialog.xaml.cs">
       <DependentUpon>SubItemSearchDialog.xaml</DependentUpon>
@@ -376,6 +380,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\RevisionList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchItemStructureDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

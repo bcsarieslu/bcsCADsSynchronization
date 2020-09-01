@@ -7,7 +7,7 @@
       xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" 
       xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
       mc:Ignorable="d" 
-      Title="DataGrid">
+      >
     <!--xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"-->
     <Page.Resources>

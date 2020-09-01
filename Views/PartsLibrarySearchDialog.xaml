@@ -6,7 +6,7 @@
         xmlns:vm="clr-namespace:BCS.CADs.Synchronization.ViewModels"  
         xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"        
         mc:Ignorable="d"
-        Title="PartsLibrarySearchDialog" Height="300" Width="300">
+        Title="Parts Library" Height="300" Width="300">
 
     <Window.Resources>
         <ResourceDictionary>

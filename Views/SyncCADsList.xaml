@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:BCS.CADs.Synchronization"
         xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" x:Class="BCS.CADs.Synchronization.Views.SyncCADsList"
         mc:Ignorable="d"
-        Title="SyncCADsList" x:Name="win">
+        x:Name="win">
 
     <Page.DataContext>
         <ViewModels:MainWindowViewModel/>

@@ -8,7 +8,7 @@
       xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="SubItemSearchDialog"
+      Title="Search"
         WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" WindowStyle="None" ResizeMode="NoResize">
 
     <Window.Resources>

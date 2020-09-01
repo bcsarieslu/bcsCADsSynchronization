@@ -7,7 +7,7 @@
       xmlns:vm="clr-namespace:BCS.CADs.Synchronization.ViewModels"  
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="PartsLibrarySearch">
+      >
     
       <Page.Resources>
         <ResourceDictionary>

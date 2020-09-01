@@ -9,7 +9,7 @@
       x:Class="BCS.CADs.Synchronization.Views.PlugInFuncs"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="PlugInFuncs">
+      >
 
     <Page.Resources>
         <ResourceDictionary>

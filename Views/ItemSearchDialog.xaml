@@ -9,7 +9,7 @@
         xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
         mc:Ignorable="d"
         x:Name="winItemType"
-        Title="ItemTypeSearchDialog" Height="300" Width="300">
+        Title="Search" Height="300" Width="300">
 
     <Window.Resources>
         <ResourceDictionary>
