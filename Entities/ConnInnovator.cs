@@ -721,8 +721,7 @@ namespace BCS.CADs.Synchronization.Entities
                             {
                                 string[] arry = newProperty.DataValue.Split((char)47);
                                 newProperty.DisplayValue = arry[arry.Length - 1];
-                                newProperty.KeyedId = newProperty.DataValue;
-                                newProperty.KeyedName = newProperty.DisplayValue;
+                                newProperty.DataValue = qureyResult.getItemByIndex(i).getProperty(newProperty.Name, "");
                             }
                             else if(newProperty.DataType == "revision")//Modify by kenny 2020/08/05
                             {
@@ -807,8 +806,7 @@ namespace BCS.CADs.Synchronization.Entities
                             {
                                 string[] arry = newProperty.DataValue.Split((char)47);
                                 newProperty.DisplayValue = arry[arry.Length - 1];
-                                newProperty.KeyedId = newProperty.DataValue;
-                                newProperty.KeyedName = newProperty.DisplayValue;
+                                newProperty.DataValue = qureyResult.getItemByIndex(i).getProperty(newProperty.Name, "");
                             }
                             else if (newProperty.DataType == "revision")
                             {
@@ -2020,7 +2018,7 @@ namespace BCS.CADs.Synchronization.Entities
                 itemType = new ItemType();
                 //itemType = new ItemType(itemTypeProperties, name);
                 itemType.Type  = type;
-                itemType.BuildItemType(itemTypeProperties, name);
+                itemType.BuildItemType(itemTypeProperties, itemType, name);
 
                 //foreach (PLMProperties plmProperties in itemType.CsProperties.Where(x => x.DataSource != "" && (x.DataType == "list" || x.DataType == "filter list")))
                 foreach (PLMProperty plmProperty in itemType.PlmProperties.Where(x => String.IsNullOrWhiteSpace(x.DataSource) ==false && (x.DataType == "list" || x.DataType == "filter list")))
@@ -2642,7 +2640,8 @@ namespace BCS.CADs.Synchronization.Entities
                 //property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
                 property.DisplayValue = (dataContext.DisplayValue==null)? "": dataContext.DisplayValue;
 
-                property.DataValue = property.DisplayValue;
+                if (property.DataType!= "classification") property.DataValue = property.DisplayValue;
+
                 switch (property.DataType)
                 {
                     case "item":

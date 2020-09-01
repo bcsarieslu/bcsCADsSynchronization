@@ -7,7 +7,8 @@
     <!--xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"-->
     
     <local1:PLMProperty x:Key="RegPLMPropertiesConverter"/>
-
+    <local1:PLMProperty x:Key="RegTagConverter"/>
+    
     <DataTemplate x:Key="RowDetailTemplate">
         <Grid x:Name="RowDetailGrid"
               HorizontalAlignment="Center"
@@ -51,13 +52,21 @@
                                                     <!--<ColumnDefinition Width="*"/>-->
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock  Text="{Binding Label}" />
+                                            <!--Tag="{Binding DataSource}"  Template="{Binding Tag, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  -->
                                                 <TextBox 
                                                     Text="{Binding DisplayValue, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                     Tag="{Binding DataSource}"
                                                     Grid.Column="1" Foreground="{Binding IsModify, Mode=TwoWay,Converter={StaticResource RegPLMPropertiesConverter }}" 
                                                     Background="{Binding SyncColorTypeValue, Mode=TwoWay,Converter={StaticResource RegPLMPropertiesConverter }}"  
                                                     TextWrapping="Wrap">
-                                                    <TextBox.Style>
+                                                   <!--<TextBox.Tag>
+                                                    <MultiBinding Converter="{StaticResource RegTagConverter}" ConverterParameter="FormatDataSourceTag">
+                                                            <Binding Path="DataSource"/>
+                                                            <Binding Path="Tag"/>
+                                                        </MultiBinding>
+                                                   </TextBox.Tag>-->
+
+                                                <TextBox.Style>
                                                         <Binding Path="DataType"  >
                                                             <Binding.Converter >
                                                                 <con:StyleConverter  />

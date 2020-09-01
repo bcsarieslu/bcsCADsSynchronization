@@ -70,17 +70,17 @@ namespace BCS.CADs.Synchronization.Classes
         /// 外部程式進入點
         /// </summary>
         /// <param name="xd"></param>
-        public void BuildItemType(XElement xd, string itemtype)
+        public void BuildItemType(XElement xd, ItemType itemType, string itemtypeName)
         {
             _xmlSetting = xd;
-            BuildProperties(itemtype);
+            BuildProperties(itemType, itemtypeName);
         }
 
         #endregion
 
         #region "                   方法(內部)"
 
-        private void BuildProperties(string itemtype)
+        private void BuildProperties(ItemType itemType, string itemtypeName)
         {
             try
             {
@@ -107,6 +107,9 @@ namespace BCS.CADs.Synchronization.Classes
                     //PLM資料類型
                     property.DataType = xmlItem.Elements("data_type")?.Single()?.Value;
 
+                    if (property.Name == "classification") property.DataType = "classification";
+                    property.SoruceItemType = itemType;
+
                     //PLMCAD資料來源
                     property.DataSource = xmlItem.Elements("data_source")?.Single()?.Attribute("keyed_name")?.Value;
 
@@ -131,11 +134,11 @@ namespace BCS.CADs.Synchronization.Classes
                     if (property.DataType == "image")
                     {
                         PlmProperties.Add(property);
-                        if (isAddRevision==false)AddRevisionProperty(itemtype);
+                        if (isAddRevision==false)AddRevisionProperty(itemtypeName);
                     }
                     else
                     {
-                        if (isAddRevision == false) AddRevisionProperty(itemtype);
+                        if (isAddRevision == false) AddRevisionProperty(itemtypeName);
                         PlmProperties.Add(property);
                     }
                     isAddRevision = true;

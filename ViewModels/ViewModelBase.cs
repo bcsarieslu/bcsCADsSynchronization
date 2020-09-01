@@ -1821,14 +1821,13 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.DialogReturnValue = "";
         }
 
-        private void ShowClassificationTreeDialog(TextBox txtProperty)
+        private void ShowClassificationTreeDialog(TextBox txtProperty, PLMProperty plmProperty)
         {
-            string value = (txtProperty.Tag == null) ? "" : txtProperty.Tag.ToString();
-            //if (itemType == "") itemType = ItemTypeName.CAD.ToString();
-            ClsSynchronizer.ClassificationItemType = ItemTypeName.CAD.ToString();
-            //string value = txtProperty.Name;
+            //SoruceItemType
+            string itemType = (plmProperty == null)? ItemTypeName.CAD.ToString():(plmProperty.SoruceSearchItem!=null)?  plmProperty.SoruceSearchItem.ItemType: plmProperty.SoruceItemType.Name;
+            string value = (plmProperty == null) ? "" : plmProperty.DataValue;
 
-            ClassificationTree itemSearchDialog = new ClassificationTree(ClsSynchronizer.ClassificationItemType, value);
+            ClassificationTree itemSearchDialog = new ClassificationTree(itemType, value);
             ClsSynchronizer.DialogReturnDisplayValue = "";
             ClsSynchronizer.DialogReturnValue = "";
             itemSearchDialog.Width = 500;
@@ -1838,14 +1837,32 @@ namespace BCS.CADs.Synchronization.ViewModels
             itemSearchDialog.ShowDialog();
             if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false)
             {
-                //MessageBox.Show(ClsSynchronizer.DialogReturnValue);
-                //string full = ClsSynchronizer.DialogReturnValue.Split((char)44)[0];
-                //ClsSynchronizer.VmSyncCADs.OpenFile(System.IO.Path.GetDirectoryName(full), System.IO.Path.GetFileName(full));
                 txtProperty.Text = ClsSynchronizer.DialogReturnDisplayValue;
-                txtProperty.Tag = ClsSynchronizer.DialogReturnValue;
+                UpdateSearchItemTypePropertyValue(plmProperty, ClsSynchronizer.DialogReturnValue, ClsSynchronizer.DialogReturnDisplayValue);
             }
             ClsSynchronizer.DialogReturnValue = "";
 
+        }
+
+
+        private void UpdateSearchItemTypePropertyValue(PLMProperty plmProperty,string dataValue,string displayValue)
+        {
+            if (plmProperty == null) return;
+
+            //要先修改DisplayValue,才能改DataValue,不然值會被異動
+            plmProperty.DisplayValue = displayValue;
+            plmProperty.DataValue = dataValue;
+
+            if (plmProperty.SoruceItemType == null) return;
+
+            int index = (ClsSynchronizer.SyncSubListView == null) ? -1 : ClsSynchronizer.SyncSubListView.Count() - 1;
+            SearchItem searchItemType = (ClsSynchronizer.IsActiveSubDialogView == true) ? ClsSynchronizer.NewSubSearchItem[index.ToString()] : ClsSynchronizer.NewSearchItem;
+            if (searchItemType == null) return;
+
+            PLMProperty property = searchItemType.PlmProperties.Where(x => x.Name == plmProperty.Name).FirstOrDefault();
+            if (property == null) return;
+            property.DisplayValue = displayValue;
+            property.DataValue = dataValue;
         }
 
         /// <summary>
@@ -2108,7 +2125,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //System.Diagnostics.Debugger.Break();
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
-                    ShowClassificationTreeDialog(txtProperty);
+                    PLMProperty plmProperty = (PLMProperty)y.DataContext;
+                    ShowClassificationTreeDialog(txtProperty, plmProperty);
 
                 });
                 return _classificationPickerImageLeftClick;
@@ -2144,8 +2162,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
-
-                    ShowClassificationTreeDialog(txtProperty);
+                    PLMProperty plmProperty = (PLMProperty)y.DataContext;
+                    ShowClassificationTreeDialog(txtProperty, plmProperty);
                     if (ClsSynchronizer.SyncCurrentObsSearchItems.Count() < 1) ClsSynchronizer.IsActiveSubDialogView = false;
                 });
                 return _gridClassificationPickerImageLeftClick;
@@ -2239,6 +2257,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             double left = 10, top = 10, right = 0, bottom = 10;
 
             formGrid.Children.Clear();
+            if (ObsSearchItems.Count() == 0) return;
             var plmProperties = (plmProp != null) ? plmProp : ObsSearchItems.FirstOrDefault(a => a.PlmProperties != null).PlmProperties;
             foreach (var item in plmProperties)
             {

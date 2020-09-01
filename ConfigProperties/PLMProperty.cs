@@ -208,6 +208,9 @@ namespace BCS.CADs.Synchronization.ConfigProperties
             }
         }
 
+
+
+
         public string Value { get; set; } = "";
 
         /// <summary>

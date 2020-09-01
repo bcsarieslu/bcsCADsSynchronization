@@ -1190,14 +1190,14 @@ namespace BCS.CADs.Synchronization.Models
         /// </summary>
         /// <param name="itemType"></param>
         /// <returns></returns>
-        protected internal XElement GetSearchItemTypeProperties(string itemType)
+        protected internal XElement GetSearchItemTypeProperties(string itemTypeName)
         {
             try
             {
 
                 //if (_cadRequiredProperties != null) return null;
 
-                
+
                 List<string> selects = new List<string> { "name", "id", "data_type", "data_source","pattern", "is_required", "label" ,"keyed_name" ,"related_id","sort_order", "column_width" };
                 foreach (var lagnlist in _language)
                 {
@@ -1207,7 +1207,7 @@ namespace BCS.CADs.Synchronization.Models
                 }
 
                 
-                string aml = GetConfigSearchItemTypeProperties(itemType, selects);
+                string aml = GetConfigSearchItemTypeProperties(itemTypeName, selects);
 
                 Aras.IOM.Item itemTypeProperties = AsInnovator.applyAML(aml);
                 if (itemTypeProperties.isError()) return null;

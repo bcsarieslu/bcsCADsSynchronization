@@ -111,7 +111,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static string DialogReturnDisplayValue { get; set; } = "";
 
-        public static string ClassificationItemType { get; set; } = "";
+        //public static string ClassificationItemType { get; set; } = "";
 
         public static string DialogReturnKeyedName { get; set; } = "";
 
