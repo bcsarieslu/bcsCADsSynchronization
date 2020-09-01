@@ -6,9 +6,11 @@
       xmlns:vm="clr-namespace:BCS.CADs.Synchronization.ViewModels"
       xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"    
       xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
+      xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+      WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" WindowStyle="None" ResizeMode="NoResize"   
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="Revisions">
+      Title="{DynamicResource revision}">
 
 
     <Window.Resources>
@@ -19,6 +21,7 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/AddTemplateStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/MainStyle.xaml"/>
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <!--<ViewModels:MainWindowViewModel></ViewModels:MainWindowViewModel>-->
             <vm:NewFileNameViewModel x:Key="viewmodel"/>
@@ -33,10 +36,30 @@
         <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="10" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Margin="0,15,0,0" >
+
+            <Grid Background="White" Grid.Row="0" Height="35">
+                <TextBlock x:Name="searchDialogTitle" Text="{DynamicResource PartsLibrary}" Margin="15,10,0,0" FontSize="14"/>
+                <Thumb Opacity="0" Foreground="{x:Null}" DragDelta="Thumb_OnDragDelta"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0">
+                    <Button Margin="0,0,8,0" ToolTip="{DynamicResource maximize}" Width="22" Height="22" Style="{StaticResource WindowActionButton}" Click="btnActionMinimize_OnClick">
+                        <Path Width="16" Height="16" RenderTransformOrigin="0.5,0.5" Data="M7.9750088,17.000004L24.024009,17.000004C24.577003,17.000004 25.024009,17.447025 25.024009,18.000004 25.024009,18.552982 24.577003,19.000004 24.024009,19.000004L7.9750088,19.000004C7.4219998,19.000004 6.9750087,18.552982 6.9750089,18.000004 6.9750087,17.447025 7.4219998,17.000004 7.9750088,17.000004z M2,2L2,26 30,26 30,2z M0,0L32,0 32,28 0,28z" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}, Mode=FindAncestor}}"/>
+                    </Button>
+                    <Button Margin="0,0,8,0" ToolTip="{DynamicResource maximize}" Width="22" Height="22" Style="{StaticResource WindowActionButton}" Click="btnActionMaximize_OnClick">
+                        <Path Width="16" Height="16" RenderTransformOrigin="0.5,0.5" Data="M19.519989,18.835993L32,18.835993 19.519989,31.317999z M0,18.835993L12.480011,18.835993 12.480011,31.317999z M19.519989,0L32,12.480007 19.519989,12.480007z M12.480011,0L12.480011,12.480007 0,12.480007z" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}, Mode=FindAncestor}}"/>
+                    </Button>
+                    <Button ToolTip="{DynamicResource close}" Width="22" Height="22" Style="{StaticResource WindowActionButtonClose}" Click="btnActionClose_Click">
+                        <Path Width="16" Height="16" Stretch="Fill" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}, Mode=FindAncestor}}" Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z "/>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+
+            <Grid Grid.Row="1" Margin="0,0,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="40"/>
@@ -57,7 +80,7 @@
                 <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Bottom"/>
             </Grid>
 
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="2">
                 <DataGrid x:Name="gridSelectedItems" IsReadOnly="False" CanUserAddRows="False"
                         AutoGenerateColumns="False" 
                         ItemsSource="{Binding ObsSearchItems}"

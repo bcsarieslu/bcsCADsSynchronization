@@ -19,6 +19,11 @@
     <sys:String x:Key="logout">Logout</sys:String>
     <!--<sys:String x:Key="systeminf">System Information</sys:String>-->
     <sys:String x:Key="search">Search</sys:String>
+    <sys:String x:Key="structure">Structure</sys:String>
+    <sys:String x:Key="revision">Revision</sys:String>
+    <sys:String x:Key="classification">Type</sys:String>
+    <sys:String x:Key="add">Add</sys:String>
+    
     <!-- exeproject -->
     <sys:String x:Key="execute">Execute</sys:String>
     <sys:String x:Key="propsync">Property Synchronization</sys:String>

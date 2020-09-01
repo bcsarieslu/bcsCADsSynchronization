@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
       xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" x:Class="BCS.CADs.Synchronization.Views.AddFromTemplate"
       mc:Ignorable="d" 
-      Title="Add">
+      Title="{DynamicResource add}">
 
     <Page.Resources>
         <ResourceDictionary>

@@ -24,6 +24,8 @@ namespace BCS.CADs.Synchronization.Views
     public partial class SubItemSearchDialog : Window
     {
 
+        bool window_size_max = true;
+
         public SubItemSearchDialog()
         {
             InitializeComponent();
@@ -61,7 +63,22 @@ namespace BCS.CADs.Synchronization.Views
             this.Close();
         }
 
-
-       
+        private void btnActionMinimize_OnClick(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+        private void btnActionMaximize_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (window_size_max)
+            {
+                WindowState = WindowState.Maximized;
+                window_size_max = false;
+            }
+            else
+            {
+                WindowState = WindowState.Normal;
+                window_size_max = true;
+            }
+        }
     }
 }
