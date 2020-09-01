@@ -52,7 +52,7 @@
 
             <DataGrid.InputBindings>
                 <!-- LeftDoubleClick -->
-                <MouseBinding Gesture="LeftClick" 
+                <MouseBinding Gesture="RightClick" 
                           Command="{Binding GridFieldClickedCommand}" 
                           CommandParameter="{Binding ElementName=gridDetail, Path=SelectedItem}" />
             </DataGrid.InputBindings>
@@ -148,7 +148,7 @@
                         <StackPanel>
                             <Image Source="{Binding ThumbnailImagePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                                Stretch="Uniform" 
-                               Width="170"
+                               Width="200"
                                VerticalAlignment="Top" 
                                Margin="0,20,0,0"/>
                         </StackPanel>
@@ -172,5 +172,16 @@
                 </Border>
             </StackPanel>
         </ScrollViewer>
+        <StackPanel Grid.Row="0" Grid.RowSpan="2">
+            <Popup 
+                        IsOpen="{Binding ShowThumbnailImage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                        Grid.Row="0" Grid.RowSpan="2"
+                        Placement="Center"
+                        PopupAnimation="Fade"
+                        StaysOpen="False"
+                        AllowsTransparency="True">
+                <Image Stretch="Uniform" Height="500" Width="500" Source="{Binding ThumbnailImageSource,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+            </Popup>
+        </StackPanel>
     </Grid>
 </Page>

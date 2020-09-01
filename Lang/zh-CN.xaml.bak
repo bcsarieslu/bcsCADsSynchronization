@@ -103,6 +103,7 @@
     <sys:String x:Key="status_finish">完成</sys:String>
     <sys:String x:Key="status_end">结束</sys:String>
 
-    <sys:String x:Key="date">日期</sys:String>
-    <sys:String x:Key="filePath">文件路径</sys:String>
+
+
+
 </ResourceDictionary>

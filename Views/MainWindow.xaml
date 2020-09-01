@@ -339,22 +339,25 @@
                     </TextBox>
                 </StackPanel>
             </Border>
-            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="3">
+            <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="3">
                 <Button x:Name="btn_Message" Grid.Column="3" Style="{StaticResource 3DButtonStyle}" ToolTip="{DynamicResource message}"  Command="{Binding ShowMessages}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">
-                    <Image>
-                        <Image.Style>
-                            <Style>
-                                <Setter Property="Image.Source" Value="{StaticResource ResourceKey=NotificationsDrawingImage}"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsMouseOver,
+                    <Grid>
+                        <Ellipse Visibility="{Binding ShowMessageDot,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="#BCFDFF" Width="10" Height="10" VerticalAlignment="Top" Margin="10,3,0,0" Panel.ZIndex="1"/>
+                        <Image>
+                            <Image.Style>
+                                <Style>
+                                    <Setter Property="Image.Source" Value="{StaticResource ResourceKey=NotificationsDrawingImage}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver,
                                                 RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
                                                 Value="True">
-                                        <Setter Property="Image.Source" Value="{StaticResource ResourceKey=NotificationsDrawingImageTriggerUse}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
+                                            <Setter Property="Image.Source" Value="{StaticResource ResourceKey=NotificationsDrawingImageTriggerUse}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Grid>
                 </Button>
             </WrapPanel>
             <Grid.LayoutTransform>
@@ -421,13 +424,13 @@
                     </Grid>
                 </Grid>
 
+                <Frame x:Name="RecentFileView" Visibility="{Binding RecentFileViewVisibility,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Margin="0,-0.7,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
                 <Frame x:Name="LoginView" Margin="0,-0.7,0,0" Grid.Row="0" NavigationUIVisibility="Hidden" Background="#F5ECC3" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-                <Frame x:Name="SystemView" Grid.Row="0" NavigationUIVisibility="Hidden" Grid.RowSpan="2" Background="AliceBlue" Visibility="Collapsed" Grid.ColumnSpan="2" Margin="0,0,0.4,0">
+                <Frame x:Name="SystemView" Grid.Row="0" NavigationUIVisibility="Hidden" Grid.RowSpan="2" Background="AliceBlue" Visibility="Collapsed" Grid.ColumnSpan="2">
                     <Frame.LayoutTransform>
                         <ScaleTransform ScaleX="{Binding SetScale}" ScaleY="{Binding SetScale}"/>
                     </Frame.LayoutTransform>
                 </Frame>
-
 
                 <ac:AdornedControl Name="LoadingAdorner" Grid.Row="0" Grid.RowSpan="2">
                     <ac:AdornedControl.AdornerContent>
@@ -508,7 +511,7 @@
 
                     <!--新增範本按鈕-->
                     <StackPanel Orientation="Horizontal" Grid.Row="1" x:Name="newFormTemplateFile_SP">
-                        <!-- for test : <Button x:Name="newFormTemplateFile" Command="{Binding ShowCommand }" CommandParameter="{Binding RelativeSource={RelativeSource self}}" > -->
+                        <!-- for test : <Button x:Name="newFormTemplateFile" Command="{Binding ShowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource self}}" > -->
                         <Button x:Name="newFormTemplateFile" Command="{Binding NewFormTemplateFileList}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" ToolTip="{DynamicResource temp2add}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">

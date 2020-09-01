@@ -105,6 +105,5 @@
     <sys:String x:Key="status_finish">完成</sys:String>
     <sys:String x:Key="status_end">結束</sys:String>
 
-    <sys:String x:Key="date">日期</sys:String>
-    <sys:String x:Key="filePath">檔案路徑</sys:String>
+
 </ResourceDictionary>

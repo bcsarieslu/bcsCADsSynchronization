@@ -166,9 +166,11 @@
       <DependentUpon>SystemInformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\CalendarConveter.cs" />
+    <Compile Include="Utility\ClassificationPickerConveter.cs" />
     <Compile Include="Utility\DoubleStringConverter.cs" />
     <Compile Include="Utility\ItemPickerConveter.cs" />
     <Compile Include="Utility\ListboxConveter.cs" />
+    <Compile Include="ViewModels\ClassificationTreeViewModel.cs" />
     <Compile Include="ViewModels\ClsSynchronizer.cs" />
     <Compile Include="ViewModels\ItemSearchViewModel.cs" />
     <Compile Include="ViewModels\LanguageList.cs" />
@@ -204,7 +206,7 @@
     <Compile Include="Views\ItemSearchDialog.xaml.cs">
       <DependentUpon>ItemSearchDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ItemsMessage.xaml.cs">
+    <Compile Include="ViewModels\ItemsMessage.xaml.cs">
       <DependentUpon>ItemsMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoadingWait.xaml.cs">
@@ -305,6 +307,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Utility\ClassificationPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Utility\GridItemPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -341,7 +347,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ItemsMessage.xaml">
+    <Page Include="ViewModels\ItemsMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

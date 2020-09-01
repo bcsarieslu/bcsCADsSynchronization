@@ -69,7 +69,9 @@ namespace BCS.CADs.Synchronization.Classes
                 //BCS CAD Integration Definition(BCS CAD Define Class),BCS Class Composition(BCS CAD Define Class),BCS CAD Integration Events,BCS CAD Conditional Rules(Property),BCS CAD Operation Options,BCS CAD PA
                 //foreach (XElement xmlRelItem in _xmlSetting.Descendants("Result").Single().Descendants("Item").Where(c => c.Attribute("type").Value == "BCS CAD Integration Definition"))
                 //foreach (XElement xmlRelItem in _xmlSetting.Descendants("Result").Single()?.Elements("Item")?.Elements("Relationships")?.Elements("Item").Where(c => c.Attribute("type").Value == "BCS CAD Integration Definition"))
-                XElement xElement =_xmlSetting.Descendants("Result").Single()?.Elements("Item").SingleOrDefault();
+
+                //XElement xElement =_xmlSetting.Descendants("Result").Single()?.Elements("Item").SingleOrDefault();
+                XElement xElement =_xmlSetting.Descendants("Result").Single()?.Elements("Item").FirstOrDefault();
                 this.IsResolveAllLightweightSuppres = Convert.ToBoolean(int.Parse(xElement.Elements("bcs_is_resolve_all_lightweight").Single()?.Value));
                 this.IsResolveAllSuppres = Convert.ToBoolean(int.Parse(xElement.Elements("bcs_is_resolve_suppres").Single()?.Value));
                 foreach (XElement xmlRelItem in _xmlSetting.Descendants("Result").Single()?.Elements("Item")?.Elements("Relationships")?.Elements())

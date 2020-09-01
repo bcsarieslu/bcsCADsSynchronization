@@ -21,6 +21,7 @@ namespace BCS.CADs.Synchronization.Classes
         //public Dictionary<string,string> Paths { get; set; } = new Dictionary<string, string>();
 
         public ObservableCollection<LibraryPath> Paths { get; set; } = new ObservableCollection <LibraryPath>();
+        
 
         #endregion
 

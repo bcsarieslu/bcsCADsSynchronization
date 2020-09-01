@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using BCS.CADs.Synchronization.ViewModels;
 using Microsoft.Win32;
 using System.Windows.Controls;
+using System.Xml.Linq;
 //using System.Windows.Forms;
 #endregion
 
@@ -87,13 +88,31 @@ namespace BCS.CADs.Synchronization
         }
 
         /// <summary>
+        /// 取得Classification
+        /// </summary>
+        /// <param name="itemType"></param>
+        virtual protected internal XDocument GetClassification(string itemType)
+        {
+            try
+            {
+                return _Plm.GetClassification(itemType);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
         /// 登錄
         /// </summary>
         /// <param name="strUrl"></param>
         /// <param name="strDBName"></param>
         /// <param name="strLogin"></param>
         /// <param name="strPassword"></param>
-        
+
         protected internal bool Login(string strUrl, string strDBName, string strLogin, string strPassword, ref Exception exception)
         {
             try

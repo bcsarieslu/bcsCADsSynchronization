@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace BCS.CADs.Synchronization.ViewModels
 {
@@ -13,16 +14,13 @@ namespace BCS.CADs.Synchronization.ViewModels
         public ObservableCollection<RecentFileProperties> RecentFile
         {
             get { return _recentFile; }
-            set { SetProperty(ref _recentFile, value, "RecentFile"); }
-        }
-
-        private static string _changeLanguage;
-        public string ChangeLanguage
-        {
-            get { return _changeLanguage; }
-            set { SetProperty(ref _changeLanguage, value, "ChangeLanguage"); }
+            set
+            {
+                SetProperty(ref _recentFile, value, "RecentFile");
+            }
         }
     }
+    
     public static class Converter
     {
         public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> col)

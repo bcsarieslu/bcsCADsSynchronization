@@ -273,10 +273,11 @@ namespace BCS.CADs.Synchronization.Models
                 Aras.IOM.Item itemConfigurations = AsInnovator.applyAML(aml);
                 if (itemConfigurations.isError()) return _xmlConfigurations;
 
-                XmlDocument xmlDocument = new XmlDocument();
+                //XmlDocument xmlDocument = new XmlDocument();
                 string xml = itemConfigurations.ToString();
-                xmlDocument.LoadXml(xml);
-                _xmlConfigurations = ToXDocument(xmlDocument);
+                //xmlDocument.LoadXml(xml);
+                //_xmlConfigurations = ToXDocument(xmlDocument);
+                _xmlConfigurations = XDocument.Parse(xml);
                 return _xmlConfigurations;
 
             }
@@ -507,8 +508,14 @@ namespace BCS.CADs.Synchronization.Models
                                     newProperty.KeyedId = newProperty.Value;
                                     newProperty.DisplayValue = newProperty.KeyedName;
                                 }
-
-                                newProperty.SyncDisplayValue = newProperty.DisplayValue;
+                                else if (newProperty.DataType == "classification" && String.IsNullOrWhiteSpace(newProperty.Value) == false)
+                                {
+                                    string[] arry = newProperty.Value.Split((char)47);
+                                    newProperty.DisplayValue = arry[arry.Length - 1];
+                                    newProperty.KeyedId = newProperty.Value;
+                                    newProperty.KeyedName = newProperty.DisplayValue;
+                                }
+                                 newProperty.SyncDisplayValue = newProperty.DisplayValue;
                                 newProperty.ResetSyncColorTypeValue();
                                 newProperty.IsInitial = false;
                                 newProperty.IsExist = true;
@@ -1160,10 +1167,11 @@ namespace BCS.CADs.Synchronization.Models
                 Aras.IOM.Item itemRequiredProperties = AsInnovator.applyAML(aml);
                 if (itemRequiredProperties.isError()) return null;
 
-                XmlDocument xmlDocument = new XmlDocument();
+                //XmlDocument xmlDocument = new XmlDocument();
                 string xml = itemRequiredProperties.ToString();
-                xmlDocument.LoadXml(xml);
-                XDocument xmlDoc = ToXDocument(xmlDocument);
+                //xmlDocument.LoadXml(xml);
+                //XDocument xmlDoc = ToXDocument(xmlDocument);
+                XDocument xmlDoc = XDocument.Parse(xml);
                 _cadRequiredProperties = xmlDoc.Descendants("Result").Single();
                 return _cadRequiredProperties;
 
@@ -1173,6 +1181,7 @@ namespace BCS.CADs.Synchronization.Models
                 throw ex;
             }
         }
+
 
 
 
@@ -1203,11 +1212,12 @@ namespace BCS.CADs.Synchronization.Models
                 Aras.IOM.Item itemTypeProperties = AsInnovator.applyAML(aml);
                 if (itemTypeProperties.isError()) return null;
 
-                XmlDocument xmlDocument = new XmlDocument();
+                //XmlDocument xmlDocument = new XmlDocument();
                 string xml = itemTypeProperties.ToString();
 
-                xmlDocument.LoadXml(xml);
-                XDocument xmlDoc = ToXDocument(xmlDocument);
+                //xmlDocument.LoadXml(xml);
+                //XDocument xmlDoc = ToXDocument(xmlDocument);
+                XDocument xmlDoc = XDocument.Parse(xml);
                 _cadRequiredProperties = xmlDoc.Descendants("Result").Single();
                 return _cadRequiredProperties;
 
@@ -1894,6 +1904,42 @@ namespace BCS.CADs.Synchronization.Models
             }
         }
 
+        /// <summary>
+        /// 取得Classification
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <returns></returns>
+        protected internal XDocument GetClassification(string itemType)
+        {
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("<AML>");
+                stringBuilder.Append($"<Item type = 'ItemType' action = 'get' >");
+                stringBuilder.Append($"<name>{itemType}</name>");
+                stringBuilder.Append("</Item>");
+                stringBuilder.Append("</AML>");
+                string aml = stringBuilder.ToString();
+                Aras.IOM.Item item = AsInnovator.applyAML(aml);
+
+                string xml = item.getProperty("class_structure","");
+
+                //XmlDocument xmlDocument = new XmlDocument();
+                //xmlDocument.LoadXml(xml);
+                //xmlDocument.Save(@"D:\Temp\001\20200831.xml");
+
+                XDocument xmlDoc =(xml!="")? XDocument.Parse(xml):null;
+                return xmlDoc;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
         #endregion
 
         #region "                   方法(內部)"
@@ -2287,6 +2333,7 @@ namespace BCS.CADs.Synchronization.Models
         /// </summary>
         /// <param name="xmlDocument"></param>
         /// <returns></returns>
+        /*
         private XDocument ToXDocument(XmlDocument xmlDocument)
         {
 
@@ -2300,6 +2347,7 @@ namespace BCS.CADs.Synchronization.Models
             return xDocument;
 
         }
+        */
 
         /// <summary>
         /// CAD整合定義:CAD產品定義

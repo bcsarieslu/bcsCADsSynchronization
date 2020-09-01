@@ -178,6 +178,8 @@ namespace BCS.CADs.Synchronization.Classes
                                 //PLM資料類型
                                 property.DataType = xmlItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("data_type").Single()?.Value;
 
+                                if (property.Name == "classification") property.DataType = "classification";//Modify by kenny 2020/08/31
+
                                 //PLMCAD資料來源
                                 property.DataSource = xmlItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("data_source").Single()?.Attribute("keyed_name")?.Value;
 

@@ -105,6 +105,5 @@
     <sys:String x:Key="status_finish">Finish</sys:String>
     <sys:String x:Key="status_end">End</sys:String>
 
-    <sys:String x:Key="date">Date</sys:String>
-    <sys:String x:Key="filePath">Path</sys:String>
+
 </ResourceDictionary>

@@ -604,6 +604,23 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+        /// <summary>
+        /// 取得Classification
+        /// </summary>
+        /// <param name="itemType"></param>
+        virtual protected internal XDocument GetClassification(string itemType)
+        {
+            try
+            {
+                return _asInnovator.GetClassification(itemType);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
 
         /// <summary>
@@ -700,6 +717,13 @@ namespace BCS.CADs.Synchronization.Entities
                                 newProperty.KeyedName = newProperty.DisplayValue;
 
                             }
+                            else if (newProperty.DataType == "classification")
+                            {
+                                string[] arry = newProperty.DataValue.Split((char)47);
+                                newProperty.DisplayValue = arry[arry.Length - 1];
+                                newProperty.KeyedId = newProperty.DataValue;
+                                newProperty.KeyedName = newProperty.DisplayValue;
+                            }
                             else if(newProperty.DataType == "revision")//Modify by kenny 2020/08/05
                             {
                                 AddRevisionItem(qureyResult.getItemByIndex(i), newProperty);
@@ -778,6 +802,13 @@ namespace BCS.CADs.Synchronization.Entities
                                 newProperty.KeyedId = newProperty.DataValue;
                                 newProperty.KeyedName = newProperty.DisplayValue;
 
+                            }
+                            else if (newProperty.DataType == "classification")
+                            {
+                                string[] arry = newProperty.DataValue.Split((char)47);
+                                newProperty.DisplayValue = arry[arry.Length - 1];
+                                newProperty.KeyedId = newProperty.DataValue;
+                                newProperty.KeyedName = newProperty.DisplayValue;
                             }
                             else if (newProperty.DataType == "revision")
                             {

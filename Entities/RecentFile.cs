@@ -20,10 +20,17 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <param name="filepath"></param>
-        public void AddRecentFile(string name, string filepath)
+        public ObservableCollection<RecentFileProperties> AddRecentFile(string name, string filepath)
         {
-            List<RecentFileProperties> recentFileData = new List<RecentFileProperties>();
-            recentFileData.Add(new RecentFileProperties
+            ObservableCollection<RecentFileProperties>  readData = ReadRecentFile();
+            readData.Remove(readData.FirstOrDefault(a => a.FileName == name && a.FilePath == filepath));
+
+            if (readData.Count >= 15)
+            {
+                readData.Remove(readData.Last());
+            }
+
+            readData.Insert(0,new RecentFileProperties
             {
                 FileName = name,
                 FilePath = filepath,
@@ -32,13 +39,13 @@ namespace BCS.CADs.Synchronization.Entities
 
             var result = new
             {
-                registration_ids = from s in recentFileData select s
+                registration_ids = from s in readData select s
             };
 
             var json = JsonConvert.SerializeObject(result);
             JObject jo = JObject.Parse(json);
-            //WriteFile(jo);
-            ReadRecentFile();
+            WriteFile(jo);
+            return readData;
         }
 
         /// <summary>
@@ -68,6 +75,7 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         public ObservableCollection<RecentFileProperties> ReadRecentFile()
         {
+            if (File.Exists(Path.Combine(path, "myjson.json")) == false) return new ObservableCollection<RecentFileProperties>();
             var jsonData = JObject.Parse(File.ReadAllText(Path.Combine(path, "myjson.json"))).Children().First().Values();
             var readRecentFiles = Converter.ToObservableCollection(jsonData.Select(a => new RecentFileProperties { FileName = a.Value<string>("FileName"), FilePath = a.Value<string>("FilePath"), OpenDate = a.Value<string>("OpenDate") }));
             return readRecentFiles;

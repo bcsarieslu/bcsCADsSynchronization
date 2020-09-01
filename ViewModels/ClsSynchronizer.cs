@@ -75,6 +75,9 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         public static dynamic SyncCommonDialogView { get; set; }
 
+        public static dynamic SyncCommonTreeView { get; set; }
+        
+
         public static dynamic SyncCommonPageView { get; set; }
 
         public static bool IsSyncCommonPageView { get; set; } = false;
@@ -105,6 +108,10 @@ namespace BCS.CADs.Synchronization.ViewModels
         public static string CurrentDialog { get; set; } = "";
 
         public static string DialogReturnValue { get; set; } = "";
+
+        public static string DialogReturnDisplayValue { get; set; } = "";
+
+        public static string ClassificationItemType { get; set; } = "";
 
         public static string DialogReturnKeyedName { get; set; } = "";
 

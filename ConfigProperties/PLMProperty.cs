@@ -470,8 +470,10 @@ namespace BCS.CADs.Synchronization.ConfigProperties
         /// </summary>
         private void ChangeDataValueOnPropertyChange()
         {
+            
             if (IsInitial == false)
             {
+                //System.Diagnostics.Debugger.Break();
                 if (DataSource != "" && ListItems.Count() > 0 && (DataType == "list" || DataType == "filter list"))
                 {
                     //System.Diagnostics.Debugger.Break();
