@@ -126,7 +126,8 @@ namespace BCS.CADs.Synchronization.Models
         Insert,
         Replacement,
         CopyToAdd,
-        InsertSaveAs
+        InsertSaveAs,
+        StructureView
     }
 
     /// <summary>

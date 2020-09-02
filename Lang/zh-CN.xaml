@@ -100,7 +100,8 @@
     <sys:String x:Key="menu_ReplaceAPart">替换分件(单笔)</sys:String>
     <sys:String x:Key="menu_ReplaceAllParts">替换分件(全部)</sys:String>
     <sys:String x:Key="menu_CopyToAdd">另存为新图</sys:String>
-
+    <sys:String x:Key="menu_StructureView">结构检视</sys:String>
+    
     <sys:String x:Key="label_CopyFileName">新文件名</sys:String>
     <sys:String x:Key="label_NewFileName">新文件名</sys:String>
 

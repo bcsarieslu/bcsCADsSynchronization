@@ -461,7 +461,7 @@ namespace BCS.CADs.Synchronization
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
-        virtual protected internal SearchItem GetVersionSearchItem(SearchItem searchItem)
+        protected internal SearchItem GetVersionSearchItem(SearchItem searchItem)
         {
             try
             {
@@ -474,6 +474,27 @@ namespace BCS.CADs.Synchronization
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// 依Item Id取得CAD圖檔
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        protected internal SearchItem GetPLMSearchItem(string itemType, string id)
+        {
+            try
+            {
+
+                return _Plm.GetPLMSearchItem(itemType, id);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         /// <summary>
         /// 取得Item Type
         /// </summary>

@@ -1366,6 +1366,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 treeSearchItem.AccessRights = searchItem.AccessRights;
                 treeSearchItem.Thumbnail = searchItem.Thumbnail;// ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail); 
                 treeSearchItem.IsChecked = searchItem.IsViewSelected;
+                treeSearchItem.IsStructureView = searchItem.IsStructureView ;
                 string displayName = System.IO.Path.GetFileNameWithoutExtension(searchItem.FileName);
                 if (treeSearchItem.IsChecked == true)
                 {
@@ -1796,6 +1797,8 @@ namespace BCS.CADs.Synchronization.ViewModels
             ShowMessageDot = Visibility.Visible;
             //ShowPartsLibrarySearchDialog();
             //ShowClassificationTreeDialog("CAD", "Electronic/Manufacturing");
+            //1ED50B5814E64EA0A1D72B987734A013,9735BA229863440688E40FA0C5C90C2B
+            //ShowItemStructureDialog("CAD", "1ED50B5814E64EA0A1D72B987734A013");
         }
 
         private void ShowPartsLibrarySearchDialog()
@@ -1830,7 +1833,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClassificationTree itemSearchDialog = new ClassificationTree(itemType, value);
             ClsSynchronizer.DialogReturnDisplayValue = "";
             ClsSynchronizer.DialogReturnValue = "";
-            itemSearchDialog.Width = 500;
+            itemSearchDialog.Width = 600;
             itemSearchDialog.Height = 600;
             itemSearchDialog.Topmost = true;
             itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -1844,6 +1847,20 @@ namespace BCS.CADs.Synchronization.ViewModels
 
         }
 
+        private void ShowItemStructureDialog(string itemType,string id)
+        {
+
+            ItemStructureDialog itemSearchDialog = new ItemStructureDialog(itemType, id);
+            ClsSynchronizer.DialogReturnDisplayValue = "";
+            ClsSynchronizer.DialogReturnValue = "";
+            itemSearchDialog.Width = 500;
+            itemSearchDialog.Height = 600;
+            itemSearchDialog.Topmost = true;
+            itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            itemSearchDialog.ShowDialog();
+            ClsSynchronizer.DialogReturnValue = "";
+
+        }
 
         private void UpdateSearchItemTypePropertyValue(PLMProperty plmProperty,string dataValue,string displayValue)
         {
@@ -3191,6 +3208,26 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
+        private ICommand _syncStructureView { get; set; }
+        public ICommand SyncStructureView
+        {
+            get
+            {
+                _syncReplaceItem = new RelayCommand((x) =>
+                {
+                    //System.Diagnostics.Debugger.Break();
+                    BCS.CADs.Synchronization.ViewModels.SearchItemsViewModel menuItem = (BCS.CADs.Synchronization.ViewModels.SearchItemsViewModel)x;
+                    ShowItemStructureDialog(menuItem.NodeSearchItem.ItemType, menuItem.NodeSearchItem.ItemId);
+                });
+                return _syncReplaceItem;
+            }
+            private set
+            {
+                _syncInsertItem = value;
+            }
+        }
+
+
         private ICommand _syncReplaceAllItems { get; set; }
         public ICommand SyncReplaceAllItems
         {
@@ -3913,6 +3950,13 @@ namespace BCS.CADs.Synchronization.ViewModels
             set { SetProperty(ref _isInsertSaveAs, value, nameof(IsInsertSaveAs)); }
         }
 
+        private Boolean _isStructureView = false ;//false;
+        public Boolean IsStructureView
+        {
+            get { return _isStructureView; }
+            set { SetProperty(ref _isStructureView, value, nameof(IsStructureView)); }
+        }
+
 
         private SearchItem _nodeSearchItem;
 
@@ -3927,9 +3971,11 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
                     SearchItemsViewModel sonSearchItem = new SearchItemsViewModel();
                     sonSearchItem.Name = cadStructure.Child.FileName;
-                    
+                    //IsStructureView
                     sonSearchItem.Order = cadStructure.Order;
                     sonSearchItem.InstanceId = cadStructure.InstanceId;
+
+                    
 
                     PLMProperty property = cadStructure.Child.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) == false).SingleOrDefault();
                     string displayName = (property != null) ? property.DisplayValue : System.IO.Path.GetFileNameWithoutExtension(cadStructure.Child.FileName);
@@ -3945,6 +3991,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     sonSearchItem.OperationType = cadStructure.OperationType;
 
                     sonSearchItem.IsChecked = cadStructure.Child.IsViewSelected;
+
+                    sonSearchItem.IsStructureView = cadStructure.Child.IsStructureView;
+
                     if (sonSearchItem.IsChecked == true && sonSearchItem.OperationType==0)
                     {
                         sonSearchItem.IsReplacement = true;

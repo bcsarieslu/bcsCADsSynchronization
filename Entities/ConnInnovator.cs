@@ -1154,6 +1154,30 @@ namespace BCS.CADs.Synchronization.Entities
             }
         }
 
+
+        /// <summary>
+        /// 依Item Id取得CAD圖檔
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        virtual protected internal SearchItem GetPLMSearchItem(string itemType,string id)
+        {
+            try
+            {
+
+                Aras.IOM.Item item = AsInnovator.getItemById(itemType, id);
+                List<SearchItem> searchItems = GetPLMSearchItem(item);
+                return  searchItems.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         /// <summary>
         /// 取得CAD圖檔在PLM系統的基本查詢屬性建立(含是否存在)AddNewSearchItem(searchItems, item, rules, "", addedFilename, itemId, fileId);
         /// </summary>
@@ -1584,7 +1608,7 @@ namespace BCS.CADs.Synchronization.Entities
                             //activeSearchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("bcs_is_standard_part", "0")));
                             activeSearchItem.IsStandardPart = System.Convert.ToBoolean(int.Parse(item.getProperty("is_standard", "0")));
                             //2d圖檔,取得關連
-                            if (activeSearchItem.ClassName == "Drawing")
+                            if (activeSearchItem.ClassName == ClassName.Drawing.ToString())
                             {
                                 _asInnovator.Get2DDrawingCADSourceItem(searchItems, activeSearchItem);
                                 
@@ -2381,7 +2405,10 @@ namespace BCS.CADs.Synchronization.Entities
                         if (structuralChange.IsCommonPart == false) structuralChange.TargetFilePath = searchItem.FilePath;
                         structuralChange.TargetItemConfigId = searchItem.ItemConfigId;
 
-                    }else
+                        if (searchItem.ClassName == ClassName.Assembly.ToString()) searchItem.IsStructureView = true;
+
+                    }
+                    else
                     {
                         //Parts Library 未放入系統
                         searchItem = GetCommonPartSearchItem(structuralChange.TargetFilePath, structuralChange.TargetFileName);

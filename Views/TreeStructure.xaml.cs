@@ -32,6 +32,9 @@ namespace BCS.CADs.Synchronization.Views
 
         private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+
+            //System.Diagnostics.Debugger.Break();
+
             DependencyObject obj = e.OriginalSource as DependencyObject;
             TreeViewItem item = GetDependencyObjectFromVisualTree(obj, typeof(TreeViewItem)) as TreeViewItem;
 
@@ -41,14 +44,22 @@ namespace BCS.CADs.Synchronization.Views
             {
                 ContextMenu menu = new ContextMenu() { };
                 menu.FontSize = 14;
-                if (searchItem.IsInsert == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_InsertSubPart") , true, false, false,false);//"插入分件"
-                if (searchItem.IsInsertSaveAs == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_InsertSaveasSubPart"), false, false, false, true);//"插入另存分件" 
+                if (searchItem.IsInsert == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_InsertSubPart") , true, false, false,false, false);//"插入分件"
+                if (searchItem.IsInsertSaveAs == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_InsertSaveasSubPart"), false, false, false, true, false);//"插入另存分件" 
                 if (searchItem.IsReplacement == true)
                 {
-                    AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_ReplaceAPart"), false,false,false, false);//替換分件(單筆)
-                    AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_ReplaceAllParts"), false,true,false, false);// 替換分件(全部)
+                    AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_ReplaceAPart"), false,false,false, false, false);//替換分件(單筆)
+                    AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_ReplaceAllParts"), false,true,false, false, false);// 替換分件(全部)
                 }
-                if (searchItem.IsCopyToAdd == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_CopyToAdd"), false, false, true,false);// 複製轉新增
+                if (searchItem.IsCopyToAdd == true) AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_CopyToAdd"), false, false, true,false, false);// 複製轉新增
+
+
+                (sender as TreeViewItem).ContextMenu = menu;
+                return;
+            }else if(searchItem.IsStructureView){
+                ContextMenu menu = new ContextMenu() { };
+                menu.FontSize = 14;
+                AddMenuItem(menu, searchItem, ClsSynchronizer.VmSyncCADs.GetLanguageByKeyName("menu_StructureView"), false, false, false, false,true);
                 (sender as TreeViewItem).ContextMenu = menu;
                 return;
             }
@@ -77,7 +88,7 @@ namespace BCS.CADs.Synchronization.Views
         //    MessageBox.Show("Page_Loaded");
         //}
 
-        private void AddMenuItem(ContextMenu menu, BCS.CADs.Synchronization.ViewModels.SearchItemsViewModel searchItem, string display,bool isInsert,bool isReplaceAll,bool isCopyToAdd, bool isInsertSaveAs)
+        private void AddMenuItem(ContextMenu menu, BCS.CADs.Synchronization.ViewModels.SearchItemsViewModel searchItem, string display,bool isInsert,bool isReplaceAll,bool isCopyToAdd, bool isInsertSaveAs,bool isStructureView)
         {
 
             BCS.CADs.Synchronization.ViewModels.MainWindowViewModel mainVM = new BCS.CADs.Synchronization.ViewModels.MainWindowViewModel();
@@ -87,7 +98,7 @@ namespace BCS.CADs.Synchronization.Views
             //Image image = new System.Windows.Controls.Image();
             //image.Source = new BitmapImage(new Uri("pack://application:,,,/BCS.CADs.Synchronization;Component/Images/Calculator_Icon.png"));
 
-            string imageFileName = (isInsert) ? "Insert.bmp" : (isInsertSaveAs) ? "Insert.bmp" :(isCopyToAdd)? "CopyToAdd.bmp" : "ReplaceRevision.bmp";
+            string imageFileName = (isInsert) ? "Insert.bmp" : (isInsertSaveAs) ? "Insert.bmp" :(isCopyToAdd)? "CopyToAdd.bmp" :(isStructureView)? "MBOM.bmp" : "ReplaceRevision.bmp";
 
             mnuItem.Icon = new System.Windows.Controls.Image
             {
@@ -96,7 +107,7 @@ namespace BCS.CADs.Synchronization.Views
                 Height = 24
             };
 
-            mnuItem.Command = (isInsert) ? mainVM.SyncInsertItem : (isCopyToAdd) ? mainVM.SyncCopyToAdd :(isInsertSaveAs) ? mainVM.SyncInsertSaveAs : (isReplaceAll) ? mainVM.SyncReplaceAllItems : mainVM.SyncReplaceItem;
+            mnuItem.Command = (isInsert) ? mainVM.SyncInsertItem : (isCopyToAdd) ? mainVM.SyncCopyToAdd :(isInsertSaveAs) ? mainVM.SyncInsertSaveAs : (isReplaceAll) ? mainVM.SyncReplaceAllItems:(isStructureView) ? mainVM.SyncStructureView : mainVM.SyncReplaceItem;
             mnuItem.CommandParameter = searchItem;
             menu.Items.Add(mnuItem);
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BCS.CADs.Synchronization.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,16 +18,25 @@ namespace BCS.CADs.Synchronization.Views
     /// <summary>
     /// SearchItemStructureDialog.xaml 的互動邏輯
     /// </summary>
-    public partial class SearchItemStructureDialog : Window
+    public partial class ItemStructureDialog : Window
     {
         bool window_size_max = true;
 
-        public SearchItemStructureDialog()
+        public ItemStructureDialog()
         {
             InitializeComponent();
         }
 
-
+        public ItemStructureDialog(string itemType, string id)
+        {
+            InitializeComponent();
+            //System.Diagnostics.Debugger.Break();
+            ClsSynchronizer.VmSyncCADs.LoadLanguage(this);
+            ItemStructureViewModel DataContext = new ItemStructureViewModel();
+            DataContext.SetView = this;
+            //DataContext.ShowClassificationItems(itemType, "Electronic/Manufacturing");
+            DataContext.ShowSearchItems(itemType, id);
+        }
 
 
         private void Thumb_OnDragDelta(object sender, DragDeltaEventArgs e)

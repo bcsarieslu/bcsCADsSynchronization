@@ -1,4 +1,4 @@
-﻿<Window x:Class="BCS.CADs.Synchronization.Views.SearchItemStructureDialog"
+﻿<Window x:Class="BCS.CADs.Synchronization.Views.ItemStructureDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,16 +14,19 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries >
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CommonStyle.xaml"/>
+                <!--<ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/TreeViewStyle.xaml" />-->
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml"  />
+
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/TreeViewStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <ViewModels:SearchItemStructureViewModel x:Key="viewmodel"/>
+            <ViewModels:ItemStructureViewModel x:Key="viewmodel"/>
+            <ViewModels:ThumbnailToPathConverter x:Key="ImageIdToPathConverter" ImagePath="DisplayImage" />
         </ResourceDictionary>
     </Window.Resources>
     <Window.DataContext>
-        <ViewModels:SearchItemStructureViewModel />
+        <ViewModels:ItemStructureViewModel />
     </Window.DataContext>
 
     <Grid>
@@ -53,7 +56,7 @@
             </Grid>
 
 
-            <Grid Grid.Row="1" Margin="0,0,0,0" >
+            <Grid Grid.Row="1" Margin="0,0,0,0" Visibility="Collapsed"  >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="40"/>
@@ -63,7 +66,7 @@
 
                 <Rectangle Visibility="{Binding ShowLine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Fill="LightGray" Opacity="0.7" Height="1" Grid.ColumnSpan="6" Grid.Column="0" VerticalAlignment="Top"/>
 
-                <Button Grid.Column="0" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding Done}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
+                <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource GlassButton}" Name="doneSelecting" ToolTip="{DynamicResource done}" Command="{Binding Done}" CommandParameter="{Binding Source={StaticResource viewmodel}, Path=Value}"   >
                     <Image  Source="{StaticResource CheckmarkDrawingImage}"/>
                 </Button>
 
@@ -81,25 +84,22 @@
                     ItemsSource="{Binding ClassStructureItems}"
                     Margin="10"
                     FontSize="14">
-
-                    <!--<TreeView.ItemTemplate >
-                        <HierarchicalDataTemplate DataType="{x:Type ViewModels:ClassificationTreeViewModel}" 
-                                          ItemsSource="{Binding ClassItems}">
-                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0" >
-                                <Image Width="24" Height="24" Tag="{Binding Value}"  x:Name="iconItemType" Source="{StaticResource CADDrawingImage}"/>
-                                <TextBlock Text="{Binding Name}" Tag="{Binding Value}"  />
+                    <TreeView.ItemTemplate >
+                        <HierarchicalDataTemplate ItemsSource="{Binding Child}">
+                            <StackPanel Orientation="Horizontal" Margin="-2,0,0,0" >
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                                    <Image Width="24" Height="24" x:Name="iconClassName" Source="{Binding ClassThumbnail}"/>
+                                    <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}" />
+                                </StackPanel>
+                                <ContentPresenter Content="{Binding DisplayName}" />
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
-
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="True" />
-                            <EventSetter Event="MouseLeftButtonUp" Handler="treeViewItem_MouseLeftButtonUp"/>
-                            <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
                         </Style>
-                    </TreeView.ItemContainerStyle>-->
-
+                    </TreeView.ItemContainerStyle>
                 </TreeView>
             </Grid>
             <Grid Grid.Row="3">

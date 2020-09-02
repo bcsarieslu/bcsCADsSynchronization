@@ -182,7 +182,7 @@
     <Compile Include="ViewModels\RecentFileViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\RevisionListViewModel.cs" />
-    <Compile Include="ViewModels\SearchItemStructureViewModel.cs" />
+    <Compile Include="ViewModels\ItemStructureViewModel.cs" />
     <Compile Include="ViewModels\ShowCommand.cs" />
     <Compile Include="ViewModels\SubItemSearchViewModel.cs" />
     <Compile Include="ViewModels\SyncCommands.cs" />
@@ -207,7 +207,7 @@
     <Compile Include="Views\ItemSearchDialog.xaml.cs">
       <DependentUpon>ItemSearchDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ItemsMessage.xaml.cs">
+    <Compile Include="Views\ItemsMessage.xaml.cs">
       <DependentUpon>ItemsMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoadingWait.xaml.cs">
@@ -219,7 +219,6 @@
     <Compile Include="Views\EditProperties.xaml.cs">
       <DependentUpon>EditProperties.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\IClient.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -241,8 +240,8 @@
     <Compile Include="Views\RevisionList.xaml.cs">
       <DependentUpon>RevisionList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SearchItemStructureDialog.xaml.cs">
-      <DependentUpon>SearchItemStructureDialog.xaml</DependentUpon>
+    <Compile Include="Views\ItemStructureDialog.xaml.cs">
+      <DependentUpon>ItemStructureDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SubItemSearchDialog.xaml.cs">
       <DependentUpon>SubItemSearchDialog.xaml</DependentUpon>
@@ -351,7 +350,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ViewModels\ItemsMessage.xaml">
+    <Page Include="Views\ItemsMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -383,7 +382,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SearchItemStructureDialog.xaml">
+    <Page Include="Views\ItemStructureDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -539,6 +538,7 @@
     <Resource Include="Images\calendar.png" />
     <Resource Include="Images\CopyToAdd.bmp" />
     <Resource Include="Images\ToggleButtonEditIcon.png" />
+    <Resource Include="Images\MBOM.bmp" />
     <Content Include="Libs\WPFToolkit.dll" />
     <Content Include="Libs\WPFToolkit.Extended.dll" />
   </ItemGroup>

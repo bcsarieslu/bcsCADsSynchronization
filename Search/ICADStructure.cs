@@ -50,6 +50,8 @@ namespace BCS.CADs.Synchronization.Search
         /// </summary>
         bool IsSuppressed { get; set; }
 
+
+
         /// <summary>
         /// 是否為輕量抑制
         /// </summary>

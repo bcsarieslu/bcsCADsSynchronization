@@ -187,6 +187,13 @@ namespace BCS.CADs.Synchronization.Search
         /// </summary>
         public bool IsStandardPart { get; set; } = false;
 
+
+        /// <summary>
+        /// 是否檢視(目前是提供檢視結構)
+        /// </summary>
+        public bool IsStructureView { get; set; } = false;
+        
+
         /// <summary>
         /// 限制狀態
         /// </summary>

@@ -102,7 +102,8 @@
     <sys:String x:Key="menu_ReplaceAPart">Replace a part</sys:String>
     <sys:String x:Key="menu_ReplaceAllParts">Replace all parts</sys:String>
     <sys:String x:Key="menu_CopyToAdd">Save As</sys:String>
-
+    <sys:String x:Key="menu_StructureView">Structure View</sys:String>
+    
     <sys:String x:Key="label_CopyFileName">New File Name</sys:String>
     <sys:String x:Key="label_NewFileName">New File Name</sys:String>
 
