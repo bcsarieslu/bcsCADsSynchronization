@@ -13,7 +13,7 @@ namespace BCS.CADs.Synchronization.ConfigProperties
     /// <summary>
     /// CAD類別特定屬性值
     /// </summary>
-    public class PLMKeys : IDefaultElements, ICloneable
+    public class PLMKey : IDefaultElements, ICloneable
     {
         #region "                   宣告區"
 
@@ -31,6 +31,11 @@ namespace BCS.CADs.Synchronization.ConfigProperties
         /// </summary>
         [XmlSettingAttributeName("keyed_name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// CAD檔案類別名稱
+        /// </summary>
+        public string FileClassName { get; set; } = "";
 
         /// <summary>
         /// PLM屬性值

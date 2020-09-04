@@ -266,7 +266,8 @@ namespace BCS.CADs.Synchronization.Models
         {
             try
             {
-                if (_xmlConfigurations != null ) return _xmlConfigurations;
+                //Modify by kenny 2020/09/03
+                //if (_xmlConfigurations != null ) return _xmlConfigurations;
 
                 string aml = GetCADConfigAML(strProductName);
 
@@ -885,7 +886,7 @@ namespace BCS.CADs.Synchronization.Models
         /// <param name="searchItem"></param>
         /// <param name="isLock"></param>
         /// <returns></returns>
-        protected internal bool SynToPLMNewItem(SearchItem searchItem, List<BCS.CADs.Synchronization.Classes.IntegrationEvents> integrationEvents, SyncEvents syncEvent, List<PLMKeys> classItemKeys, string filename, IsLock isLock)
+        protected internal bool SynToPLMNewItem(SearchItem searchItem, List<BCS.CADs.Synchronization.Classes.IntegrationEvents> integrationEvents, SyncEvents syncEvent, List<PLMKey> classItemKeys, string filename, IsLock isLock)
         {
             try
             {
@@ -904,7 +905,7 @@ namespace BCS.CADs.Synchronization.Models
                     SetProperty(item, itemProperty);
                 }
 
-                foreach (PLMKeys keyProperty in classItemKeys.Where(x => x.Name !=""))
+                foreach (PLMKey keyProperty in classItemKeys.Where(x => x.Name !=""))
                 {
                     item.setProperty(keyProperty.Name, keyProperty.Value);
                 }

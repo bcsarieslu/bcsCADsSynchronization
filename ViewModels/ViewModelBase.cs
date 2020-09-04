@@ -1360,6 +1360,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                 treeSearchItem.Name = searchItem.FileName;
                 treeSearchItem.NodeSearchItem = searchItem;
                 treeSearchItem.ClassName = searchItem.ClassName;
+                treeSearchItem.FileClassName = searchItem.FileClassName;
+                
                 treeSearchItem.ClassThumbnail = searchItem.ClassThumbnail;
                 treeSearchItem.RestrictedStatus = searchItem.RestrictedStatus;
                 treeSearchItem.VersionStatus = searchItem.VersionStatus;
@@ -3855,6 +3857,15 @@ namespace BCS.CADs.Synchronization.ViewModels
             set { SetProperty(ref _className, value, nameof(ClassName)); }
         }
 
+        private string _fileClassName;
+        public string FileClassName
+        {
+            get { return _fileClassName; }
+            set { SetProperty(ref _fileClassName, value, nameof(FileClassName)); }
+        }
+
+
+
         //1111:(8,4,2,1) :InsertSaveAs,CopyToAdd,Replace,Insert
         private int _operationType;
         public int OperationType
@@ -3982,6 +3993,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     sonSearchItem.DisplayName = (sonSearchItem.InstanceId != "") ? String.Format (displayName + "<{0}>", sonSearchItem.InstanceId) : displayName;
                     
                     sonSearchItem.ClassName = cadStructure.Child.ClassName;
+                    sonSearchItem.FileClassName = cadStructure.Child.FileClassName;
+
                     sonSearchItem.ClassThumbnail = cadStructure.Child.ClassThumbnail;
                     sonSearchItem.RestrictedStatus = cadStructure.Child.RestrictedStatus;
                     sonSearchItem.VersionStatus = cadStructure.Child.VersionStatus;

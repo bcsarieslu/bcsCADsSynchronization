@@ -33,7 +33,7 @@ namespace BCS.CADs.Synchronization.Classes
 
         #region "                   屬性"
 
-        public List<PLMKeys> CsKeys { get; set; } = new List<PLMKeys>();
+        public List<PLMKey> CsKeys { get; set; } = new List<PLMKey>();
         public List<PLMProperty> CsProperties { get; set; } = new List<PLMProperty>();
 
         public List<PLMPropertyFile> CsPropertyFile { get; set; } = new List<PLMPropertyFile>();
@@ -57,10 +57,17 @@ namespace BCS.CADs.Synchronization.Classes
         public string Name { get; set; }
 
         /// <summary>
-        /// CAD檔案類型
+        /// CAD檔案類別名稱
         /// </summary>
         [XmlSettingTagNameAttribute("bcs_cad_file_types")]
-        public string FileType { get; set; }
+        public string FileClassName { get; set; }
+
+
+        ///// <summary>
+        ///// CAD檔案類型
+        ///// </summary>
+        //[XmlSettingTagNameAttribute("bcs_cad_file_types")]
+        //public string FileType { get; set; }
 
         /// <summary>
         /// 副檔名
@@ -124,13 +131,16 @@ namespace BCS.CADs.Synchronization.Classes
                     switch (xmlItem.Attribute("type").Value)
                     {
                         case "BCS CAD Class Keys"://CAD類別特定屬性值
-                            var key = new PLMKeys();
+                            var key = new PLMKey();
 
                             //序號
                             key.Order = int.Parse(xmlItem.Elements("sort_order").Single()?.Value);
 
                             //PLM屬性名稱
                             key.Name = xmlItem.Elements("related_id").Single()?.Attribute("keyed_name")?.Value;
+
+                            //CAD檔案類別名稱
+                            key.FileClassName = FileClassName;
 
                             //PLM屬性值
                             key.Value = xmlItem.Elements("bcs_value").Single()?.Value;
@@ -266,6 +276,8 @@ namespace BCS.CADs.Synchronization.Classes
 
 
                                 classTemplateFile.ClassName = Name;
+
+                                classTemplateFile.FileClassName = FileClassName;
 
                                 CsTemplateFile.Add(classTemplateFile);
                             }

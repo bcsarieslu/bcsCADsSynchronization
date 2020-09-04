@@ -49,6 +49,11 @@ namespace BCS.CADs.Synchronization.Classes
         string ClassName { get; set; }
 
         /// <summary>
+        /// CAD檔案類別名稱
+        /// </summary>
+        string FileClassName { get; set; }
+
+        /// <summary>
         /// 特殊功能
         /// </summary>
         SpecialFeatures SpecialFeatures { get; set; }

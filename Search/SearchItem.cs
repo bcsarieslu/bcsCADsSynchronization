@@ -30,6 +30,11 @@ namespace BCS.CADs.Synchronization.Search
         public string ClassName { get; set; } = "";
 
         /// <summary>
+        /// CAD檔案類別名稱
+        /// </summary>
+        public string FileClassName { get; set; } = "";
+
+        /// <summary>
         /// CAD類別名稱
         /// </summary>
         public string ItemType { get; set; } = "";
@@ -111,6 +116,13 @@ namespace BCS.CADs.Synchronization.Search
             //set { SetProperty(ref _plmProperties, value); }//Modify by kenny 2020/08/04
             set { SetProperty(ref _plmProperties, value, nameof(PLMProperty)); }
         }
+
+        /// <summary>
+        /// 其他相同型屬性,暫時存放位置
+        /// </summary>
+        public List<PLMProperty> SameClassProperties { get; set; } = new List<PLMProperty>();
+
+
 
         /// <summary>
         /// 系統所有版本+版次

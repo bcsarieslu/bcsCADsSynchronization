@@ -112,7 +112,7 @@
     <Compile Include="ConfigProperties\IDefaultElements.cs" />
     <Compile Include="ConfigProperties\IPLMProperty.cs" />
     <Compile Include="ConfigProperties\IPLMPropertyFile.cs" />
-    <Compile Include="ConfigProperties\PLMKeys.cs" />
+    <Compile Include="ConfigProperties\PLMKey.cs" />
     <Compile Include="ConfigProperties\PLMProperty.cs" />
     <Compile Include="ConfigProperties\PLMPropertyFile.cs" />
     <Compile Include="ConfigProperties\XmlSettingAttributeNameAttribute.cs" />

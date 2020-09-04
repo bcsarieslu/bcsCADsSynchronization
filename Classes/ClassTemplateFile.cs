@@ -36,6 +36,12 @@ namespace BCS.CADs.Synchronization.Classes
         [XmlSettingTagNameAttribute("name")]
         public string Name { get; set; }
 
+
+        /// <summary>
+        /// CAD檔案類別名稱
+        /// </summary>
+        public string FileClassName { get; set; }
+
         /// <summary>
         /// 檔案名稱
         /// </summary>

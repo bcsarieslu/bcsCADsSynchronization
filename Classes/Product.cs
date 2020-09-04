@@ -93,7 +93,8 @@ namespace BCS.CADs.Synchronization.Classes
                                 classItem.Name = xmlRelItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("name").Single()?.Value;
 
                                 //CAD檔案類型
-                                classItem.FileType = xmlRelItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("bcs_cad_file_types").Single()?.Value;
+                                //classItem.FileType = xmlRelItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("bcs_cad_file_types").Single()?.Value;
+                                classItem.FileClassName = xmlRelItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("bcs_cad_file_types").Single()?.Value;
 
                                 //副檔名
                                 classItem.Extension = xmlRelItem.Elements("related_id")?.Single()?.Elements("Item").Single()?.Elements("bcs_extension_name").Single()?.Value;

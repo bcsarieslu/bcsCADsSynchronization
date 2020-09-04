@@ -23,7 +23,7 @@ namespace BCS.CADs.Synchronization.Entities
 
         #region "                   屬性"
 
-        List<PLMKeys> CsKeys { get; set; }
+        List<PLMKey> CsKeys { get; set; }
         List<PLMProperty> CsProperties { get; set; }
 
         List<PLMPropertyFile> CsPropertyFile { get; set; }
@@ -46,9 +46,14 @@ namespace BCS.CADs.Synchronization.Entities
         string Name { get; set; }
 
         /// <summary>
-        /// CAD檔案類型
+        /// CAD檔案類別名稱
         /// </summary>
-        string FileType { get; set; }
+        string FileClassName { get; set; }
+
+        ///// <summary>
+        ///// CAD檔案類型
+        ///// </summary>
+        //string FileType { get; set; }
 
         /// <summary>
         /// 副檔名
