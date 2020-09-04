@@ -59,16 +59,19 @@ namespace BCS.CADs.Synchronization.ViewModels
         private ItemSearch _ItemSearchView = null;
         private PartsLibrarySearch _partsLibrarySearch = null;
 
-        private RecentFileViewModel recentFileVM=null;
+        private static RecentFileViewModel _recentFileVM;
+        /// <summary>
+        /// 記錄RecentFileViewModel
+        /// </summary>
         public RecentFileViewModel RecentFileVM
         {
             get
             {
-                if (recentFileVM == null)
-                {
-                    return new RecentFileViewModel();
-                }
-                return recentFileVM;
+                return _recentFileVM;
+            }
+            set
+            {
+                _recentFileVM =(value!=null&& _recentFileVM != null) ? value: new RecentFileViewModel();
             }
         }
 
@@ -117,16 +120,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             LoadFromPLMView((Window)_view, true, itemType, isSub,false);
             
         }
-        
-        private bool _showThumbnailImage = false;
-        public bool ShowThumbnailImage
-        {
-            get { return _showThumbnailImage; }
-            set
-            {
-                SetProperty(ref _showThumbnailImage, value, "ShowThumbnailImage");
-            }
-        }
 
         private string _thumbnailImageSource = "";
         public string ThumbnailImageSource
@@ -138,50 +131,71 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        public ICommand GridFieldClickedCommand
+        private ICommand _showThumbnailImage;
+        public ICommand ShowThumbnailImage
         {
             get
             {
-                
-                _showCommand = _showCommand ?? new RelayCommand((x) =>
+                _showThumbnailImage = new RelayCommand((x) =>
                 {
-                    SearchItem searchItem = x as SearchItem;
-                    if (searchItem != null)
+                    Button btn = x as Button;
+                    Image imageSource = btn.Template.FindName("IconImage", btn) as Image;
+                    var imgPath = (imageSource != null) ? imageSource.Source.ToString() : ClsSynchronizer.ViewFilePath;
+                    if (!string.IsNullOrWhiteSpace(imgPath))
                     {
-                        ThumbnailImage thumbnailImage = new ThumbnailImage();
-                        thumbnailImage.GetThumbnailImagePath(searchItem);
-
-                        Canvas canvas = (Canvas)MyMainWindow.FindName("CanvasViewFile");
-                        TextBlock positionUse = (TextBlock)MyMainWindow.FindName("positionUse");
-
-                        if (ClsSynchronizer.IsActiveSubDialogView == true)
-                        {
-                            //Window win = (Window)ClsSynchronizer.SyncSubDialogView;
-                            int index = ClsSynchronizer.SyncSubDialogView.Count()-1;
-                            Window win = (Window)ClsSynchronizer.SyncSubDialogView[index.ToString()];
-
-                            canvas = ((Canvas)(win.FindName("SubDialogCanvasViewFile")) != null) ? (Canvas)(win.FindName("SubDialogCanvasViewFile")) : canvas;
-                            positionUse = ((Canvas)(win.FindName("SubDialogCanvasViewFile")) != null) ? (TextBlock)win.FindName("positionUse") : positionUse;
-                        }
-                        else
-                        {
-                            if (ClsSynchronizer.SyncDialogView != null)
-                            {
-                                Window win = (Window)ClsSynchronizer.SyncDialogView;
-                                canvas = ((Canvas)(win.FindName("DialogCanvasViewFile")) != null) ? (Canvas)(win.FindName("DialogCanvasViewFile")) : canvas;
-                                positionUse = ((Canvas)(win.FindName("DialogCanvasViewFile")) != null) ? (TextBlock)win.FindName("positionUse") : positionUse;
-                            }
-                        }
-                        ShowThumbnailImage = true;
-                        ThumbnailImageSource = ClsSynchronizer.ViewFilePath;
-                        //ShowThumbnailImage();
+                        RecentFileVM.ThumbnailImageIsOpen = true;
+                        OnPropertyChanged(nameof(RecentFileVM));
+                        ThumbnailImageSource = imgPath;
                     }
                 });
-
-
-                return _showCommand;
+                return _showThumbnailImage;
             }
         }
+
+        //public ICommand GridFieldClickedCommand
+        //{
+        //    get
+        //    {
+
+        //        _showCommand = _showCommand ?? new RelayCommand((x) =>
+        //        {
+        //            SearchItem searchItem = x as SearchItem;
+        //            if (searchItem != null)
+        //            {
+        //                ThumbnailImage thumbnailImage = new ThumbnailImage();
+        //                thumbnailImage.GetThumbnailImagePath(searchItem);
+
+        //                Canvas canvas = (Canvas)MyMainWindow.FindName("CanvasViewFile");
+        //                TextBlock positionUse = (TextBlock)MyMainWindow.FindName("positionUse");
+
+        //                if (ClsSynchronizer.IsActiveSubDialogView == true)
+        //                {
+        //                    //Window win = (Window)ClsSynchronizer.SyncSubDialogView;
+        //                    int index = ClsSynchronizer.SyncSubDialogView.Count()-1;
+        //                    Window win = (Window)ClsSynchronizer.SyncSubDialogView[index.ToString()];
+
+        //                    canvas = ((Canvas)(win.FindName("SubDialogCanvasViewFile")) != null) ? (Canvas)(win.FindName("SubDialogCanvasViewFile")) : canvas;
+        //                    positionUse = ((Canvas)(win.FindName("SubDialogCanvasViewFile")) != null) ? (TextBlock)win.FindName("positionUse") : positionUse;
+        //                }
+        //                else
+        //                {
+        //                    if (ClsSynchronizer.SyncDialogView != null)
+        //                    {
+        //                        Window win = (Window)ClsSynchronizer.SyncDialogView;
+        //                        canvas = ((Canvas)(win.FindName("DialogCanvasViewFile")) != null) ? (Canvas)(win.FindName("DialogCanvasViewFile")) : canvas;
+        //                        positionUse = ((Canvas)(win.FindName("DialogCanvasViewFile")) != null) ? (TextBlock)win.FindName("positionUse") : positionUse;
+        //                    }
+        //                }
+        //                ShowThumbnailImage = true;
+        //                ThumbnailImageSource = ClsSynchronizer.ViewFilePath;
+        //                //ShowThumbnailImage();
+        //            }
+        //        });
+
+
+        //        return _showCommand;
+        //    }
+        //}
 
         private decimal _setScale = 1;
         public decimal SetScale
@@ -541,6 +555,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             btn_List.Add("systemSetting",(Button)MyMainWindow.FindName("systemSetting"));
             btn_List.Add("about",(Button)MyMainWindow.FindName("about")); 
             btn_List.Add("copyToAdd", (Button)MyMainWindow.FindName("copyToAdd"));
+            btn_List.Add("Insert_Replace", (Button)MyMainWindow.FindName("Insert_Replace"));
 
             foreach (var btn in btn_List)
             {
@@ -631,6 +646,8 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.TreeSearchItemsCollection = null;
             ClsSynchronizer.ActiveSearchItem = null;
             ClsSynchronizer.NewSearchItem = null;
+
+            CheckBoxWPVisibility = Visibility.Collapsed;
 
             ClsSynchronizer.ItemStructureChanges = null;
             ClsSynchronizer.ClassTemplateFiles = null;
@@ -818,6 +835,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             btn = (Button)MyMainWindow.FindName("btn_Execute");
             btn.Visibility = visibilityExecute;
             btn.IsEnabled = isEnable;
+
             RecentFileViewVisibility = Visibility.Hidden;
 
         }
@@ -1423,7 +1441,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                         SelectedDirectoryGridVisibility = Visibility.Collapsed;
 
                         ClsSynchronizer.Status = "";
-
                         OperationStart("SyncExecute");
 
                         IEnumerable<SearchItem> checkItems = (ClsSynchronizer.VmOperation == SyncOperation.AddTemplates) ? (IEnumerable<SearchItem>)ObsSearchItems : _searchItems;
@@ -1626,13 +1643,21 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 if (ObsItemsMessage.FirstOrDefault(a => a.IsError == true) == null)
                     MyMainWindow.Hide();
-
+                if (ClsSynchronizer.Status != "Error")
+                    RememberRecentFile();
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             return true;
         }
 
+        private void RememberRecentFile()
+        {
+            //寫入並寫入近期開啟的檔案
+            if (ObsSearchItems != null) RecentFileVM.RecentFile = RecentFile.AddRecentFile(ObsSearchItems.ToList());
+            //資料來源修改時，重置資料
+            OnPropertyChanged("RecentFileVM");
+        }
 
         private string ExecuteOperation(List<SearchItem> searchItems, SearchItem searchItem)
         {
@@ -1772,6 +1797,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                         ShowMessagesView();
                         ShowMessageDot = Visibility.Collapsed;
+                        RecentFileViewVisibility = Visibility.Hidden;
                     }
                     catch (Exception ex)
                     {
@@ -1799,8 +1825,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             ShowMessageDot = Visibility.Visible;
             //ShowPartsLibrarySearchDialog();
             //ShowClassificationTreeDialog("CAD", "Electronic/Manufacturing");
-            //1ED50B5814E64EA0A1D72B987734A013,9735BA229863440688E40FA0C5C90C2B
-            //ShowItemStructureDialog("CAD", "1ED50B5814E64EA0A1D72B987734A013");
         }
 
         private void ShowPartsLibrarySearchDialog()
@@ -2086,8 +2110,20 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
+        private ICommand _insert_Replace { get; set; }
+        public ICommand Insert_Replace
+        {
+            get
+            {
 
-        
+                _insert_Replace = new RelayCommand((x) =>
+                {
+                    
+                });
+                return _insert_Replace;
+            }
+        }
+
         private ICommand _loadFromPLM { get; set; }
         public ICommand LoadFromPLM
         {
@@ -2650,12 +2686,6 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                 CheckBox_AllIsChecked(false);
                 StartStopWait(false);
-
-                var searchItem = ClsSynchronizer.VmSyncCADs.GetActiveSearchItem(ObsSearchItems.ToList());
-                //寫入並寫入近期開啟的檔案
-                if(searchItem!=null) RecentFileVM.RecentFile = RecentFile.AddRecentFile(searchItem.FileName, searchItem.FilePath);
-                //資料來源修改時，重置資料
-                OnPropertyChanged("RecentFileVM");
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -3985,8 +4015,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //IsStructureView
                     sonSearchItem.Order = cadStructure.Order;
                     sonSearchItem.InstanceId = cadStructure.InstanceId;
-
-                    
 
                     PLMProperty property = cadStructure.Child.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) == false).SingleOrDefault();
                     string displayName = (property != null) ? property.DisplayValue : System.IO.Path.GetFileNameWithoutExtension(cadStructure.Child.FileName);

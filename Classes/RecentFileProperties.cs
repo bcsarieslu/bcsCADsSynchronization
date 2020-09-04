@@ -9,6 +9,7 @@ namespace BCS.CADs.Synchronization.Classes
     {
         public string FileName { get; set; }
         public string FilePath { get; set; }
+        public string DrawingTypeImage { get; set; }
         public int Index { get; set; }
         public string OpenDate { get; set; }
     }

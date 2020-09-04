@@ -49,6 +49,7 @@
     <sys:String x:Key="ApplicationVer">目前版本:</sys:String>
     <sys:String x:Key="systemSetting">設定</sys:String>
     <sys:String x:Key="plugIn">插件模組</sys:String>
+    <sys:String x:Key="Insert_Replace">插入/替換分件</sys:String>
     <sys:String x:Key="about">關於</sys:String>
     <sys:String x:Key="computerInfo">環境信息</sys:String>
     <sys:String x:Key="notLogin">尚未登入</sys:String>
@@ -113,4 +114,6 @@
 
     <sys:String x:Key="date">日期</sys:String>
     <sys:String x:Key="filePath">檔案路徑</sys:String>
+    <sys:String x:Key="recent_document">最近執行項目</sys:String>
+    <sys:String x:Key="recently">最近</sys:String>
 </ResourceDictionary>

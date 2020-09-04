@@ -7,11 +7,12 @@
       xmlns:ViewModels="clr-namespace:BCS.CADs.Synchronization.ViewModels" 
       xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
       mc:Ignorable="d" 
-      >
+      Title="DataGrid">
     <!--xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"-->
     <Page.Resources>
         <ResourceDictionary>
+            <ViewModels:MainWindowViewModel x:Key="MainViewModel"/>
             <ViewModels:StringImageToResource x:Key="StringToResource" />
             <ViewModels:ThumbnailToPathConverter x:Key="ImageIdToPathConverter" ImagePath="DisplayImage" />
             <!--TruePath="MyTruePath" FalsePath="MyFalsePath"-->
@@ -21,8 +22,8 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ScrallBarStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
         </ResourceDictionary>
 
     </Page.Resources>
@@ -50,12 +51,12 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto">
             <!--RowDetailsTemplate="{StaticResource RowDetailTemplate}"-->
 
-            <DataGrid.InputBindings>
-                <!-- LeftDoubleClick -->
-                <MouseBinding Gesture="RightClick" 
+            <!--<DataGrid.InputBindings>
+                --><!-- LeftDoubleClick --><!--
+                <MouseBinding Gesture="Alt+LeftClick" 
                           Command="{Binding GridFieldClickedCommand}" 
                           CommandParameter="{Binding ElementName=gridDetail, Path=SelectedItem}" />
-            </DataGrid.InputBindings>
+            </DataGrid.InputBindings>-->
 
             <DataGrid.RowHeaderTemplate>
                 <DataTemplate>
@@ -99,10 +100,16 @@
                 </DataGridTemplateColumn>
                 <!--<DataGridTextColumn Header="icon" Binding="{Binding Icon}"  Width="auto" x:Name="icon"/>-->
 
-                <DataGridTemplateColumn Header=""  Width="24" IsReadOnly="True">
+                <DataGridTemplateColumn IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"></Image>
+                            <Button Height="30" Width="30" Command="{Binding ShowThumbnailImage,Source={StaticResource MainViewModel}}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Image x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"/>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -146,11 +153,18 @@
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <Image Source="{Binding ThumbnailImagePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
-                               Stretch="Uniform" 
-                               Width="200"
-                               VerticalAlignment="Top" 
-                               Margin="0,20,0,0"/>
+                            <Button Width="220"
+                                    VerticalAlignment="Top" 
+                                    Margin="0,20,0,0"
+                                    Command="{Binding ShowThumbnailImage,Source={StaticResource MainViewModel}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Image Source="{Binding ThumbnailImagePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                           Stretch="Uniform" />
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </StackPanel>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Column="1">
                             <Grid x:Name="formContent" Margin="10,0,0,0" ScrollViewer.CanContentScroll="True" VerticalAlignment="Stretch"/>
@@ -173,15 +187,44 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="0" Grid.RowSpan="2">
-            <Popup 
-                        IsOpen="{Binding ShowThumbnailImage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                        Grid.Row="0" Grid.RowSpan="2"
-                        Placement="Center"
-                        PopupAnimation="Fade"
-                        StaysOpen="False"
-                        AllowsTransparency="True">
-                <Image Stretch="Uniform" Height="500" Width="500" Source="{Binding ThumbnailImageSource,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+            <Popup x:Name="ThumbnailImagePopup"
+                IsOpen="{Binding RecentFileVM.ThumbnailImageIsOpen,Source={StaticResource MainViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                Grid.Row="0" Grid.RowSpan="2"
+                Placement="Center"
+                PopupAnimation="Fade"
+                StaysOpen="False"
+                AllowsTransparency="True">
+                <Grid>
+                    <Image Stretch="Uniform" Height="550" Width="550" Source="{Binding ThumbnailImageSource,Source={StaticResource MainViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                    <Button Width="22" Height="22"
+                            Style="{StaticResource WindowActionButtonClose}"
+                            VerticalAlignment="Top"
+                            Command="{Binding RecentFileVM.CloseTImgPopup,Source={StaticResource MainViewModel}}"
+                            HorizontalAlignment="Right"
+                            Margin="0,70,5,0">
+                        <Path Width="16" Height="16"
+                              Stretch="Fill"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}, Mode=FindAncestor}}"
+                              Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z "/>
+                    </Button>
+                </Grid>
             </Popup>
         </StackPanel>
+        <Rectangle Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="2">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="Black"/>
+                    <Setter Property="Margin" Value="-500,-500,-500,-500"/>
+                    <Setter Property="Opacity" Value="0.2"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=ThumbnailImagePopup,Path=IsOpen}" Value="false">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
     </Grid>
 </Page>

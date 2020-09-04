@@ -1,4 +1,5 @@
 ﻿using BCS.CADs.Synchronization.Models;
+using BCS.CADs.Synchronization.ViewModels;
 using BCS.CADs.Synchronization.Views;
 using System;
 using System.Collections.Generic;
@@ -54,8 +55,16 @@ namespace BCS.CADs.Synchronization
                     _syncMain = (MainWindow)cache["MainWindow"];
                     //System.Diagnostics.Debugger.Break();
                     dynamic DataContext = _syncMain.DataContext;
-                    if (DataContext!=null) DataContext.ResetMainWindowDefaultValues();
 
+                if (DataContext != null)
+                {
+                    DataContext.ResetMainWindowDefaultValues();
+                    DataContext.RecentFileVM = new RecentFileViewModel();
+                    DataContext.CheckBoxWPVisibility = Visibility.Collapsed;
+                    DataContext.RecentFileViewVisibility = Visibility.Visible;
+                    DataContext.RecentFileVM.RecentFile = DataContext.RecentFile.ReadRecentFile();
+                }
+                
 
 
                 _syncMain.Topmost = true;

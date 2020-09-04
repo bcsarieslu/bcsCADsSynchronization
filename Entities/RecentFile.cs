@@ -1,4 +1,5 @@
 ﻿using BCS.CADs.Synchronization.Classes;
+using BCS.CADs.Synchronization.Search;
 using BCS.CADs.Synchronization.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -20,22 +21,28 @@ namespace BCS.CADs.Synchronization.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <param name="filepath"></param>
-        public ObservableCollection<RecentFileProperties> AddRecentFile(string name, string filepath)
+        public ObservableCollection<RecentFileProperties> AddRecentFile(List<SearchItem> searchItems)
         {
+            string path = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images";
             ObservableCollection<RecentFileProperties>  readData = ReadRecentFile();
-            readData.Remove(readData.FirstOrDefault(a => a.FileName == name && a.FilePath == filepath));
 
-            if (readData.Count >= 15)
+            foreach (var item in searchItems)
             {
-                readData.Remove(readData.Last());
+                readData.Remove(readData.FirstOrDefault(a => a.FileName == item.FileName && a.FilePath == item.FilePath));
+
+                while (readData.Count >= 15)
+                {
+                    readData.Remove(readData.Last());
+                }
+
+                readData.Insert(0, new RecentFileProperties
+                {
+                    FileName = item.FileName,
+                    FilePath = item.FilePath,
+                    DrawingTypeImage = Path.Combine(path,item.ClassName+".png"),
+                    OpenDate = DateTime.Now.ToString("yyyy/MM/dd"),
+                });
             }
-
-            readData.Insert(0,new RecentFileProperties
-            {
-                FileName = name,
-                FilePath = filepath,
-                OpenDate = DateTime.Now.ToString("yyyy/MM/dd"),
-            });
 
             var result = new
             {
@@ -77,7 +84,14 @@ namespace BCS.CADs.Synchronization.Entities
         {
             if (File.Exists(Path.Combine(path, "myjson.json")) == false) return new ObservableCollection<RecentFileProperties>();
             var jsonData = JObject.Parse(File.ReadAllText(Path.Combine(path, "myjson.json"))).Children().First().Values();
-            var readRecentFiles = Converter.ToObservableCollection(jsonData.Select(a => new RecentFileProperties { FileName = a.Value<string>("FileName"), FilePath = a.Value<string>("FilePath"), OpenDate = a.Value<string>("OpenDate") }));
+
+            var readRecentFiles = Converter.ToObservableCollection(jsonData.Select(a => new RecentFileProperties
+            {
+                FileName = a.Value<string>("FileName"),
+                FilePath = a.Value<string>("FilePath"),
+                OpenDate = a.Value<string>("OpenDate"),
+                DrawingTypeImage = a.Value<string>("DrawingTypeImage")
+            }));
             return readRecentFiles;
             //foreach (var item in jsonData.Select(a => new { FileName = a.Value<string>("FileName"), OpenDate = a.Value<string>("OpenDate") }))
             //{

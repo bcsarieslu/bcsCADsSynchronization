@@ -9,7 +9,7 @@
       x:Class="BCS.CADs.Synchronization.Views.PlugInFuncs"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      >
+      Title="PlugInFuncs">
 
     <Page.Resources>
         <ResourceDictionary>
@@ -66,11 +66,33 @@
                                         Command="{Binding Source={StaticResource viewmodel},Path=SyncPlugIn}" 
                                         CommandParameter="{Binding RelativeSource={RelativeSource self}}"
                                         Style="{StaticResource PlugInFuncsButtonStyle}"
-                                        Background="#FF9340">
+                                        Background="White">
                                     <!--<Image Source="{StaticResource CreateRelatedItemDrawingImage}" />-->
-                                    <StackPanel Orientation="Vertical">
-                                        <Image x:Name="IconImage" Source="{Binding Image,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}" Margin="23"/>
-                                        <TextBlock x:Name="PlugInName" Margin="0,-20,0,0" HorizontalAlignment="Center" FontFamily="微軟正黑體" FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                                    <StackPanel>
+                                        <Grid>
+                                            <Image HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top"
+                                                   x:Name="IconImage"
+                                                   Width="60"
+                                                   Source="{Binding Image,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"
+                                                   Margin="10,10,0,0"/>
+                                            <TextBlock x:Name="PlugInName"
+                                                   Margin="20,10,0,0"
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center" 
+                                                   FontFamily="微軟正黑體"
+                                                   FontWeight="Bold"
+                                                   FontSize="14"
+                                                   Text="{Binding Name}"/>
+                                        </Grid>
+                                        <TextBlock Margin="10,10,10,0"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Bottom"
+                                                   FontFamily="微軟正黑體"
+                                                   FontWeight="Bold"
+                                                   FontSize="14"
+                                                   Text="content"
+                                                   TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Button>
                                 <!--<TextBlock Text="{Binding}" Margin="3,0,3,0"  />-->

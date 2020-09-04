@@ -50,6 +50,7 @@
     <sys:String x:Key="ApplicationVer">Application Version:</sys:String>
     <sys:String x:Key="systemSetting">Setting</sys:String>
     <sys:String x:Key="plugIn">Plug In</sys:String>
+    <sys:String x:Key="Insert_Replace">Insert/Replace</sys:String>
     <sys:String x:Key="about">About</sys:String>
     <sys:String x:Key="computerInfo">System Information</sys:String>
     <sys:String x:Key="notLogin">Please Login</sys:String>
@@ -113,4 +114,6 @@
 
     <sys:String x:Key="date">Date</sys:String>
     <sys:String x:Key="filePath">Path</sys:String>
+    <sys:String x:Key="recent_document">Recent Document</sys:String>
+    <sys:String x:Key="recently">Recently</sys:String>
 </ResourceDictionary>

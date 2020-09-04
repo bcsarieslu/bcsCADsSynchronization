@@ -376,7 +376,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="DisplayGrid">
@@ -442,12 +442,13 @@
                     <local:ViewFile HorizontalContentAlignment="Left" VerticalContentAlignment="Top" x:Name="viewFile" Width="0" Height="0"/>
                 </Canvas>
 
-                <TextBlock x:Name="showStatus" Grid.Row="2" Text="{DynamicResource MainWindow_status}" Padding="10,0,0,0"/>
+                <TextBlock Height="15" Visibility="Hidden" x:Name="showStatus" Grid.Row="2" Text="{DynamicResource MainWindow_status}" Padding="10,0,0,0"/>
             </Grid>
 
             <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -462,7 +463,7 @@
                     </Grid.RowDefinitions>
 
                     <!--填補無按鈕的位置-->
-                    <WrapPanel Orientation="Horizontal" Grid.Row="8" Background="{StaticResource LeftDefaultColor}"/>
+                    <WrapPanel Orientation="Horizontal" Grid.Row="9" Background="{StaticResource LeftDefaultColor}"/>
 
                     <!--Login按鈕-->
                     <Rectangle x:Name="IsCheckMark" Grid.Row="0" Fill="#00F9FF" Width="4" Height="40" Panel.ZIndex="1" HorizontalAlignment="Left"/>
@@ -667,8 +668,60 @@
                         </StackPanel.Style>
                     </StackPanel>
 
+                    <!--插入分件-->
+                    <StackPanel Orientation="Horizontal" Grid.Row="4" x:Name="Insert_Replace_SP">
+                        <Button x:Name="Insert_Replace" ToolTip="{DynamicResource Insert_Replace}" Command="{Binding Insert_Replace}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" >
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource buttondefault}">
+                                    <Setter Property="Button.IsEnabled" Value="False"/>
+                                    <Setter Property="Control.Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border Background="{TemplateBinding Background}">
+                                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Image Style="{StaticResource Insert_ReplaceDrawingImageStyle}" Height="28" VerticalAlignment="Top"/>
+                                                        <TextBlock FontSize="10" Text="{DynamicResource Insert_Replace}" x:Name="Insert_Replace_Text"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="Button.IsMouseOver" Value="True">
+                                            <Setter Property="Button.Foreground" Value="White"/>
+                                            <Setter Property="Button.Background" Value="{StaticResource ButtonTriggerDefaultColor}"/>
+                                        </Trigger>
+                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=Insert_Replace_SP}" Value="True">
+                                            <Setter Property="Button.Foreground" Value="White"/>
+                                            <Setter Property="Button.Background" Value="{StaticResource ButtonTriggerDefaultColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsEnabled, ElementName=Insert_Replace}" Value="False">
+                                            <Setter Property="Button.Foreground" Value="#ACACAC"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <StackPanel.Style>
+                            <Style>
+                                <Setter Property="Panel.Background" Value="{StaticResource LeftDefaultColor}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=Insert_Replace_SP}" Value="True">
+                                        <Setter Property="Panel.Background" Value="{StaticResource ButtonTriggerDefaultColor}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=Insert_Replace}" Value="True">
+                                        <Setter Property="Panel.Background" Value="{StaticResource ButtonTriggerDefaultColor}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsEnabled, ElementName=Insert_Replace}" Value="False">
+                                        <Setter Property="Button.Cursor" Value="No"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                    </StackPanel>
+                    
                     <!--從PLM下載圖檔按鈕-->
-                    <StackPanel Orientation="Horizontal" Grid.Row="4" x:Name="loadFromPLM_SP">
+                    <StackPanel Orientation="Horizontal" Grid.Row="5" x:Name="loadFromPLM_SP">
                         <Button x:Name="loadFromPLM" ToolTip="{DynamicResource plmdownimage}" Command="{Binding LoadFromPLM}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" >
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">
@@ -721,7 +774,7 @@
 
 
                     <!--複製轉新增-->
-                    <StackPanel Orientation="Horizontal" Grid.Row="5" x:Name="copyToAdd_SP">
+                    <StackPanel Orientation="Horizontal" Grid.Row="6" x:Name="copyToAdd_SP">
                         <Button x:Name="copyToAdd" ToolTip="{DynamicResource copyToAdd}" Command="{Binding ShowCopyToAdd}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" >
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">
@@ -773,7 +826,7 @@
                     </StackPanel>
 
                     <!--標記按鈕-->
-                    <StackPanel Orientation="Horizontal" Grid.Row="6" x:Name="flaggedBy_SP">
+                    <StackPanel Orientation="Horizontal" Grid.Row="7" x:Name="flaggedBy_SP">
                         <Button x:Name="flaggedBy" ToolTip="{DynamicResource flaggedBy}" Command="{Binding ShowFlaggedBy}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">
@@ -824,8 +877,8 @@
                         </StackPanel.Style>
                     </StackPanel>
 
-                    <!--插入分件按鈕-->
-                    <StackPanel Orientation="Horizontal" Grid.Row="7" x:Name="PlugIn_SP">
+                    <!--插件模組-->
+                    <StackPanel Orientation="Horizontal" Grid.Row="8" x:Name="PlugIn_SP">
                         <Button x:Name="PlugIn" ToolTip="{DynamicResource plugIn}" Command="{Binding ShowPlugInFuncs}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">
@@ -881,7 +934,7 @@
                     </StackPanel>
 
                     <!--系統設定按鈕-->
-                    <StackPanel Orientation="Horizontal" Grid.Row="9" x:Name="systemSetting_SP" VerticalAlignment="Top">
+                    <StackPanel Orientation="Horizontal" Grid.Row="10" x:Name="systemSetting_SP" VerticalAlignment="Top">
                         <Button x:Name="systemSetting" Command="{Binding SystemSetting}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" ToolTip="{DynamicResource systemSetting}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">
@@ -892,7 +945,7 @@
                                                 <Border Background="{TemplateBinding Background}">
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <Image Style="{StaticResource PhantomDrawingImageStyle}" Height="30"/>
-                                                        <TextBlock FontSize="10" Text="{DynamicResource systemSetting}" x:Name="systemSetting_Text"/>
+                                                        <TextBlock FontSize="10" HorizontalAlignment="Center" Text="{DynamicResource systemSetting}" x:Name="systemSetting_Text"/>
                                                     </StackPanel>
                                                 </Border>
                                             </ControlTemplate>
@@ -927,7 +980,7 @@
                     </StackPanel>
 
                     <!--關於按鈕-->
-                    <StackPanel Orientation="Horizontal" Grid.Row="10" x:Name="about_SP" VerticalAlignment="Top">
+                    <StackPanel Orientation="Horizontal" Grid.Row="11" x:Name="about_SP" VerticalAlignment="Top">
                         <Button x:Name="about" Command="{Binding About}" CommandParameter="{Binding Source={StaticResource proxy}, Path=Value}" ToolTip="{DynamicResource about}">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource buttondefault}">

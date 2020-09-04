@@ -19,6 +19,11 @@
     <sys:String x:Key="logout">Logout</sys:String>
     <!--<sys:String x:Key="systeminf">System Information</sys:String>-->
     <sys:String x:Key="search">Search</sys:String>
+    <sys:String x:Key="structure">Structure</sys:String>
+    <sys:String x:Key="revision">Revision</sys:String>
+    <sys:String x:Key="classification">Type</sys:String>
+    <sys:String x:Key="add">Add</sys:String>
+    
     <!-- exeproject -->
     <sys:String x:Key="execute">Execute</sys:String>
     <sys:String x:Key="propsync">Property Synchronization</sys:String>
@@ -97,7 +102,8 @@
     <sys:String x:Key="menu_ReplaceAPart">Replace a part</sys:String>
     <sys:String x:Key="menu_ReplaceAllParts">Replace all parts</sys:String>
     <sys:String x:Key="menu_CopyToAdd">Save As</sys:String>
-
+    <sys:String x:Key="menu_StructureView">Structure View</sys:String>
+    
     <sys:String x:Key="label_CopyFileName">New File Name</sys:String>
     <sys:String x:Key="label_NewFileName">New File Name</sys:String>
 
@@ -105,5 +111,6 @@
     <sys:String x:Key="status_finish">Finish</sys:String>
     <sys:String x:Key="status_end">End</sys:String>
 
-
+    <sys:String x:Key="date">Date</sys:String>
+    <sys:String x:Key="filePath">Path</sys:String>
 </ResourceDictionary>

@@ -42,11 +42,6 @@ namespace BCS.CADs.Synchronization.Views
         {
             //SystemCommands.CloseWindow(this);
         }
-
-        private void comboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 
     public class PasswordBoxMonitor : DependencyObject

@@ -176,7 +176,6 @@ namespace BCS.CADs.Synchronization.Entities
             set
             {
                 SetProperty(ref _Url, value, nameof(Url));
-                ListItems.Remove<PLMListItem>(x => x.Value!=null);
             }
         }
 
@@ -3148,7 +3147,7 @@ namespace BCS.CADs.Synchronization.Entities
                     searchItem.ItemConfigId = qureyResult.getItemByIndex(i).getProperty("config_id", "");
                     searchItem.KeyedName  = qureyResult.getItemByIndex(i).getProperty("keyed_name", "");
                     searchItem.ItemId = qureyResult.getItemByIndex(i).getProperty("id", "");
-                    
+
                     //searchItem.ClassName = (classItem.Key != "") ? classItem.Key : GetClassKey(qureyResult.getItemByIndex(i));
                     searchItem.ClassName = (String.IsNullOrWhiteSpace(classItem.Key) ==false) ? classItem.Key : GetClassKey(qureyResult.getItemByIndex(i));
                     //searchItem.FileClassName = //@@@@@@@@@@@
@@ -3990,19 +3989,5 @@ namespace BCS.CADs.Synchronization.Entities
 
 
     }
-    public static class ExtensionMethods
-    {
-        public static int Remove<T>(
-            this ObservableCollection<T> coll, Func<T, bool> condition)
-        {
-            var itemsToRemove = coll.Where(condition).ToList();
 
-            foreach (var itemToRemove in itemsToRemove)
-            {
-                coll.Remove(itemToRemove);
-            }
-
-            return itemsToRemove.Count;
-        }
-    }
 }

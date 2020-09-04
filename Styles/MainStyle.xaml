@@ -386,8 +386,8 @@
 
     <Style TargetType="{x:Type Button}" x:Key="PlugInFuncsButtonStyle">
         <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Width" Value="100"/>
-        <Setter Property="Height" Value="100"/>
+        <Setter Property="Width" Value="230"/>
+        <Setter Property="Height" Value="150"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -396,49 +396,13 @@
                                    Opacity="1"
                                    Fill="{TemplateBinding Background}"
                                    StrokeThickness="0.35">
-                            <Rectangle.Stroke>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="White" Offset="0"/>
-                                    <GradientStop Color="AliceBlue" Offset="0.5"/>
-                                    <GradientStop Color="#666666" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Rectangle.Stroke>
-                        </Rectangle>
-                        <Rectangle x:Name="xShine"
-                                   Margin="2,2,2,0"
-                                   VerticalAlignment="Top"
-                                   Opacity="1"
-                                   Stroke="Transparent"
-                                   Height="20px">
-                            <Rectangle.Fill>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="White" Offset="0"/>
-                                    <GradientStop Color="Transparent" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Rectangle.Fill>
                         </Rectangle>
                         <ContentPresenter Margin="{TemplateBinding Padding}"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Fill" TargetName="xBackground">
-                                <Setter.Value>
-                                    <RadialGradientBrush>
-                                        <GradientStop Color="#CAD6FF" Offset="0"/>
-                                        <GradientStop Color="#A6BAFF" Offset="1"/>
-                                    </RadialGradientBrush>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                        <Trigger Property="Button.IsPressed" Value="True">
-                            <Setter Property="Fill" TargetName="xBackground">
-                                <Setter.Value>
-                                    <RadialGradientBrush>
-                                        <GradientStop Color="#ffcc00" Offset="0"/>
-                                        <GradientStop Color="#cc9900" Offset="1"/>
-                                    </RadialGradientBrush>
-                                </Setter.Value>
-                            </Setter>
+                            <Setter Property="Fill" TargetName="xBackground" Value="LightGray"/>
+                            <Setter Property="Opacity" TargetName="xBackground" Value="0.8"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

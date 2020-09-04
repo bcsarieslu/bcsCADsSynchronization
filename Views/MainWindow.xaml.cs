@@ -103,9 +103,6 @@ namespace BCS.CADs.Synchronization.Views
             RecentFileView.Navigate(recentFileView);
             Panel.SetZIndex(RecentFileView, 1);
 
-            var mainVM = ((MainWindowViewModel)this.DataContext);
-            mainVM.RecentFileVM.RecentFile = mainVM.RecentFile.ReadRecentFile();
-
             //LoadingAdorner.IsAdornerVisible = true;
             //ClsSynchronizer.LoadingAdornerView = LoadingAdorner;
             //ClsSynchronizer.MainWindows = this;

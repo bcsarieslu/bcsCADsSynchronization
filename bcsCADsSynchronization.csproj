@@ -539,6 +539,7 @@
     <Resource Include="Images\CopyToAdd.bmp" />
     <Resource Include="Images\ToggleButtonEditIcon.png" />
     <Resource Include="Images\MBOM.bmp" />
+    <Resource Include="Images\documenticon.png" />
     <Content Include="Libs\WPFToolkit.dll" />
     <Content Include="Libs\WPFToolkit.Extended.dll" />
   </ItemGroup>

@@ -72,6 +72,14 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
+        public RecentFile RecentFile
+        {
+            get
+            {
+                return new RecentFile();
+            }
+        }
+
         private MainWindow _myMainWindow;
         public MainWindow MyMainWindow { get { return (MainWindow)MyCache.CacheInstance["MainWindow"]; } set { _myMainWindow = value; } }
 
@@ -109,7 +117,26 @@ namespace BCS.CADs.Synchronization.ViewModels
             LoadFromPLMView((Window)_view, true, itemType, isSub,false);
             
         }
+        
+        private bool _showThumbnailImage = false;
+        public bool ShowThumbnailImage
+        {
+            get { return _showThumbnailImage; }
+            set
+            {
+                SetProperty(ref _showThumbnailImage, value, "ShowThumbnailImage");
+            }
+        }
 
+        private string _thumbnailImageSource = "";
+        public string ThumbnailImageSource
+        {
+            get { return _thumbnailImageSource; }
+            set
+            {
+                SetProperty(ref _thumbnailImageSource, value, "ThumbnailImageSource");
+            }
+        }
 
         public ICommand GridFieldClickedCommand
         {
@@ -145,33 +172,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                                 positionUse = ((Canvas)(win.FindName("DialogCanvasViewFile")) != null) ? (TextBlock)win.FindName("positionUse") : positionUse;
                             }
                         }
-
-
-                        canvas.Visibility = Visibility.Visible;
-                        ViewFile viewFile = (ViewFile)canvas.FindName("viewFile");
-                       
-                        Label lb = (Label)MyMainWindow.FindName("scaleLabel");
-                        Point pointToWindow = Mouse.GetPosition(positionUse);
-
-                        double size = (double.Parse(lb.Content.ToString()) / 100);
-                        if (ClsSynchronizer.CurrentDialog != "ItemSearchDialog" && ClsSynchronizer.IsActiveSubDialogView == false)
-                        {                 
-                            Canvas.SetLeft(viewFile, pointToWindow.X - (55 * size));
-                            Canvas.SetTop(viewFile, pointToWindow.Y - (48 * size));
-                        }else
-                        {
-                            Canvas.SetLeft(viewFile, pointToWindow.X + (350 * size));
-                            Canvas.SetTop(viewFile, pointToWindow.Y - (250 * size));
-                        }
-
-                        if (viewFile != null)
-                        {
-                            Image image = (Image)viewFile.FindName("imageFile");
-                            if (image != null) image.Source = new BitmapImage(new Uri(ClsSynchronizer.ViewFilePath));
-                        }
-                        Storyboard myStoryboard = new Storyboard();
-                        myStoryboard.Children.Add((Storyboard)MyMainWindow.Resources["showMe"]);
-                        myStoryboard.Begin(viewFile);
+                        ShowThumbnailImage = true;
+                        ThumbnailImageSource = ClsSynchronizer.ViewFilePath;
+                        //ShowThumbnailImage();
                     }
                 });
 
@@ -286,6 +289,26 @@ namespace BCS.CADs.Synchronization.ViewModels
             {
                 SetProperty(ref _showLine, value, "ShowLine");
                 OnPropertyChanged("ShowLine");
+            }
+        }
+        
+        private Visibility _recentFileViewVisibility;
+        public Visibility RecentFileViewVisibility
+        {
+            get { return _recentFileViewVisibility; }
+            set
+            {
+                SetProperty(ref _recentFileViewVisibility, value, "RecentFileViewVisibility");
+            }
+        }
+
+        private Visibility _showMessageDot = Visibility.Hidden;
+        public Visibility ShowMessageDot
+        {
+            get { return _showMessageDot; }
+            set
+            {
+                SetProperty(ref _showMessageDot, value, "ShowMessageDot");
             }
         }
 
@@ -795,7 +818,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             btn = (Button)MyMainWindow.FindName("btn_Execute");
             btn.Visibility = visibilityExecute;
             btn.IsEnabled = isEnable;
-
+            RecentFileViewVisibility = Visibility.Hidden;
 
         }
 
@@ -861,9 +884,6 @@ namespace BCS.CADs.Synchronization.ViewModels
                         {
                             StartStopWait(false);
                         }
-
-
-                        //CheckBox_AllIsChecked(false);
                     }
 
                 });
@@ -1340,12 +1360,15 @@ namespace BCS.CADs.Synchronization.ViewModels
                 treeSearchItem.Name = searchItem.FileName;
                 treeSearchItem.NodeSearchItem = searchItem;
                 treeSearchItem.ClassName = searchItem.ClassName;
+                treeSearchItem.FileClassName = searchItem.FileClassName;
+                
                 treeSearchItem.ClassThumbnail = searchItem.ClassThumbnail;
                 treeSearchItem.RestrictedStatus = searchItem.RestrictedStatus;
                 treeSearchItem.VersionStatus = searchItem.VersionStatus;
                 treeSearchItem.AccessRights = searchItem.AccessRights;
                 treeSearchItem.Thumbnail = searchItem.Thumbnail;// ClsSynchronizer.VmSyncCADs.GetImageFullName(searchItem.Thumbnail); 
                 treeSearchItem.IsChecked = searchItem.IsViewSelected;
+                treeSearchItem.IsStructureView = searchItem.IsStructureView ;
                 string displayName = System.IO.Path.GetFileNameWithoutExtension(searchItem.FileName);
                 if (treeSearchItem.IsChecked == true)
                 {
@@ -1743,18 +1766,19 @@ namespace BCS.CADs.Synchronization.ViewModels
         {
             get
             {
-                _syncExecute = new RelayCommand((x) =>
+                _showMessages = new RelayCommand((x) =>
                 {
                     try
                     {
                         ShowMessagesView();
+                        ShowMessageDot = Visibility.Collapsed;
                     }
                     catch (Exception ex)
                     {
                         string message = ex.Message;
                     }
                 });
-                return _syncExecute;
+                return _showMessages;
             }
         }
 
@@ -1771,9 +1795,12 @@ namespace BCS.CADs.Synchronization.ViewModels
             var viewPage = (Frame)MyMainWindow.FindName("viewPage");
             viewPage.Visibility = Visibility.Visible;
             viewPage.Navigate(_addItemsMessageView);
-            //for test
+
+            ShowMessageDot = Visibility.Visible;
             //ShowPartsLibrarySearchDialog();
             //ShowClassificationTreeDialog("CAD", "Electronic/Manufacturing");
+            //1ED50B5814E64EA0A1D72B987734A013,9735BA229863440688E40FA0C5C90C2B
+            //ShowItemStructureDialog("CAD", "1ED50B5814E64EA0A1D72B987734A013");
         }
 
         private void ShowPartsLibrarySearchDialog()
@@ -1799,14 +1826,33 @@ namespace BCS.CADs.Synchronization.ViewModels
             ClsSynchronizer.DialogReturnValue = "";
         }
 
-        private void ShowClassificationTreeDialog(TextBox txtProperty)
+        private void ShowClassificationTreeDialog(TextBox txtProperty, PLMProperty plmProperty)
         {
-            string value = (txtProperty.Tag == null) ? "" : txtProperty.Tag.ToString();
-            //if (itemType == "") itemType = ItemTypeName.CAD.ToString();
-            ClsSynchronizer.ClassificationItemType = ItemTypeName.CAD.ToString();
-            //string value = txtProperty.Name;
+            //SoruceItemType
+            string itemType = (plmProperty == null)? ItemTypeName.CAD.ToString():(plmProperty.SoruceSearchItem!=null)?  plmProperty.SoruceSearchItem.ItemType: plmProperty.SoruceItemType.Name;
+            string value = (plmProperty == null) ? "" : plmProperty.DataValue;
 
-            ClassificationTree itemSearchDialog = new ClassificationTree(ClsSynchronizer.ClassificationItemType, value);
+            ClassificationTree itemSearchDialog = new ClassificationTree(itemType, value);
+            ClsSynchronizer.DialogReturnDisplayValue = "";
+            ClsSynchronizer.DialogReturnValue = "";
+            itemSearchDialog.Width = 600;
+            itemSearchDialog.Height = 600;
+            itemSearchDialog.Topmost = true;
+            itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            itemSearchDialog.ShowDialog();
+            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false)
+            {
+                txtProperty.Text = ClsSynchronizer.DialogReturnDisplayValue;
+                UpdateSearchItemTypePropertyValue(plmProperty, ClsSynchronizer.DialogReturnValue, ClsSynchronizer.DialogReturnDisplayValue);
+            }
+            ClsSynchronizer.DialogReturnValue = "";
+
+        }
+
+        private void ShowItemStructureDialog(string itemType,string id)
+        {
+
+            ItemStructureDialog itemSearchDialog = new ItemStructureDialog(itemType, id);
             ClsSynchronizer.DialogReturnDisplayValue = "";
             ClsSynchronizer.DialogReturnValue = "";
             itemSearchDialog.Width = 500;
@@ -1814,16 +1860,28 @@ namespace BCS.CADs.Synchronization.ViewModels
             itemSearchDialog.Topmost = true;
             itemSearchDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             itemSearchDialog.ShowDialog();
-            if (String.IsNullOrWhiteSpace(ClsSynchronizer.DialogReturnValue) == false)
-            {
-                //MessageBox.Show(ClsSynchronizer.DialogReturnValue);
-                //string full = ClsSynchronizer.DialogReturnValue.Split((char)44)[0];
-                //ClsSynchronizer.VmSyncCADs.OpenFile(System.IO.Path.GetDirectoryName(full), System.IO.Path.GetFileName(full));
-                txtProperty.Text = ClsSynchronizer.DialogReturnDisplayValue;
-                txtProperty.Tag = ClsSynchronizer.DialogReturnValue;
-            }
             ClsSynchronizer.DialogReturnValue = "";
 
+        }
+
+        private void UpdateSearchItemTypePropertyValue(PLMProperty plmProperty,string dataValue,string displayValue)
+        {
+            if (plmProperty == null) return;
+
+            //要先修改DisplayValue,才能改DataValue,不然值會被異動
+            plmProperty.DisplayValue = displayValue;
+            plmProperty.DataValue = dataValue;
+
+            if (plmProperty.SoruceItemType == null) return;
+
+            int index = (ClsSynchronizer.SyncSubListView == null) ? -1 : ClsSynchronizer.SyncSubListView.Count() - 1;
+            SearchItem searchItemType = (ClsSynchronizer.IsActiveSubDialogView == true) ? ClsSynchronizer.NewSubSearchItem[index.ToString()] : ClsSynchronizer.NewSearchItem;
+            if (searchItemType == null) return;
+
+            PLMProperty property = searchItemType.PlmProperties.Where(x => x.Name == plmProperty.Name).FirstOrDefault();
+            if (property == null) return;
+            property.DisplayValue = displayValue;
+            property.DataValue = dataValue;
         }
 
         /// <summary>
@@ -2086,7 +2144,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     //System.Diagnostics.Debugger.Break();
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
-                    ShowClassificationTreeDialog(txtProperty);
+                    PLMProperty plmProperty = (PLMProperty)y.DataContext;
+                    ShowClassificationTreeDialog(txtProperty, plmProperty);
 
                 });
                 return _classificationPickerImageLeftClick;
@@ -2122,8 +2181,8 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     dynamic y = x;
                     TextBox txtProperty = (TextBox)y.TemplatedParent;
-
-                    ShowClassificationTreeDialog(txtProperty);
+                    PLMProperty plmProperty = (PLMProperty)y.DataContext;
+                    ShowClassificationTreeDialog(txtProperty, plmProperty);
                     if (ClsSynchronizer.SyncCurrentObsSearchItems.Count() < 1) ClsSynchronizer.IsActiveSubDialogView = false;
                 });
                 return _gridClassificationPickerImageLeftClick;
@@ -2217,6 +2276,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             double left = 10, top = 10, right = 0, bottom = 10;
 
             formGrid.Children.Clear();
+            if (ObsSearchItems.Count() == 0) return;
             var plmProperties = (plmProp != null) ? plmProp : ObsSearchItems.FirstOrDefault(a => a.PlmProperties != null).PlmProperties;
             foreach (var item in plmProperties)
             {
@@ -2591,9 +2651,13 @@ namespace BCS.CADs.Synchronization.ViewModels
                 CheckBox_AllIsChecked(false);
                 StartStopWait(false);
 
+                var searchItem = ClsSynchronizer.VmSyncCADs.GetActiveSearchItem(ObsSearchItems.ToList());
+                //寫入並寫入近期開啟的檔案
+                if(searchItem!=null) RecentFileVM.RecentFile = RecentFile.AddRecentFile(searchItem.FileName, searchItem.FilePath);
+                //資料來源修改時，重置資料
+                OnPropertyChanged("RecentFileVM");
+
             }, TaskScheduler.FromCurrentSynchronizationContext());
-
-
 
         }
 
@@ -3145,6 +3209,26 @@ namespace BCS.CADs.Synchronization.ViewModels
                 _syncInsertItem = value;
             }
         }
+
+        private ICommand _syncStructureView { get; set; }
+        public ICommand SyncStructureView
+        {
+            get
+            {
+                _syncReplaceItem = new RelayCommand((x) =>
+                {
+                    //System.Diagnostics.Debugger.Break();
+                    BCS.CADs.Synchronization.ViewModels.SearchItemsViewModel menuItem = (BCS.CADs.Synchronization.ViewModels.SearchItemsViewModel)x;
+                    ShowItemStructureDialog(menuItem.NodeSearchItem.ItemType, menuItem.NodeSearchItem.ItemId);
+                });
+                return _syncReplaceItem;
+            }
+            private set
+            {
+                _syncInsertItem = value;
+            }
+        }
+
 
         private ICommand _syncReplaceAllItems { get; set; }
         public ICommand SyncReplaceAllItems
@@ -3773,6 +3857,15 @@ namespace BCS.CADs.Synchronization.ViewModels
             set { SetProperty(ref _className, value, nameof(ClassName)); }
         }
 
+        private string _fileClassName;
+        public string FileClassName
+        {
+            get { return _fileClassName; }
+            set { SetProperty(ref _fileClassName, value, nameof(FileClassName)); }
+        }
+
+
+
         //1111:(8,4,2,1) :InsertSaveAs,CopyToAdd,Replace,Insert
         private int _operationType;
         public int OperationType
@@ -3868,6 +3961,13 @@ namespace BCS.CADs.Synchronization.ViewModels
             set { SetProperty(ref _isInsertSaveAs, value, nameof(IsInsertSaveAs)); }
         }
 
+        private Boolean _isStructureView = false ;//false;
+        public Boolean IsStructureView
+        {
+            get { return _isStructureView; }
+            set { SetProperty(ref _isStructureView, value, nameof(IsStructureView)); }
+        }
+
 
         private SearchItem _nodeSearchItem;
 
@@ -3882,15 +3982,19 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
                     SearchItemsViewModel sonSearchItem = new SearchItemsViewModel();
                     sonSearchItem.Name = cadStructure.Child.FileName;
-                    
+                    //IsStructureView
                     sonSearchItem.Order = cadStructure.Order;
                     sonSearchItem.InstanceId = cadStructure.InstanceId;
+
+                    
 
                     PLMProperty property = cadStructure.Child.PlmProperties.Where(x => x.Name == "bcs_added_filename" && String.IsNullOrWhiteSpace(x.DisplayValue) == false).SingleOrDefault();
                     string displayName = (property != null) ? property.DisplayValue : System.IO.Path.GetFileNameWithoutExtension(cadStructure.Child.FileName);
                     sonSearchItem.DisplayName = (sonSearchItem.InstanceId != "") ? String.Format (displayName + "<{0}>", sonSearchItem.InstanceId) : displayName;
                     
                     sonSearchItem.ClassName = cadStructure.Child.ClassName;
+                    sonSearchItem.FileClassName = cadStructure.Child.FileClassName;
+
                     sonSearchItem.ClassThumbnail = cadStructure.Child.ClassThumbnail;
                     sonSearchItem.RestrictedStatus = cadStructure.Child.RestrictedStatus;
                     sonSearchItem.VersionStatus = cadStructure.Child.VersionStatus;
@@ -3900,6 +4004,9 @@ namespace BCS.CADs.Synchronization.ViewModels
                     sonSearchItem.OperationType = cadStructure.OperationType;
 
                     sonSearchItem.IsChecked = cadStructure.Child.IsViewSelected;
+
+                    sonSearchItem.IsStructureView = cadStructure.Child.IsStructureView;
+
                     if (sonSearchItem.IsChecked == true && sonSearchItem.OperationType==0)
                     {
                         sonSearchItem.IsReplacement = true;

@@ -8,25 +8,67 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Width="1000">
     <UserControl.Resources>
-        <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ScrallBarStyle.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ScrallBarStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/RecentFileViewStyle.xaml" />
+                <ResourceDictionary>
+                    <vm:RecentFileViewModel x:Key="RFViewModel"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <ListView Background="Transparent" BorderThickness="0" ItemsSource="{Binding RecentFileVM.RecentFile,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ScrollViewer.CanContentScroll="True" Grid.ColumnSpan="2">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,65,30,15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="{DynamicResource recent_document}" Grid.Row="0" Margin="5,0,5,0" FontSize="20" FontWeight="Black" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button Width="80" Content="{DynamicResource recently}" FontSize="18" Style="{StaticResource MenuButton}"/>
+        </StackPanel>
+        <ListView Background="Transparent"
+                  BorderThickness="0" 
+                  Grid.Row="2"
+                  HorizontalContentAlignment="Stretch"
+                  SelectedItem="{Binding Selected,Source={StaticResource RFViewModel}}"
+                  ItemsSource="{Binding RecentFileVM.RecentFile,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                  ScrollViewer.CanContentScroll="True" Grid.ColumnSpan="2"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="FontSize" Value="14"/>
                     <Setter Property="BorderBrush" Value="LightGray"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                <Border Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="true">
+                                    <GridViewRowPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="AliceBlue" />
+                            <Setter Property="Background" Value="#DADADA" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="true" />
                                 <Condition Property="Selector.IsSelectionActive" Value="true" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="#84EEFF" />
+                            <Setter Property="Background" Value="#F4FE8A" />
                         </MultiTrigger>
                     </Style.Triggers>
                 </Style>
@@ -37,18 +79,15 @@
                         <Style TargetType="{x:Type GridViewColumnHeader}">
                             <Setter Property="Background" Value="Transparent"/>
                             <Setter Property="BorderBrush" Value="LightGray"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="Margin" Value="0,-1,0,0"/>
+                            <Setter Property="BorderThickness" Value="0,1,0,1"/>
+                            <Setter Property="Margin" Value="0,-3,0,0"/>
                         </Style>
                     </GridView.ColumnHeaderContainerStyle>
                     <GridView.Columns>
-                        <GridViewColumn Width="750">
+                        <GridViewColumn Width="55">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Margin="0,5,0,5" ToolTip="{Binding FilePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
-                                        <TextBlock Text="{Binding FileName,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
-                                        <TextBlock Margin="0,3,0,0" FontSize="12" Text="{Binding FilePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
-                                    </StackPanel>
+                                    <Image Source="{Binding DrawingTypeImage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Width="50" Height="50"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                             <GridViewColumnHeader>
@@ -59,11 +98,7 @@
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
                                                     <Border BorderBrush="LightGray" BorderThickness="0,0,0,1">
-                                                        <TextBlock Text="{DynamicResource filename}"
-                                                                   HorizontalAlignment="Left"
-                                                                   VerticalAlignment="Center"
-                                                                   FontSize="16"
-                                                                   Margin="10,8,0,8"/>
+                                                        <Image Margin="10,0,0,0" HorizontalAlignment="Center" Height="25" Width="25" Source="/BCS.CADs.Synchronization;component/Images/documenticon.png"/>
                                                     </Border>
                                                 </ControlTemplate>
                                             </Setter.Value>
@@ -73,6 +108,37 @@
                             </GridViewColumnHeader>
                         </GridViewColumn>
                         <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,5,0,5" ToolTip="{Binding FilePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" >
+                                        <TextBlock Margin="0,3,0,0" FontSize="14" Text="{Binding FileName,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                                        <TextBlock Margin="0,3,0,3" Foreground="DarkGray" FontSize="10" Text="{Binding FilePath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                            <GridViewColumnHeader Width="700">
+                                <GridViewColumnHeader.Style>
+                                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                                                    <Border BorderBrush="LightGray" BorderThickness="0,0,0,1">
+                                                        <TextBlock Text="{DynamicResource filename}"
+                                                                   HorizontalAlignment="Stretch"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="18"
+                                                                   FontWeight="Bold"
+                                                                   Margin="10,8,0,8"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GridViewColumnHeader.Style>
+                            </GridViewColumnHeader>
+                        </GridViewColumn>
+                        <GridViewColumn Width="130">
                             <GridViewColumnHeader>
                                 <GridViewColumnHeader.Style>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
@@ -84,8 +150,9 @@
                                                         <TextBlock Text="{DynamicResource date}"
                                                                HorizontalAlignment="Left"
                                                                VerticalAlignment="Center"
-                                                               FontSize="16"
-                                                               Margin="20,8,0,8"/>
+                                                               FontSize="18"
+                                                               FontWeight="Bold"
+                                                               Margin="10,8,0,8"/>
                                                     </Border>
                                                 </ControlTemplate>
                                             </Setter.Value>
@@ -95,8 +162,8 @@
                             </GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <TextBlock Margin="10,0,0,0" Text="{Binding OpenDate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                                    <StackPanel MinWidth="150" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <TextBlock HorizontalAlignment="Stretch" Text="{Binding OpenDate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

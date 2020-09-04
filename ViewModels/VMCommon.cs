@@ -47,12 +47,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             if (plmProperty.DataType == "image" || plmProperty.DataType == "revision")
             {
-                FrameworkElementFactory txtBox = new FrameworkElementFactory(typeof(TextBox));
-                AddDataGridTextBlockStyleBinding(txtBox, plmProperty);
-                txtBox.SetValue(TextBox.HeightProperty, 25d);  //TextBox高度
-                txtBox.SetValue(TextBox.IsEnabledProperty,false);
-                txtBox.SetValue(TextBox.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
-                stackPanel.AppendChild(txtBox);
+                stackPanel.AppendChild(CreateEmptyBorder());
             }
 
             else
@@ -100,6 +95,24 @@ namespace BCS.CADs.Synchronization.ViewModels
             gridSelectedItems.Columns.Add(col);
             gridSelectedItems.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
 
+        }
+
+        private FrameworkElementFactory CreateEmptyBorder()
+        {
+            FrameworkElementFactory border1 = new FrameworkElementFactory(typeof(Border));
+            FrameworkElementFactory border2 = new FrameworkElementFactory(typeof(Border));
+            //AddDataGridTextBlockStyleBinding(txtBox, plmProperty);
+            border1.SetValue(Border.HeightProperty, 25d);  //Border高度
+            border1.SetValue(Border.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
+            border1.SetValue(Border.BorderThicknessProperty, new Thickness(0, 1, 0, 0));
+            border1.SetValue(Border.BorderBrushProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")));
+
+            border2.SetValue(Border.BackgroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D3FDFF")));
+            border2.SetValue(Border.BorderThicknessProperty, new Thickness(0.8, 0, 0.8, 0));
+            border2.SetValue(Border.BorderBrushProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#DDDDDD")));
+            border1.AppendChild(border2);
+
+            return border1;
         }
 
         public void AddDataGridHeaderSearchControls(FrameworkElementFactory stackPanel, PLMProperty plmProperty)

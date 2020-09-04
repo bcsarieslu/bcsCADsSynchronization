@@ -19,6 +19,11 @@
     <sys:String x:Key="logout">注销</sys:String>
     <!--<sys:String x:Key="systeminf">使用者系统资讯</sys:String>-->
     <sys:String x:Key="search">查询</sys:String>
+    <sys:String x:Key="structure">结构</sys:String>
+    <sys:String x:Key="revision">版本</sys:String>
+    <sys:String x:Key="classification">Type</sys:String>
+    <sys:String x:Key="add">添加</sys:String>
+    
     <sys:String x:Key="execute">确认执行</sys:String>
     <sys:String x:Key="propsync">属性同步</sys:String>
     <sys:String x:Key="filesync">档案同步</sys:String>
@@ -95,7 +100,8 @@
     <sys:String x:Key="menu_ReplaceAPart">替换分件(单笔)</sys:String>
     <sys:String x:Key="menu_ReplaceAllParts">替换分件(全部)</sys:String>
     <sys:String x:Key="menu_CopyToAdd">另存为新图</sys:String>
-
+    <sys:String x:Key="menu_StructureView">结构检视</sys:String>
+    
     <sys:String x:Key="label_CopyFileName">新文件名</sys:String>
     <sys:String x:Key="label_NewFileName">新文件名</sys:String>
 
@@ -103,7 +109,6 @@
     <sys:String x:Key="status_finish">完成</sys:String>
     <sys:String x:Key="status_end">结束</sys:String>
 
-
-
-
+    <sys:String x:Key="date">日期</sys:String>
+    <sys:String x:Key="filePath">文件路径</sys:String>
 </ResourceDictionary>
