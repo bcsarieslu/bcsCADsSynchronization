@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 using System.Windows.Media;
 #endregion
 
@@ -66,10 +67,14 @@ namespace BCS.CADs.Synchronization.ViewModels
             DataTemplate cellTemplate = new DataTemplate();
             if (plmProperty.DataType == "image")
             {
-                FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-
-                AddDataGridImage(imagePickerFactoryElem, plmProperty, index);
-                cellTemplate.VisualTree = imagePickerFactoryElem;
+                FrameworkElementFactory buttonPickerFactoryElem = new FrameworkElementFactory(typeof(Button));
+                MainWindowViewModel mv = (MainWindowViewModel)gridSelectedItems.DataContext;
+                buttonPickerFactoryElem.SetValue(Button.CommandProperty, mv.ShowThumbnailImage);
+                Binding buttonBind = new Binding();
+                buttonBind.RelativeSource = RelativeSource.Self;
+                buttonPickerFactoryElem.SetValue(Button.CommandParameterProperty, buttonBind);
+                AddDataGridImage(buttonPickerFactoryElem, plmProperty, index);
+                cellTemplate.VisualTree = buttonPickerFactoryElem;
             }
             else if (plmProperty.DataType == "revision")
             {
@@ -367,38 +372,55 @@ namespace BCS.CADs.Synchronization.ViewModels
 
             DataGridTemplateColumn col = new DataGridTemplateColumn();
             col.Header = (plmProperty != null) ? plmProperty.Label : "";
-            FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
-            AddDataGridImage(imagePickerFactoryElem, plmProperty, index);
+            FrameworkElementFactory buttonPickerFactoryElem = new FrameworkElementFactory(typeof(Button));
+            AddDataGridImage(buttonPickerFactoryElem, plmProperty, index);
 
 
             DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = imagePickerFactoryElem;
+            cellTemplate.VisualTree = buttonPickerFactoryElem;
             col.CellTemplate = cellTemplate;
 
             gridSelectedItems.Columns.Add(col);
         }
 
 
-        public void AddDataGridImage(FrameworkElementFactory imagePickerFactoryElem, PLMProperty plmProperty, int index)
+        public void AddDataGridImage(FrameworkElementFactory buttonPickerFactoryElem, PLMProperty plmProperty, int index)
         {
 
-            Binding imageBind = (plmProperty != null) ? new Binding("PlmProperties[" + index + "].DataValue") : new Binding("Thumbnail");
-            imageBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            imageBind.Mode = BindingMode.TwoWay;
-            imageBind.Converter = new ThumbnailToPathConverter();
+            FrameworkElementFactory imagePickerFactoryElem = new FrameworkElementFactory(typeof(Image));
+            var controlTemplate = new StringBuilder(
+                @"<ControlTemplate  xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
+                          xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
+                          xmlns:vm1=""clr-namespace:BCS.CADs.Synchronization.ViewModels;assembly=BCS.CADs.Synchronization"">
+                          <ControlTemplate.Resources>
+                                <ResourceDictionary>
+                                    <vm1:ThumbnailToPathConverter x:Key=""ThumbnailToPathConverter"" ImagePath=""DisplayImage""/>
+                                </ResourceDictionary>
+                          </ControlTemplate.Resources>"
+            );
+            controlTemplate.Append("<Image Name='IconImage' Width='24' Height='24'");
 
-            imagePickerFactoryElem.SetValue(Image.SourceProperty, imageBind);
-
-            Style imgStyle = new Style();
-            imgStyle.TargetType = typeof(Image);
-            for (int i = 0; i < 2; i++)
+            if (plmProperty != null)
             {
-                Setter imgSetter = new Setter();
-                imgSetter.Property = (i == 0) ? Image.WidthProperty : Image.HeightProperty;
-                imgSetter.Value = (double)24;
-                imgStyle.Setters.Add(imgSetter);
+                controlTemplate.Append(@" Source='{Binding PlmProperties[" + index + @"].DataValue,
+                                        UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,
+                                        Converter={StaticResource ResourceKey=ThumbnailToPathConverter}}'>");
             }
-            imagePickerFactoryElem.SetValue(Image.StyleProperty, imgStyle);
+            else
+            {
+                controlTemplate.Append(@" Source='{Binding Thumbnail.DataValue,
+                                        UpdateSourceTrigger=PropertyChanged,
+                                        Mode=TwoWay,Converter={StaticResource ResourceKey=ThumbnailToPathConverter}}'>");
+            }
+            controlTemplate.Append("</Image>");
+            controlTemplate.Append("</ControlTemplate>");
+
+            var test = (ControlTemplate)XamlReader.Parse(controlTemplate.ToString());
+
+            ControlTemplate content = new ControlTemplate();
+            content.VisualTree = imagePickerFactoryElem;
+            
+            buttonPickerFactoryElem.SetValue(Button.TemplateProperty, test);
         }
 
 

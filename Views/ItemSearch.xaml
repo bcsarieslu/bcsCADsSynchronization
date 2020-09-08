@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:BCS.CADs.Synchronization.Views"
       xmlns:local1="clr-namespace:BCS.CADs.Synchronization.ConfigProperties"
-      xmlns:con="clr-namespace:BCS.CADs.Synchronization.ViewModels"
       xmlns:vm1="clr-namespace:BCS.CADs.Synchronization.ViewModels"
       xmlns:vm="clr-namespace:BCS.CADs.Synchronization"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -23,6 +22,8 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/GlassButton.xaml"/>
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ButtonDefaultStyle.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ThumbnailImageStyle.xaml"/>
                 <!--RectangleButton GlassButton-->
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Key="GroupingHeaderTemplate">
@@ -37,11 +38,12 @@
             <vm1:SubItemSearchDialogViewModel x:Key="viewmodel"/>
             -->
             <vm1:MainWindowViewModel x:Key="viewmodel"/>
+            <vm1:ThumbnailToPathConverter x:Key="ThumbnailToPathConverter"/>
             <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference win}"/>
         </ResourceDictionary>
     </Page.Resources>
     <Page.DataContext>
-        <con:MainWindowViewModel/>
+        <vm1:MainWindowViewModel/>
     </Page.DataContext>
     <!--
     <con:SubItemSearchDialogViewModel/>
@@ -163,6 +165,29 @@
             </Grid>
             <Grid Grid.Row="3"/>
         </Grid>
-    
+        <StackPanel Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="4">
+            <Popup x:Name="ThumbnailImagePopup"
+                   Style="{StaticResource ThumbnailImagePopup}"
+                   Grid.Row="0" Grid.RowSpan="2"
+                   IsOpen="{Binding ThumbnailImageIsOpen,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                <Grid>
+                    <Image Stretch="Uniform" 
+                           Height="550" Width="550"
+                           Source="{Binding ThumbnailImageSource,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                    <Button Width="22" Height="22"
+                            Style="{StaticResource WindowActionButtonClose}"
+                            VerticalAlignment="Top"
+                            Command="{Binding CloseTImgPopup}"
+                            HorizontalAlignment="Right"
+                            Margin="0,70,5,0">
+                        <Path Width="16" Height="16"
+                              Stretch="Fill"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}, Mode=FindAncestor}}"
+                              Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z "/>
+                    </Button>
+                </Grid>
+            </Popup>
+        </StackPanel>
+        <Rectangle Style="{StaticResource ThumbnailImageRectangle}" Panel.ZIndex="4"/>
     </Grid>
 </Page>

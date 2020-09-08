@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace BCS.CADs.Synchronization
@@ -50,9 +52,15 @@ namespace BCS.CADs.Synchronization
                 var cache = MyCache.CacheInstance;
 
                 if (cache["MainWindow"] == null)
+                {
                     _syncMain = new MainWindow();
+                    ((Rectangle)_syncMain.FindName("IsCheckMark")).SetValue(Grid.RowProperty, 0);
+                }
                 else
+                {
                     _syncMain = (MainWindow)cache["MainWindow"];
+                    ((Rectangle)_syncMain.FindName("IsCheckMark")).Visibility = Visibility.Collapsed;
+                }
                     //System.Diagnostics.Debugger.Break();
                     dynamic DataContext = _syncMain.DataContext;
 
@@ -64,8 +72,6 @@ namespace BCS.CADs.Synchronization
                     DataContext.RecentFileViewVisibility = Visibility.Visible;
                     DataContext.RecentFileVM.RecentFile = DataContext.RecentFile.ReadRecentFile();
                 }
-                
-
 
                 _syncMain.Topmost = true;
                 _syncMain.CADSoftware = _cadSoftware;

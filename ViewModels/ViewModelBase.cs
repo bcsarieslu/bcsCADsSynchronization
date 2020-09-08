@@ -121,7 +121,31 @@ namespace BCS.CADs.Synchronization.ViewModels
             
         }
 
-        private string _thumbnailImageSource = "";
+        private static bool _thumbnailImageIsOpen = false;
+        public bool ThumbnailImageIsOpen
+        {
+            get { return _thumbnailImageIsOpen; }
+            set
+            {
+                SetProperty(ref _thumbnailImageIsOpen, value, "ThumbnailImageIsOpen");
+            }
+        }
+
+        private ICommand _closeTImgPopup;
+        public ICommand CloseTImgPopup
+        {
+            get
+            {
+                _closeTImgPopup = _closeTImgPopup ?? new RelayCommand((x) =>
+                {
+                    ThumbnailImageIsOpen = false;
+                });
+
+                return _closeTImgPopup;
+            }
+        }
+
+        private static string _thumbnailImageSource = "";
         public string ThumbnailImageSource
         {
             get { return _thumbnailImageSource; }
@@ -140,11 +164,15 @@ namespace BCS.CADs.Synchronization.ViewModels
                 {
                     Button btn = x as Button;
                     Image imageSource = btn.Template.FindName("IconImage", btn) as Image;
+                    if (imageSource == null)
+                    {
+                        var frameTemplate = btn.Template.VisualTree;
+                        imageSource = (Image)btn.FindName("IconImage");
+                    }
                     var imgPath = (imageSource != null) ? imageSource.Source.ToString() : ClsSynchronizer.ViewFilePath;
                     if (!string.IsNullOrWhiteSpace(imgPath))
                     {
-                        RecentFileVM.ThumbnailImageIsOpen = true;
-                        OnPropertyChanged(nameof(RecentFileVM));
+                        ThumbnailImageIsOpen = true;
                         ThumbnailImageSource = imgPath;
                     }
                 });
@@ -483,6 +511,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                         {
                             case "showLogin":
                                 Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+                                rect.Visibility = Visibility.Visible;
                                 rect.SetValue(Grid.RowProperty, Grid.GetRow(button));
                                 ShowLogIn();
                                 break;                     
@@ -774,6 +803,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     CheckBoxWPVisibility = Visibility.Visible;
                     SelectedDirectoryGridVisibility = Visibility.Collapsed;
                     Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+                    rect.Visibility = Visibility.Visible;
                     rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("syncFromPLM_SP")));
 
                     ResetOperationButtons(Visibility.Visible, Visibility.Visible, Visibility.Visible, Visibility.Visible, true);
@@ -887,7 +917,8 @@ namespace BCS.CADs.Synchronization.ViewModels
                     {
                     	SetMenuButtonColor("syncToPLM");
                     	Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
-                    	rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("syncToPLM_SP")));
+                        rect.Visibility = Visibility.Visible;
+                        rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("syncToPLM_SP")));
 
 						//設定目前操作選項 : ClsSynchronizer.VmOperation
                         ClsSynchronizer.VmFunction = SyncType.SyncToPLM;
@@ -1954,6 +1985,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     SetMenuButtonColor("systemSetting");
                     Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+                    rect.Visibility = Visibility.Visible;
                     rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("systemSetting_SP")));
 
                     SelectedDirectoryGridVisibility = Visibility.Collapsed;
@@ -1981,6 +2013,7 @@ namespace BCS.CADs.Synchronization.ViewModels
 
                     SetMenuButtonColor("about");
                     Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+                    rect.Visibility = Visibility.Visible;
                     rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("about_SP")));
                 });
                 return _about;
@@ -2046,6 +2079,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     SelectedDirectoryGridVisibility = Visibility.Collapsed;
                     CheckBoxWPVisibility = Visibility.Collapsed;
                     Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+                    rect.Visibility = Visibility.Visible;
                     rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("flaggedBy_SP")));
 
                     try
@@ -2781,6 +2815,7 @@ namespace BCS.CADs.Synchronization.ViewModels
             SelectedDirectoryGridVisibility = Visibility.Visible;
 
             Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+            rect.Visibility = Visibility.Visible;
             rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("newFormTemplateFile_SP")));
             var loginView = (Frame)MyMainWindow.FindName("LoginView");
             var systemView = (Frame)MyMainWindow.FindName("SystemView");
@@ -2841,10 +2876,10 @@ namespace BCS.CADs.Synchronization.ViewModels
             _plugInFunctionsView.Source = ClassPlugins;
             var viewPage = (Frame)MyMainWindow.FindName("viewPage");
             viewPage.Visibility = Visibility.Visible;
+            CheckBoxWPVisibility = Visibility.Collapsed;
 
             Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
-
-            CheckBoxWPVisibility = Visibility.Collapsed;
+            rect.Visibility = Visibility.Visible;
             rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName("PlugIn_SP")));
 
             viewPage.Navigate(_plugInFuncsView);
@@ -2966,6 +3001,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                 Button btn = (Button)MyMainWindow.FindName(displayKey);
                 SetMenuButtonColor(displayKey);
                 Rectangle rect = (Rectangle)MyMainWindow.FindName("IsCheckMark");
+                rect.Visibility = Visibility.Visible;
                 rect.SetValue(Grid.RowProperty, Grid.GetRow((StackPanel)MyMainWindow.FindName(String.Format ("{0}_SP", displayKey))));
             }
 
@@ -3863,6 +3899,74 @@ namespace BCS.CADs.Synchronization.ViewModels
             
         }
 
+        private static bool _thumbnailImageIsOpen = false;
+        public bool ThumbnailImageIsOpen
+        {
+            get { return _thumbnailImageIsOpen; }
+            set
+            {
+                SetProperty(ref _thumbnailImageIsOpen, value, "ThumbnailImageIsOpen");
+            }
+        }
+
+        private ICommand _closeTImgPopup;
+        public ICommand CloseTImgPopup
+        {
+            get
+            {
+                _closeTImgPopup = _closeTImgPopup ?? new RelayCommand((x) =>
+                {
+                    ThumbnailImageIsOpen = false;
+                });
+
+                return _closeTImgPopup;
+            }
+        }
+
+        private static string _thumbnailImageSource = "";
+        public string ThumbnailImageSource
+        {
+            get { return _thumbnailImageSource; }
+            set
+            {
+                SetProperty(ref _thumbnailImageSource, value, "ThumbnailImageSource");
+            }
+        }
+
+        private ICommand _showThumbnailImage;
+        public ICommand ShowThumbnailImage
+        {
+            get
+            {
+                _showThumbnailImage = new RelayCommand((x) =>
+                {
+                    Button btn = x as Button;
+                    Image imageSource = btn.Template.FindName("IconImage", btn) as Image;
+                    var imgPath = (imageSource != null) ? imageSource.Source.ToString() : ClsSynchronizer.ViewFilePath;
+                    if (!string.IsNullOrWhiteSpace(imgPath))
+                    {
+                        var parent = VisualTreeHelper.GetParent(imageSource);
+                        while (true)
+                        {
+                            if (parent is ItemsPresenter)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                parent = VisualTreeHelper.GetParent(parent);
+                            }
+
+                        }
+                        ItemsPresenter contentPresenter = (ItemsPresenter)parent;
+                        ((MainWindowViewModel)contentPresenter.DataContext).ThumbnailImageIsOpen = true;
+                        ((MainWindowViewModel)contentPresenter.DataContext).ThumbnailImageSource = imgPath;
+                    }
+                });
+                return _showThumbnailImage;
+            }
+        }
+
         private string _name;
         public string Name
         {
@@ -4027,6 +4131,7 @@ namespace BCS.CADs.Synchronization.ViewModels
                     sonSearchItem.RestrictedStatus = cadStructure.Child.RestrictedStatus;
                     sonSearchItem.VersionStatus = cadStructure.Child.VersionStatus;
                     sonSearchItem.AccessRights = cadStructure.Child.AccessRights;
+                    
                     sonSearchItem.Thumbnail = cadStructure.Child.Thumbnail;// ClsSynchronizer.VmSyncCADs.GetImageFullName(cadStructure.Child.Thumbnail);
 
                     sonSearchItem.OperationType = cadStructure.OperationType;

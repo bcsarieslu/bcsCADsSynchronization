@@ -26,7 +26,7 @@ namespace BCS.CADs.Synchronization.Entities
             string path = @"pack://application:,,,/BCS.CADs.Synchronization;component/Images";
             ObservableCollection<RecentFileProperties>  readData = ReadRecentFile();
 
-            foreach (var item in searchItems)
+            foreach (var item in searchItems.Where(x => !String.IsNullOrEmpty(x.FileName) && !String.IsNullOrEmpty(x.FilePath)))
             {
                 readData.Remove(readData.FirstOrDefault(a => a.FileName == item.FileName && a.FilePath == item.FilePath));
 

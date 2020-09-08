@@ -29,30 +29,6 @@ namespace BCS.CADs.Synchronization.ViewModels
             }
         }
 
-        private bool _thumbnailImageIsOpen = false;
-        public bool ThumbnailImageIsOpen
-        {
-            get { return _thumbnailImageIsOpen; }
-            set
-            {
-                SetProperty(ref _thumbnailImageIsOpen, value, "ThumbnailImageIsOpen");
-            }
-        }
-
-        private ICommand _closeTImgPopup;
-        public ICommand CloseTImgPopup
-        {
-            get
-            {
-                _closeTImgPopup = _closeTImgPopup ?? new RelayCommand((x) =>
-                {
-                    ThumbnailImageIsOpen = false;
-                });
-
-                return _closeTImgPopup;
-            }
-        }
-
         private static RecentFileProperties _selected;
         public RecentFileProperties Selected
         {

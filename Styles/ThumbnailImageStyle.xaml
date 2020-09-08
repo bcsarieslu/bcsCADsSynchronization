@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:BCS.CADs.Synchronization.Styles">
+
+    <Style x:Key="ThumbnailImageRectangle" TargetType="{x:Type Rectangle}">
+        <Setter Property="Fill" Value="Black"/>
+        <Setter Property="Margin" Value="-500,-500,-500,-500"/>
+        <Setter Property="Opacity" Value="0.2"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ElementName=ThumbnailImagePopup,Path=IsOpen}" Value="false">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ThumbnailImagePopup" TargetType="{x:Type Popup}">
+        <Setter Property="Placement" Value="Center"/>
+        <Setter Property="PopupAnimation" Value="Fade"/>
+        <Setter Property="StaysOpen" Value="False"/>
+        <Setter Property="AllowsTransparency" Value="True"/>
+    </Style>
+</ResourceDictionary>

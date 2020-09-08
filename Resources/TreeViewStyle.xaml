@@ -271,31 +271,31 @@
 
     <HierarchicalDataTemplate  x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Child}">
         <StackPanel Orientation="Horizontal" Margin="10,0,0,0" >
-            <StackPanel   Orientation="Horizontal" HorizontalAlignment="Left" >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <Image Width="20" Height="20" x:Name="iconIsChecked" Source="{Binding IsChecked,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
                 <!--<Image Width="24" Height="24" x:Name="iconClassName" Source="{Binding ClassName,Converter={StaticResource ResourceKey=StringToResource}}"></Image>-->
                 <Image Width="24" Height="24" x:Name="iconClassName" Source="{Binding ClassThumbnail}"/>
                 <Image Width="24" Height="24" x:Name="iconAccessRights" Source="{Binding AccessRights,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
                 <Image Width="24" Height="24" x:Name="iconRestrictedStatus" Source="{Binding RestrictedStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
                 <Image Width="24" Height="24" x:Name="iconVersionStatus" Source="{Binding VersionStatus,Converter={StaticResource ResourceKey=StringToResource}}"></Image>
-                <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}">
+
+                <!--<Image x:Name="IconImage" Height="24" Width="24" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}" Cursor="Hand">
                     <Image.InputBindings>
-                        <!-- LeftDoubleClick -->
-                        <MouseBinding MouseAction="LeftClick"
-                                    Command="{Binding DataContext.SelectItem, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeView}}"
-                                    CommandParameter="{Binding ElementName=treeStructureItems, Path=SelectedItem}" />
-                        <!--<MouseBinding MouseAction="LeftClick"
-                                    Command="{Binding DataContext.SelectItem, RelativeSource={RelativeSource FindAncestor, AncestorType=TreeView}}"
-                                    CommandParameter="{Binding ElementName=treeStructureItems, Path=SelectedItem}" />-->
+                        <MouseBinding Gesture="LeftClick" Command="{Binding ShowThumbnailImage}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Image}}"/>
                     </Image.InputBindings>
+                </Image>-->
 
-                    <!--<TextBlock.InputBindings>
-
-                    </TextBlock.InputBindings>-->
-                </Image>
+                <Button Height="24" Width="24" Margin="-30,0,-30,0" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding ShowThumbnailImage}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Image x:Name="IconImage" Height="24" Width="24" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}" Cursor="Hand"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                
             </StackPanel>
             <!--<CheckBox Focusable="False" IsEnabled="False" IsChecked="{Binding IsChecked}"  Visibility="Collapsed" VerticalAlignment="Center"/>-->
-            <ContentPresenter Content="{Binding DisplayName}" />
+            <ContentPresenter VerticalAlignment="Center" Content="{Binding DisplayName}" />
             <!--
             <ContentPresenter Content="{Binding Name}" />
             

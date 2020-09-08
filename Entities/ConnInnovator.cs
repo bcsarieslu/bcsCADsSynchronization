@@ -416,16 +416,12 @@ namespace BCS.CADs.Synchronization.Entities
         {
             get
             {
-                if (string.IsNullOrEmpty(_image_ID))
-                {
-                    Aras.IOM.Item it = _asInnovator.AsInnovator.newItem("User", "get");
-                    it.setProperty("login_name", "admin");
-                    it = it.apply();
-
-                    UserName = it.getProperty("last_name", "") + " " + it.getProperty("first_name", "");
-                    string str = it.getProperty("picture", "");
-                    _image_ID = str.Substring(str.IndexOf('=') + 1);
-                }
+                Aras.IOM.Item it = _asInnovator.AsInnovator.newItem("User", "get");
+                it.setProperty("login_name", LoginName);
+                it = it.apply();
+                UserName = it.getProperty("last_name", "") + " " + it.getProperty("first_name", "");
+                string str = it.getProperty("picture", "");
+                _image_ID = str.Substring(str.IndexOf('=') + 1);
                 return _image_ID;
             }
         }

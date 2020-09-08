@@ -112,7 +112,7 @@
                         VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal">
                             <Image Margin="2" Width="21" HorizontalAlignment="Left" Height="21" Source="{StaticResource LoginUserDrawingImage}"/>
-                            <TextBox Padding="0,2,0,0" Height="30" FontSize="16" x:Name="loginNameTextBox" Width="275" Text="{Binding  Mode=TwoWay, Path=PLM.LoginName}">
+                            <TextBox Padding="0,2,0,0" Height="30" FontSize="16" x:Name="loginNameTextBox" Width="275" Text="{Binding  Mode=TwoWay, Path=PLM.LoginName,UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.Resources>
                                     <VisualBrush x:Key="HintText" TileMode="None" Stretch="None" AlignmentX="Left">
                                         <VisualBrush.Visual>

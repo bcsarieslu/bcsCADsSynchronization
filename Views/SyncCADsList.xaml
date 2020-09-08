@@ -14,7 +14,7 @@
     </Page.DataContext>
     <Page.Resources>
         <ResourceDictionary>
-            <!--<Style x:Key="TextBlockStyle" TargetType="TextBlock" />-->
+            <ViewModels:MainWindowViewModel x:Key="ViewModel"/>
             <vm:DependencyObjectProxy x:Key="proxy" Value="{x:Reference win}"/>
             <ViewModels:SyncCADsListStringImageToResource x:Key="StringToResource" />
             <ViewModels:ThumbnailToPathConverter x:Key="ImageIdToPathConverter" ImagePath="DisplayImage" />
@@ -22,13 +22,14 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Resources/DataGridStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgCADImages.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/MainStyle.xaml" />
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ThumbnailImageStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         
     </Page.Resources>
-    
-    <Grid>
 
+    <Grid>
         <Grid ShowGridLines="True" >
             <!--AutoGenerateColumns="False" CanUserSortColumns="False"-->
             <DataGrid x:Name="gridSelectedItems" IsReadOnly="False" CanUserAddRows="False"
@@ -75,7 +76,13 @@
                     <DataGridTemplateColumn Header=""  Width="24" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}"></Image>
+                                <Button Command="{Binding ShowThumbnailImage,Source={StaticResource ViewModel}}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <Image Width="24" Height="24" x:Name="IconImage" Source="{Binding Thumbnail,Converter={StaticResource ResourceKey=ImageIdToPathConverter}}" Cursor="Hand"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -99,5 +106,30 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
+        <StackPanel Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="4">
+            <Popup x:Name="ThumbnailImagePopup"
+                   Style="{StaticResource ThumbnailImagePopup}"
+                   Grid.Row="0" Grid.RowSpan="2"
+                   IsOpen="{Binding ThumbnailImageIsOpen,Source={StaticResource ViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                <Grid>
+                    <Image x:Name="ThumbnailImage"
+                           Stretch="Uniform" 
+                           Height="550" Width="550"
+                           Source="{Binding ThumbnailImageSource,Source={StaticResource ViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                    <Button Width="22" Height="22"
+                            Style="{StaticResource WindowActionButtonClose}"
+                            VerticalAlignment="Top"
+                            Command="{Binding CloseTImgPopup,Source={StaticResource ViewModel}}"
+                            HorizontalAlignment="Right"
+                            Margin="0,70,5,0">
+                        <Path Width="16" Height="16"
+                              Stretch="Fill"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}, Mode=FindAncestor}}"
+                              Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z "/>
+                    </Button>
+                </Grid>
+            </Popup>
+        </StackPanel>
+        <Rectangle Style="{StaticResource ThumbnailImageRectangle}" Panel.ZIndex="4"/>
     </Grid>
 </Page>

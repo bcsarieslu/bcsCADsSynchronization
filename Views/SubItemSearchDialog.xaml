@@ -25,7 +25,13 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="13*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="41*"/>
+            <ColumnDefinition Width="6*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="4" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*" />
@@ -48,7 +54,7 @@
             </Grid>
             <Grid Grid.Row="1">
                 <Frame NavigationUIVisibility="Hidden" x:Name="viewPage" Grid.RowSpan="2" Grid.ColumnSpan="3" />
-                <ac:AdornedControl Name="LoadingAdorner" Grid.Row="0" Grid.RowSpan="2">
+                <ac:AdornedControl Name="LoadingAdorner" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="5">
                     <ac:AdornedControl.AdornerContent>
                         <local:LoadingWait></local:LoadingWait>
                     </ac:AdornedControl.AdornerContent>

@@ -23,6 +23,7 @@
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/SvgImages.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ScrallBarStyle.xaml" />
                 <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/CoreResourceDictionary.xaml"/>
+                <ResourceDictionary Source="/BCS.CADs.Synchronization;component/Styles/ThumbnailImageStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 
@@ -186,20 +187,20 @@
                 </Border>
             </StackPanel>
         </ScrollViewer>
-        <StackPanel Grid.Row="0" Grid.RowSpan="2">
+        
+        <StackPanel Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="4">
             <Popup x:Name="ThumbnailImagePopup"
-                IsOpen="{Binding RecentFileVM.ThumbnailImageIsOpen,Source={StaticResource MainViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                Grid.Row="0" Grid.RowSpan="2"
-                Placement="Center"
-                PopupAnimation="Fade"
-                StaysOpen="False"
-                AllowsTransparency="True">
+                   Style="{StaticResource ThumbnailImagePopup}"
+                   Grid.Row="0" Grid.RowSpan="2"
+                   IsOpen="{Binding ThumbnailImageIsOpen,Source={StaticResource MainViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                 <Grid>
-                    <Image Stretch="Uniform" Height="550" Width="550" Source="{Binding ThumbnailImageSource,Source={StaticResource MainViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                    <Image Stretch="Uniform" 
+                           Height="550" Width="550"
+                           Source="{Binding ThumbnailImageSource,Source={StaticResource MainViewModel},UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
                     <Button Width="22" Height="22"
                             Style="{StaticResource WindowActionButtonClose}"
                             VerticalAlignment="Top"
-                            Command="{Binding RecentFileVM.CloseTImgPopup,Source={StaticResource MainViewModel}}"
+                            Command="{Binding CloseTImgPopup,Source={StaticResource MainViewModel}}"
                             HorizontalAlignment="Right"
                             Margin="0,70,5,0">
                         <Path Width="16" Height="16"
@@ -210,21 +211,6 @@
                 </Grid>
             </Popup>
         </StackPanel>
-        <Rectangle Grid.Row="0" Grid.RowSpan="3" Panel.ZIndex="2">
-            <Rectangle.Style>
-                <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill" Value="Black"/>
-                    <Setter Property="Margin" Value="-500,-500,-500,-500"/>
-                    <Setter Property="Opacity" Value="0.2"/>
-                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalAlignment" Value="Stretch"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=ThumbnailImagePopup,Path=IsOpen}" Value="false">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Rectangle.Style>
-        </Rectangle>
+        <Rectangle Style="{StaticResource ThumbnailImageRectangle}" Panel.ZIndex="4"/>
     </Grid>
 </Page>
